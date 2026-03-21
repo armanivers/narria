@@ -7,10 +7,12 @@ const { getStoryPageImage } = require("./services/imageService");
 const app = express();
 const PORT = process.env.PORT || 4000;
 const ASSETS_ROOT = path.join(__dirname, "..", "public", "assets");
+const PROFILE_ASSETS_DIR = path.join(ASSETS_ROOT, "profiles");
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "15mb" }));
 app.use("/assets", express.static(path.join(__dirname, "..", "public", "assets")));
+fs.mkdirSync(PROFILE_ASSETS_DIR, { recursive: true });
 
 const dataPath = (...parts) => path.join(__dirname, "..", "data", ...parts);
 
@@ -64,14 +66,16 @@ function resolveCoverAudio(bookId, coverAudio) {
     front: { src: "", startDelayMs: 800 },
     back: { src: "", startDelayMs: 800 }
   };
+  const safeFront = safeCover.front || null;
+  const safeBack = safeCover.back || null;
   return {
     front: {
-      ...(safeCover.front || {}),
-      src: resolveCoverAudioSrc(bookId, "front", safeCover.front?.src || "")
+      ...(safeFront || undefined),
+      src: resolveCoverAudioSrc(bookId, "front", safeFront?.src || "")
     },
     back: {
-      ...(safeCover.back || {}),
-      src: resolveCoverAudioSrc(bookId, "back", safeCover.back?.src || "")
+      ...(safeBack || undefined),
+      src: resolveCoverAudioSrc(bookId, "back", safeBack?.src || "")
     }
   };
 }
@@ -88,6 +92,10 @@ function normalizeBook(rawBook) {
     totalPages: pages.length,
     pages
   };
+}
+
+function sanitizeProfileId(id) {
+  return String(id || "").replaceAll(/[^a-zA-Z0-9_-]/g, "");
 }
 
 app.get("/health", (_req, res) => {
@@ -173,6 +181,51 @@ app.post("/profile/child", (req, res) => {
   writeJson("children.json", children);
 
   return res.status(201).json({ child });
+});
+
+app.get("/profile/photo/:parentId", (req, res) => {
+  const parentId = sanitizeProfileId(req.params.parentId);
+  if (!parentId) {
+    return res.status(400).json({ error: "Invalid parentId" });
+  }
+
+  const candidates = ["png", "jpg", "jpeg", "webp"];
+  const foundExt = candidates.find((ext) =>
+    fs.existsSync(path.join(PROFILE_ASSETS_DIR, `${parentId}.${ext}`))
+  );
+
+  return res.json({
+    photoUrl: foundExt ? `/assets/profiles/${parentId}.${foundExt}` : null
+  });
+});
+
+app.post("/profile/photo", (req, res) => {
+  const { parentId, imageDataUrl } = req.body || {};
+  const safeParentId = sanitizeProfileId(parentId);
+  if (!safeParentId || !imageDataUrl) {
+    return res.status(400).json({ error: "parentId and imageDataUrl are required" });
+  }
+
+  const match = /^data:image\/(png|jpeg|jpg|webp);base64,(.+)$/.exec(String(imageDataUrl));
+  if (!match) {
+    return res.status(400).json({ error: "Invalid image format" });
+  }
+
+  const ext = match[1] === "jpeg" ? "jpg" : match[1];
+  const buffer = Buffer.from(match[2], "base64");
+  const targetPath = path.join(PROFILE_ASSETS_DIR, `${safeParentId}.${ext}`);
+
+  ["png", "jpg", "jpeg", "webp"]
+    .filter((candidate) => candidate !== ext)
+    .forEach((candidate) => {
+      const oldPath = path.join(PROFILE_ASSETS_DIR, `${safeParentId}.${candidate}`);
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    });
+
+  fs.writeFileSync(targetPath, buffer);
+  return res.status(201).json({
+    photoUrl: `/assets/profiles/${safeParentId}.${ext}`
+  });
 });
 
 app.get("/books", (_req, res) => {

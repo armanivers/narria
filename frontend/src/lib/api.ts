@@ -104,7 +104,12 @@ export async function getBooks() {
     books: response.books.map((book) => ({
       id: book.id,
       name: book.name,
-      pages: typeof book.pages === "number" ? book.pages : Array.isArray(book.pages) ? book.pages.length : 0
+      pages:
+        typeof book.pages === "number"
+          ? book.pages
+          : Array.isArray(book.pages)
+            ? book.pages.length
+            : 0
     }))
   };
 }
@@ -115,4 +120,15 @@ export async function getBook(bookId: string) {
 
 export async function getBookPage(bookId: string, pageNumber: number) {
   return request<PageData>(`/books/${bookId}/pages/${pageNumber}`);
+}
+
+export async function getProfilePhoto(parentId: string) {
+  return request<{ photoUrl: string | null }>(`/profile/photo/${parentId}`);
+}
+
+export async function saveProfilePhoto(parentId: string, imageDataUrl: string) {
+  return request<{ photoUrl: string }>("/profile/photo", {
+    method: "POST",
+    body: JSON.stringify({ parentId, imageDataUrl })
+  });
 }

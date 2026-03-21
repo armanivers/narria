@@ -46,6 +46,17 @@ export default function MenuPage() {
   return (
     <main className="screen">
       <section className="panel">
+        <div className="menuTopActions">
+          <button
+            className="menuButton secondaryButton"
+            onClick={() => router.push("/profile-photo?mode=edit")}
+          >
+            Edit Profile
+          </button>
+          <button className="menuButton" onClick={() => router.push("/profile-photo?mode=create")}>
+            Create Profile
+          </button>
+        </div>
         <h1 className="title">Main Menu</h1>
         <p className="subtitle">Pick a story card, then start the book story.</p>
 

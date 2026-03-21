@@ -108,6 +108,60 @@ body {
   outline: 2px solid var(--accent);
 }
 
+.menuTopActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.profilePanel {
+  width: min(980px, 100%);
+}
+
+.profileIntro,
+.profilePreview,
+.cameraStage {
+  display: grid;
+  gap: 12px;
+}
+
+.cameraFrameWrap {
+  position: relative;
+  width: min(820px, 100%);
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: #140f24;
+}
+
+.cameraVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cameraGuideRect {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(50%, 300px);
+  aspect-ratio: 3 / 4;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(255, 225, 153, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.profilePreviewImage,
+.profileSavedPhoto {
+  width: min(520px, 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
 .storyContainer {
   display: grid;
   grid-template-rows: 650px auto;
