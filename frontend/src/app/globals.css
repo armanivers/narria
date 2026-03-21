@@ -110,12 +110,193 @@ body {
 
 .storyContainer {
   display: grid;
-  grid-template-rows: 560px auto;
+  grid-template-rows: 650px auto;
   gap: 14px;
+  position: relative;
+}
+
+.storyPanel {
+  width: min(1200px, 100%);
 }
 
 .storyControls {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.storyIntroOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: rgba(8, 8, 12, 0.92);
+  pointer-events: none;
+  z-index: 10;
+  animation: storyFadeAway 1.4s ease forwards;
+}
+
+.storyOutroOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: rgba(8, 8, 12, 0.92);
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  animation: storyFadeIn 1.4s ease forwards;
+}
+
+.book2dStage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  perspective: 1200px;
+}
+
+.book2d {
+  width: min(1080px, 98%);
+  height: 590px;
+  position: relative;
+  transition: transform 0.6s ease;
+}
+
+.book2dOpening {
+  animation: bookOpen2d 0.7s ease forwards;
+}
+
+.book2dClosing {
+  animation: bookClose2d 0.6s ease forwards;
+}
+
+.book2dCoverFront,
+.book2dCoverBack {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #7a1f1f, #4a0f0f);
+  border: 2px solid #3d0d0d;
+  display: grid;
+  place-items: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #f9e8ce;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.36);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  z-index: 3;
+}
+
+.book2dCoverFront::before,
+.book2dCoverBack::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(249, 232, 206, 0.4);
+  pointer-events: none;
+}
+
+.book2dCoverOpening {
+  animation: coverLift 0.7s ease forwards;
+}
+
+.book2dBack {
+  transform: none;
+}
+
+.book2dSpread {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: #d8c4a0;
+  border: 2px solid #7d6642;
+  display: grid;
+  grid-template-columns: 1fr 22px 1fr;
+  overflow: hidden;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+}
+
+.book2dPage {
+  background-color: #e9dec7;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.book2dSpine {
+  background: linear-gradient(180deg, #b79e74, #9b825a);
+}
+
+.book2dSlidePage {
+  position: absolute;
+  top: 0;
+  left: calc(50% + 11px);
+  width: calc(50% - 11px);
+  height: 100%;
+  background-color: #efe5cf;
+  background-size: cover;
+  background-position: center;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  animation: slidePage2d 0.55s ease forwards;
+  opacity: 0.92;
+}
+
+@keyframes bookOpen2d {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.92;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bookClose2d {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slidePage2d {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-102%);
+  }
+}
+
+@keyframes coverLift {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-12%);
+  }
+}
+
+@keyframes storyFadeAway {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes storyFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

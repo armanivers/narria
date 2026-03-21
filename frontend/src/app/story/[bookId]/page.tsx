@@ -13,10 +13,20 @@ export default function StoryPage() {
   const params = useParams<{ bookId: string }>();
   const bookId = useMemo(() => params.bookId, [params.bookId]);
   const [state, setState] = useState<BookState>("closed-front");
-  const [currentPage, setCurrentPage] = useState(0);
+  const [spreadStart, setSpreadStart] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageImage, setPageImage] = useState<string | null>(null);
+  const [leftPageImage, setLeftPageImage] = useState<string | null>(null);
+  const [rightPageImage, setRightPageImage] = useState<string | null>(null);
   const [label, setLabel] = useState("Next Page");
+  const [flipTick, setFlipTick] = useState(0);
+  const [isBusy, setIsBusy] = useState(false);
+  const [introFade, setIntroFade] = useState(true);
+  const [outroFade, setOutroFade] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIntroFade(false), 1400);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const parent = getParentFromSession();
@@ -35,44 +45,70 @@ export default function StoryPage() {
     });
   }, [bookId, router]);
 
-  async function loadPage(pageNumber: number) {
-    const response = await getBookPage(bookId, pageNumber);
-    setPageImage(response.image.image);
-    setCurrentPage(response.pageNumber);
+  async function loadSpread(startPage: number) {
+    const left = await getBookPage(bookId, startPage);
+    let rightImage = left.image.image;
+    if (startPage + 1 <= totalPages) {
+      const right = await getBookPage(bookId, startPage + 1);
+      rightImage = right.image.image;
+    }
+
+    setLeftPageImage(left.image.image);
+    setRightPageImage(rightImage);
+    setSpreadStart(startPage);
   }
 
   async function nextPage() {
+    if (isBusy) return;
+
     if (state === "closed-front") {
+      setIsBusy(true);
       setState("opening");
-      await loadPage(1);
-      setTimeout(() => setState("open"), 650);
+      await loadSpread(1);
+      setTimeout(() => {
+        setState("open");
+        setIsBusy(false);
+      }, 700);
       return;
     }
 
-    if (currentPage < totalPages) {
+    if (spreadStart + 2 <= totalPages) {
+      setIsBusy(true);
       setState("flipping");
-      const next = currentPage + 1;
-      await loadPage(next);
-      setTimeout(() => setState("open"), 550);
+      await loadSpread(spreadStart + 2);
+      setFlipTick((value) => value + 1);
+      setTimeout(() => {
+        setState("open");
+        setIsBusy(false);
+      }, 600);
       return;
     }
 
     setLabel("Closing...");
+    setIsBusy(true);
     setState("closing");
     setTimeout(() => setState("closed-back"), 600);
-    setTimeout(() => router.push("/menu"), 1300);
+    setTimeout(() => setOutroFade(true), 700);
+    setTimeout(() => router.push("/menu"), 2400);
   }
 
   return (
     <main className="screen">
-      <section className="panel storyContainer">
-        <BookScene state={state} pageImage={pageImage} />
+      <section className="panel storyContainer storyPanel">
+        {introFade ? <div className="storyIntroOverlay" /> : null}
+        {outroFade ? <div className="storyOutroOverlay" /> : null}
+        <BookScene
+          state={state}
+          leftPageImage={leftPageImage}
+          rightPageImage={rightPageImage}
+          flipTick={flipTick}
+        />
 
         <div className="storyControls">
           <p>
-            Page {currentPage || 0}/{totalPages}
+            Pages {spreadStart || 0}-{Math.min(spreadStart + 1, totalPages)}/{totalPages}
           </p>
-          <button className="menuButton" onClick={nextPage}>
+          <button className="menuButton" onClick={nextPage} disabled={isBusy}>
             {label}
           </button>
         </div>
