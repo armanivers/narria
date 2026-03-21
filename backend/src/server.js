@@ -61,6 +61,31 @@ function resolvePageAudio(bookId, audio) {
   };
 }
 
+function resolvePageImage(bookId, imageFileName, book, pageNumber) {
+  if (!imageFileName) {
+    return getStoryPageImage({ book, pageNumber });
+  }
+  const imageUrl = imageFileName.startsWith("/")
+    ? imageFileName
+    : `/assets/images/${bookId}/${imageFileName}`;
+  return { kind: "url", image: imageUrl };
+}
+
+function resolveChoiceOutcomes(bookId, choiceOutcomes, book, pageNumber) {
+  if (!choiceOutcomes || typeof choiceOutcomes !== "object") return null;
+  const entries = Object.entries(choiceOutcomes).map(([option, outcome]) => {
+    const safeOutcome = outcome || {};
+    return [
+      option,
+      {
+        image: resolvePageImage(bookId, safeOutcome.image || "", book, pageNumber),
+        audio: resolvePageAudio(bookId, safeOutcome.audio || null)
+      }
+    ];
+  });
+  return Object.fromEntries(entries);
+}
+
 function resolveCoverAudio(bookId, coverAudio) {
   const safeCover = coverAudio || {
     front: { src: "", startDelayMs: 800 },
@@ -251,7 +276,9 @@ app.get("/books/:bookId", (req, res) => {
       coverAudio: resolveCoverAudio(book.id, book.coverAudio),
       pageConfigs: book.pages.map((page) => ({
         ...page,
-        audio: resolvePageAudio(book.id, page.audio)
+        image: resolvePageImage(book.id, page.image || "", book, page.pageNumber),
+        audio: resolvePageAudio(book.id, page.audio),
+        choiceOutcomes: resolveChoiceOutcomes(book.id, page.choiceOutcomes, book, page.pageNumber)
       }))
     }
   });
@@ -274,7 +301,7 @@ app.get("/books/:bookId/pages/:pageNumber", (req, res) => {
     return res.status(404).json({ error: "Page config not found" });
   }
 
-  const imagePayload = getStoryPageImage({ book, pageNumber });
+  const imagePayload = resolvePageImage(book.id, pageConfig.image || "", book, pageNumber);
   return res.json({
     bookId: book.id,
     bookName: book.name,
@@ -282,6 +309,7 @@ app.get("/books/:bookId/pages/:pageNumber", (req, res) => {
     totalPages: book.totalPages,
     image: imagePayload,
     audio: resolvePageAudio(book.id, pageConfig.audio),
+    choiceOutcomes: resolveChoiceOutcomes(book.id, pageConfig.choiceOutcomes, book, pageNumber),
     hasDialogChoice: Boolean(pageConfig.hasDialogChoice),
     dialog: pageConfig.dialog || null
   });

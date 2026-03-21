@@ -40,7 +40,11 @@ export default function StoryPage() {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [audioUnlockNeeded, setAudioUnlockNeeded] = useState(false);
   const [autoFlipSecondsLeft, setAutoFlipSecondsLeft] = useState<number | null>(null);
-  const [dismissedDialogPage, setDismissedDialogPage] = useState<number | null>(null);
+  const [dialogPromptPage, setDialogPromptPage] = useState<number | null>(null);
+  const [selectedChoiceByPage, setSelectedChoiceByPage] = useState<Record<number, string>>({});
+  const [choiceMediaOverrideByPage, setChoiceMediaOverrideByPage] = useState<
+    Record<number, { image: string; audio: AudioConfig | null }>
+  >({});
   const [subtitleWords, setSubtitleWords] = useState<SubtitleWord[]>([]);
   const [activeSubtitleWordIndex, setActiveSubtitleWordIndex] = useState<number>(-1);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -92,6 +96,16 @@ export default function StoryPage() {
       if (src.startsWith("http://") || src.startsWith("https://")) return src;
       if (src.startsWith("/")) return `${apiBaseUrl}${src}`;
       return `${apiBaseUrl}/assets/audio/pages/${bookId}/${src}`;
+    },
+    [apiBaseUrl, bookId]
+  );
+
+  const resolveImageUrl = useCallback(
+    (src?: string) => {
+      if (!src) return "";
+      if (src.startsWith("http://") || src.startsWith("https://")) return src;
+      if (src.startsWith("/")) return `${apiBaseUrl}${src}`;
+      return `${apiBaseUrl}/assets/images/${bookId}/${src}`;
     },
     [apiBaseUrl, bookId]
   );
@@ -277,11 +291,48 @@ export default function StoryPage() {
   const loadPage = useCallback(
     async (pageNumber: number) => {
       if (pagesByNumber[pageNumber]) return pagesByNumber[pageNumber];
-      const pageData = await getBookPage(bookId, pageNumber);
+      const raw = await getBookPage(bookId, pageNumber);
+      const rawPageData: PageData = {
+        ...raw,
+        image: {
+          ...raw.image,
+          image: resolveImageUrl(raw.image?.image)
+        },
+        choiceOutcomes: raw.choiceOutcomes
+          ? Object.fromEntries(
+              Object.entries(raw.choiceOutcomes).map(([option, outcome]) => [
+                option,
+                {
+                  ...outcome,
+                  image: {
+                    ...outcome.image,
+                    image: resolveImageUrl(outcome.image?.image)
+                  }
+                }
+              ])
+            )
+          : null
+      };
+      let pageData = rawPageData;
+
+      // If previous page had a dialog choice, apply its selected branch as
+      // dynamic media for this next page.
+      const previousPage = rawPageData.pageNumber > 1 ? pagesByNumber[rawPageData.pageNumber - 1] : null;
+      const selectedChoice = previousPage ? selectedChoiceByPage[previousPage.pageNumber] : null;
+      const outcome =
+        previousPage && selectedChoice ? previousPage.choiceOutcomes?.[selectedChoice] || null : null;
+      if (outcome) {
+        pageData = {
+          ...rawPageData,
+          image: outcome.image || rawPageData.image,
+          audio: outcome.audio || rawPageData.audio
+        };
+      }
+
       setPagesByNumber((prev) => ({ ...prev, [pageNumber]: pageData }));
       return pageData;
     },
-    [bookId, pagesByNumber]
+    [bookId, pagesByNumber, resolveImageUrl, selectedChoiceByPage]
   );
 
   const loadSpread = useCallback(
@@ -308,10 +359,43 @@ export default function StoryPage() {
     setTimeout(() => router.push("/menu"), 2400);
   }, [router]);
 
+  const continueAfterChoice = useCallback(() => {
+    const triggerNext = advancePageRef.current;
+    if (triggerNext) {
+      void triggerNext();
+    }
+  }, []);
+
+  const handlePageAudioEnded = useCallback(
+    (pageNumber: number) => {
+      const pageData = pagesByNumber[pageNumber];
+      if (!pageData) return;
+      if (pageData.hasDialogChoice && !selectedChoiceByPage[pageNumber]) {
+        setDialogPromptPage(pageNumber);
+        return;
+      }
+      startAutoFlipCountdown(() => {
+        const triggerNext = advancePageRef.current;
+        if (triggerNext) {
+          void triggerNext();
+        }
+      });
+    },
+    [pagesByNumber, selectedChoiceByPage, startAutoFlipCountdown]
+  );
+
   const advancePage = useCallback(async () => {
     if (isBusy) return;
     stopAudioPlayback();
     clearAutoFlipCountdown();
+
+    if (state === "open" && focusedPage >= 1) {
+      const current = pagesByNumber[focusedPage];
+      if (current?.hasDialogChoice && !selectedChoiceByPage[focusedPage]) {
+        setDialogPromptPage(focusedPage);
+        return;
+      }
+    }
 
     if (state === "closed-front") {
       setIsBusy(true);
@@ -350,11 +434,12 @@ export default function StoryPage() {
     await loadSpread(nextPage);
     setFlipTick((value) => value + 1);
     setFocusedPage(nextPage);
+    setDialogPromptPage(null);
     setTimeout(() => {
       setState("open");
       setIsBusy(false);
     }, 600);
-  }, [clearAutoFlipCountdown, finishBook, focusedPage, isBusy, loadPage, loadSpread, scheduleAudioPlayback, state, stopAudioPlayback, totalPages]);
+  }, [clearAutoFlipCountdown, finishBook, focusedPage, isBusy, loadPage, loadSpread, pagesByNumber, scheduleAudioPlayback, selectedChoiceByPage, state, stopAudioPlayback, totalPages]);
 
   useEffect(() => {
     advancePageRef.current = advancePage;
@@ -366,18 +451,27 @@ export default function StoryPage() {
       skipNextAutoPageAudioRef.current = null;
       return;
     }
-    const pageData = pagesByNumber[focusedPage];
+    const basePageData = pagesByNumber[focusedPage];
+    const override = choiceMediaOverrideByPage[focusedPage];
+    const pageData = basePageData
+      ? {
+          ...basePageData,
+          audio: override ? override.audio : basePageData.audio
+        }
+      : null;
     if (!pageData?.audio) return;
 
     const run = setTimeout(() => {
-      scheduleAudioPlayback(pageData.audio, undefined, { shouldAutoAdvanceOnEnd: true });
+      scheduleAudioPlayback(pageData.audio, () => {
+        handlePageAudioEnded(pageData.pageNumber);
+      });
     }, 0);
 
     return () => {
       clearTimeout(run);
       stopAudioPlayback();
     };
-  }, [advancePage, focusedPage, pagesByNumber, scheduleAudioPlayback, state, stopAudioPlayback]);
+  }, [advancePage, choiceMediaOverrideByPage, focusedPage, handlePageAudioEnded, pagesByNumber, scheduleAudioPlayback, state, stopAudioPlayback]);
 
   useEffect(() => {
     if (introFade || !coverAudio?.front || hasPlayedFrontRef.current) return;
@@ -401,12 +495,64 @@ export default function StoryPage() {
     return () => clearTimeout(run);
   }, [coverAudio, scheduleAudioPlayback, state]);
 
-  const currentPageData = focusedPage > 0 ? pagesByNumber[focusedPage] : null;
+  const currentPageDataRaw = focusedPage > 0 ? pagesByNumber[focusedPage] : null;
+  const currentPageOverride = focusedPage > 0 ? choiceMediaOverrideByPage[focusedPage] : null;
+  const currentPageData = currentPageDataRaw
+    ? {
+        ...currentPageDataRaw,
+        image: currentPageOverride
+          ? { ...currentPageDataRaw.image, image: currentPageOverride.image }
+          : currentPageDataRaw.image,
+        audio: currentPageOverride ? currentPageOverride.audio : currentPageDataRaw.audio
+      }
+    : null;
   const rightPageNumber = spreadStart + 1 <= totalPages ? spreadStart + 1 : null;
+  const rightPageOverride = rightPageNumber ? choiceMediaOverrideByPage[rightPageNumber] : null;
+  const displayedRightPageImage = rightPageOverride?.image || rightPageImage;
+  const shouldMaskRightPageUntilChoice = Boolean(
+    currentPageData?.hasDialogChoice &&
+      rightPageNumber &&
+      rightPageNumber === focusedPage + 1 &&
+      !selectedChoiceByPage[focusedPage]
+  );
   const showDialogModal = Boolean(
     currentPageData?.hasDialogChoice &&
       currentPageData?.dialog &&
-      dismissedDialogPage !== focusedPage
+      dialogPromptPage === focusedPage
+  );
+
+  const handleChoiceSelect = useCallback(
+    (option: string) => {
+      setSelectedChoiceByPage((prev) => ({ ...prev, [focusedPage]: option }));
+      const outcome = currentPageData?.choiceOutcomes?.[option] || null;
+      if (outcome && focusedPage + 1 <= totalPages) {
+        setChoiceMediaOverrideByPage((prev) => ({
+          ...prev,
+          [focusedPage + 1]: {
+            image: outcome.image.image,
+            audio: outcome.audio
+          }
+        }));
+      }
+
+      clearAutoFlipCountdown();
+      stopAudioPlayback();
+      setDialogPromptPage(null);
+
+      const revealDelay = shouldMaskRightPageUntilChoice ? 850 : 0;
+      setTimeout(() => {
+        continueAfterChoice();
+      }, revealDelay);
+    },
+    [
+      clearAutoFlipCountdown,
+      continueAfterChoice,
+      currentPageData?.choiceOutcomes,
+      focusedPage,
+      shouldMaskRightPageUntilChoice,
+      stopAudioPlayback,
+      totalPages
+    ]
   );
 
   return (
@@ -422,11 +568,12 @@ export default function StoryPage() {
         <BookScene
           state={state}
           leftPageImage={leftPageImage}
-          rightPageImage={rightPageImage}
+          rightPageImage={displayedRightPageImage}
           flipTick={flipTick}
           leftPageNumber={spreadStart}
           rightPageNumber={rightPageNumber}
           focusedPage={focusedPage}
+          maskRightPageUntilChoice={shouldMaskRightPageUntilChoice}
         />
 
         <div className="storyControls">
@@ -467,7 +614,7 @@ export default function StoryPage() {
         ) : null}
 
         {showDialogModal ? (
-          <div className="dialogModalOverlay" onClick={() => setDismissedDialogPage(focusedPage)}>
+          <div className="dialogModalOverlay" onClick={() => setDialogPromptPage(null)}>
             <div className="dialogModalCard" onClick={(event) => event.stopPropagation()}>
               <p className="dialogQuestion">{currentPageData?.dialog?.question}</p>
               <div className="dialogOptions">
@@ -476,7 +623,7 @@ export default function StoryPage() {
                     key={option}
                     className="menuButton secondaryButton"
                     type="button"
-                    onClick={() => setDismissedDialogPage(focusedPage)}
+                    onClick={() => handleChoiceSelect(option)}
                   >
                     {option}
                   </button>

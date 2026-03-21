@@ -11,7 +11,8 @@ export default function BookScene({
   flipTick,
   leftPageNumber,
   rightPageNumber,
-  focusedPage
+  focusedPage,
+  maskRightPageUntilChoice
 }: {
   state: BookState;
   leftPageImage: string | null;
@@ -20,6 +21,7 @@ export default function BookScene({
   leftPageNumber: number | null;
   rightPageNumber: number | null;
   focusedPage: number;
+  maskRightPageUntilChoice: boolean;
 }) {
   const showSpread = state !== "closed-front" && state !== "closed-back";
   const showFront = state === "closed-front" || state === "opening";
@@ -63,6 +65,13 @@ export default function BookScene({
               style={rightStyle}
             >
               {rightPageNumber ? <span className="book2dPageBadge">Page {rightPageNumber}</span> : null}
+              <div
+                className={`book2dChoiceMask ${
+                  maskRightPageUntilChoice ? "book2dChoiceMaskVisible" : "book2dChoiceMaskHidden"
+                }`}
+              >
+                <span className="book2dChoiceMaskIcon">?</span>
+              </div>
             </div>
             {isFlipping ? (
               <div key={flipTick} className="book2dSlidePage" style={rightStyle} />

@@ -38,6 +38,13 @@ export type PageData = {
     image: string;
   };
   audio: AudioConfig | null;
+  choiceOutcomes: Record<
+    string,
+    {
+      image: { kind: "url"; image: string };
+      audio: AudioConfig | null;
+    }
+  > | null;
   hasDialogChoice: boolean;
   dialog: DialogChoice | null;
 };

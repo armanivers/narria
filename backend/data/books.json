@@ -31,7 +31,11 @@
         "hasDialogChoice": true,
         "dialog": {
           "question": "Which spell should the wizard try first?",
-          "options": ["Light spell", "Shield spell", "Wind spell"]
+          "options": [
+            "Light spell",
+            "Shield spell",
+            "Wind spell"
+          ]
         }
       },
       {
@@ -52,7 +56,10 @@
         "hasDialogChoice": true,
         "dialog": {
           "question": "Where should the wizard travel next?",
-          "options": ["Crystal cave", "Forest tower"]
+          "options": [
+            "Crystal cave",
+            "Forest tower"
+          ]
         }
       }
     ]
@@ -73,6 +80,7 @@
     "pages": [
       {
         "pageNumber": 1,
+        "image": "page1.jpg",
         "audio": {
           "src": "page1.mp3",
           "startDelayMs": 0
@@ -82,30 +90,300 @@
       },
       {
         "pageNumber": 2,
+        "image": "page2.jpg",
         "audio": {
-          "src": "",
-          "startDelayMs": 1000
-        },
-        "hasDialogChoice": true,
-        "dialog": {
-          "question": "How should the rider greet the dragon?",
-          "options": ["With a bow", "With a song", "With a gift"]
-        }
-      },
-      {
-        "pageNumber": 3,
-        "audio": {
-          "src": "",
-          "startDelayMs": 900
+          "src": "page2.mp3",
+          "startDelayMs": 0
         },
         "hasDialogChoice": false,
         "dialog": null
       },
       {
-        "pageNumber": 4,
+        "pageNumber": 3,
+        "image": "page3.jpg",
         "audio": {
-          "src": "",
-          "startDelayMs": 1000
+          "src": "page3.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "What shall we do?",
+          "options": [
+            "Walk slowly onto the bridge and speak gently to Lumi",
+            "Ask Captain Coral to come help rescue Lumi together",
+            "Wait behind a crystal pillar until the storm gets quieter"
+          ]
+        },
+        "choiceOutcomes": {
+          "Walk slowly onto the bridge and speak gently to Lumi": {
+            "image": "page3_a.jpg",
+            "audio": {
+              "src": "page3_a.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Ask Captain Coral to come help rescue Lumi together": {
+            "image": "page3_b.jpg",
+            "audio": {
+              "src": "page3_b.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Wait behind a crystal pillar until the storm gets quieter": {
+            "image": "page3_c.jpg",
+            "audio": {
+              "src": "page3_c.mp3",
+              "startDelayMs": 0
+            }
+          }
+        }
+      },
+      {
+        "pageNumber": 4,
+        "image": "page4.jpg",
+        "audio": {
+          "src": "page4.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 5,
+        "image": "page5.jpg",
+        "audio": {
+          "src": "page5.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 6,
+        "image": "page6.jpg",
+        "audio": {
+          "src": "page6.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "Which shell needs you first?",
+          "options": [
+            "Open the trembling shell and say, This one feels scared",
+            "Open the blue shell and say, This one feels lonely or sad",
+            "Ignore the shells and search directly for the shard"
+          ]
+        },
+        "choiceOutcomes": {
+          "Open the trembling shell and say, This one feels scared": {
+            "image": "page6_a.jpg",
+            "audio": {
+              "src": "page6_a.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Open the blue shell and say, This one feels lonely or sad": {
+            "image": "page6_b.jpg",
+            "audio": {
+              "src": "page6_b.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Ignore the shells and search directly for the shard": {
+            "image": "page6_c.jpg",
+            "audio": {
+              "src": "page6_c.mp3",
+              "startDelayMs": 0
+            }
+          }
+        }
+      },
+      {
+        "pageNumber": 7,
+        "image": "page7.jpg",
+        "audio": {
+          "src": "page7.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 8,
+        "image": "page8.jpg",
+        "audio": {
+          "src": "page8.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 9,
+        "image": "page9.jpg",
+        "audio": {
+          "src": "page9.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "What kind of magic shall we make here?",
+          "options": [
+            "Invite Finn to sit with you and say, Everyone gets a place",
+            "Tell Captain Coral or another grown pirate that something unfair is happening",
+            "Stay quiet so the loud pirates do not get upset"
+          ]
+        },
+        "choiceOutcomes": {
+          "Invite Finn to sit with you and say, Everyone gets a place": {
+            "image": "page9_a.jpg",
+            "audio": {
+              "src": "page9_a.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Tell Captain Coral or another grown pirate that something unfair is happening": {
+            "image": "page9_b.jpg",
+            "audio": {
+              "src": "page9_b.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Stay quiet so the loud pirates do not get upset": {
+            "image": "page9_c.jpg",
+            "audio": {
+              "src": "page9_c.mp3",
+              "startDelayMs": 0
+            }
+          }
+        }
+      },
+      {
+        "pageNumber": 10,
+        "image": "page10.jpg",
+        "audio": {
+          "src": "page10.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 11,
+        "image": "page11.jpg",
+        "audio": {
+          "src": "page11.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 12,
+        "image": "page12.jpg",
+        "audio": {
+          "src": "page12.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "What do we do with heavy feelings?",
+          "options": [
+            "Tell Marina, Some feelings are too heavy to hold alone",
+            "Tell Lumi and ask him to stay beside you while you think",
+            "Close the chest and keep moving without opening it"
+          ]
+        },
+        "choiceOutcomes": {
+          "Tell Marina, Some feelings are too heavy to hold alone": {
+            "image": "page12_a.jpg",
+            "audio": {
+              "src": "page12_a.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Tell Lumi and ask him to stay beside you while you think": {
+            "image": "page12_b.jpg",
+            "audio": {
+              "src": "page12_b.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Close the chest and keep moving without opening it": {
+            "image": "page12_c.jpg",
+            "audio": {
+              "src": "page12_c.mp3",
+              "startDelayMs": 0
+            }
+          }
+        }
+      },
+      {
+        "pageNumber": 13,
+        "image": "page13.jpg",
+        "audio": {
+          "src": "page13.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 14,
+        "image": "page14.jpg",
+        "audio": {
+          "src": "page14.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 15,
+        "image": "page15.jpg",
+        "audio": {
+          "src": "page15.mp3",
+          "startDelayMs": 0
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "How is the Heart-Star restored?",
+          "options": [
+            "Place your hand on the Heart-Star and say how you feel out loud",
+            "Ask all your friends to help restore it together",
+            "Try to fix it alone without saying anything"
+          ]
+        },
+        "choiceOutcomes": {
+          "Place your hand on the Heart-Star and say how you feel out loud": {
+            "image": "page15_a.jpg",
+            "audio": {
+              "src": "page15_a.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Ask all your friends to help restore it together": {
+            "image": "page15_b.jpg",
+            "audio": {
+              "src": "page15_b.mp3",
+              "startDelayMs": 0
+            }
+          },
+          "Try to fix it alone without saying anything": {
+            "image": "page15_c.jpg",
+            "audio": {
+              "src": "page15_c.mp3",
+              "startDelayMs": 0
+            }
+          }
+        }
+      },
+      {
+        "pageNumber": 16,
+        "image": "page16.jpg",
+        "audio": {
+          "src": "page16.mp3",
+          "startDelayMs": 0
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -144,7 +422,10 @@
         "hasDialogChoice": true,
         "dialog": {
           "question": "Which path should the princess follow?",
-          "options": ["Moon bridge", "Garden gate"]
+          "options": [
+            "Moon bridge",
+            "Garden gate"
+          ]
         }
       },
       {
@@ -165,7 +446,11 @@
         "hasDialogChoice": true,
         "dialog": {
           "question": "Who should join the royal quest?",
-          "options": ["Knight", "Inventor", "Poet"]
+          "options": [
+            "Knight",
+            "Inventor",
+            "Poet"
+          ]
         }
       }
     ]
@@ -202,7 +487,10 @@
         "hasDialogChoice": true,
         "dialog": {
           "question": "What should the mermaid collect first?",
-          "options": ["Pearl", "Sea map"]
+          "options": [
+            "Pearl",
+            "Sea map"
+          ]
         }
       },
       {

@@ -307,6 +307,37 @@ body {
   letter-spacing: 0.2px;
 }
 
+.book2dChoiceMask {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, rgba(246, 240, 224, 0.92), rgba(226, 216, 192, 0.92));
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.book2dChoiceMaskVisible {
+  opacity: 1;
+}
+
+.book2dChoiceMaskHidden {
+  opacity: 0;
+}
+
+.book2dChoiceMaskIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(63, 48, 28, 0.82);
+  color: #fff7de;
+  font-size: 1.9rem;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
 .book2dSlidePage {
   position: absolute;
   top: 0;
