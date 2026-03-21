@@ -1,0 +1,22 @@
+[
+  {
+    "id": "wizards",
+    "name": "Wizards",
+    "pages": 4
+  },
+  {
+    "id": "dragons",
+    "name": "Dragons",
+    "pages": 4
+  },
+  {
+    "id": "princess",
+    "name": "Princess",
+    "pages": 4
+  },
+  {
+    "id": "mermaids",
+    "name": "Mermaids",
+    "pages": 4
+  }
+]

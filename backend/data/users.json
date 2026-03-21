@@ -1,0 +1,12 @@
+[
+  {
+    "id": "parent-admin",
+    "username": "admin",
+    "password": "admin"
+  },
+  {
+    "id": "parent-demo",
+    "username": "demo",
+    "password": "demo"
+  }
+]

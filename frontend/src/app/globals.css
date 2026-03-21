@@ -1,0 +1,121 @@
+:root {
+  --bg: #1e1631;
+  --panel: #2c2344;
+  --text: #f5efff;
+  --muted: #d2c6f0;
+  --accent: #f4b942;
+  --accent-dark: #d99d2e;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  color: var(--text);
+  background: radial-gradient(circle at top, #34265a, var(--bg));
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.panel {
+  width: min(880px, 100%);
+  border-radius: 18px;
+  background: rgba(44, 35, 68, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 28px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.menuButton {
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 700;
+  background: var(--accent);
+  color: #211526;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.menuButton:hover {
+  transform: translateY(-1px);
+  background: var(--accent-dark);
+}
+
+.secondaryButton {
+  background: #7f6ca6;
+  color: #fff;
+}
+
+.formGrid {
+  display: grid;
+  gap: 10px;
+  max-width: 360px;
+}
+
+.input {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #201833;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.cardsGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  margin: 16px 0 24px;
+}
+
+.card {
+  border-radius: 14px;
+  padding: 18px;
+  background: #3a2f59;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  text-transform: capitalize;
+  min-height: 100px;
+}
+
+.card.selected {
+  outline: 2px solid var(--accent);
+}
+
+.storyContainer {
+  display: grid;
+  grid-template-rows: 560px auto;
+  gap: 14px;
+}
+
+.storyControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
