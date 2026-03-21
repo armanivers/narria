@@ -1,0 +1,735 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "Captain Coral spun around and called,",
+      "start_time": 0.099,
+      "end_time": 2.439,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Captain",
+          "start_time": 0.099,
+          "end_time": 0.519
+        },
+        {
+          "text": " ",
+          "start_time": 0.519,
+          "end_time": 0.639
+        },
+        {
+          "text": "Coral",
+          "start_time": 0.639,
+          "end_time": 1.039
+        },
+        {
+          "text": " ",
+          "start_time": 1.039,
+          "end_time": 1.099
+        },
+        {
+          "text": "spun",
+          "start_time": 1.1,
+          "end_time": 1.36
+        },
+        {
+          "text": " ",
+          "start_time": 1.36,
+          "end_time": 1.48
+        },
+        {
+          "text": "around",
+          "start_time": 1.48,
+          "end_time": 1.879
+        },
+        {
+          "text": " ",
+          "start_time": 1.879,
+          "end_time": 1.919
+        },
+        {
+          "text": "and",
+          "start_time": 1.919,
+          "end_time": 2.059
+        },
+        {
+          "text": " ",
+          "start_time": 2.059,
+          "end_time": 2.119
+        },
+        {
+          "text": "called,",
+          "start_time": 2.119,
+          "end_time": 2.439
+        }
+      ]
+    },
+    {
+      "text": "\"You there, brave little boots.",
+      "start_time": 3.099,
+      "end_time": 5.44,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"You",
+          "start_time": 3.099,
+          "end_time": 3.319
+        },
+        {
+          "text": " ",
+          "start_time": 3.319,
+          "end_time": 3.399
+        },
+        {
+          "text": "there,",
+          "start_time": 3.399,
+          "end_time": 3.899
+        },
+        {
+          "text": " ",
+          "start_time": 3.899,
+          "end_time": 4.179
+        },
+        {
+          "text": "brave",
+          "start_time": 4.179,
+          "end_time": 4.619
+        },
+        {
+          "text": " ",
+          "start_time": 4.619,
+          "end_time": 4.699
+        },
+        {
+          "text": "little",
+          "start_time": 4.699,
+          "end_time": 4.94
+        },
+        {
+          "text": " ",
+          "start_time": 4.94,
+          "end_time": 4.98
+        },
+        {
+          "text": "boots.",
+          "start_time": 4.98,
+          "end_time": 5.44
+        }
+      ]
+    },
+    {
+      "text": "Yes, you.",
+      "start_time": 6.379,
+      "end_time": 7.46,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Yes,",
+          "start_time": 6.379,
+          "end_time": 6.739
+        },
+        {
+          "text": " ",
+          "start_time": 6.739,
+          "end_time": 6.879
+        },
+        {
+          "text": "you.",
+          "start_time": 6.879,
+          "end_time": 7.46
+        }
+      ]
+    },
+    {
+      "text": "The Heart Star has broken,",
+      "start_time": 8.399,
+      "end_time": 10.38,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "The",
+          "start_time": 8.399,
+          "end_time": 8.559
+        },
+        {
+          "text": " ",
+          "start_time": 8.559,
+          "end_time": 8.679
+        },
+        {
+          "text": "Heart",
+          "start_time": 8.679,
+          "end_time": 9.0
+        },
+        {
+          "text": " ",
+          "start_time": 9.0,
+          "end_time": 9.079
+        },
+        {
+          "text": "Star",
+          "start_time": 9.079,
+          "end_time": 9.539
+        },
+        {
+          "text": " ",
+          "start_time": 9.539,
+          "end_time": 9.619
+        },
+        {
+          "text": "has",
+          "start_time": 9.619,
+          "end_time": 9.8
+        },
+        {
+          "text": " ",
+          "start_time": 9.8,
+          "end_time": 9.92
+        },
+        {
+          "text": "broken,",
+          "start_time": 9.92,
+          "end_time": 10.38
+        }
+      ]
+    },
+    {
+      "text": "and Starfall has chosen you to help",
+      "start_time": 11.019,
+      "end_time": 14.019,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "and",
+          "start_time": 11.019,
+          "end_time": 11.179
+        },
+        {
+          "text": " ",
+          "start_time": 11.179,
+          "end_time": 11.339
+        },
+        {
+          "text": "Starfall",
+          "start_time": 11.34,
+          "end_time": 12.019
+        },
+        {
+          "text": " ",
+          "start_time": 12.019,
+          "end_time": 12.119
+        },
+        {
+          "text": "has",
+          "start_time": 12.119,
+          "end_time": 12.399
+        },
+        {
+          "text": " ",
+          "start_time": 12.399,
+          "end_time": 12.46
+        },
+        {
+          "text": "chosen",
+          "start_time": 12.46,
+          "end_time": 12.92
+        },
+        {
+          "text": " ",
+          "start_time": 12.92,
+          "end_time": 13.139
+        },
+        {
+          "text": "you",
+          "start_time": 13.139,
+          "end_time": 13.46
+        },
+        {
+          "text": " ",
+          "start_time": 13.46,
+          "end_time": 13.579
+        },
+        {
+          "text": "to",
+          "start_time": 13.579,
+          "end_time": 13.679
+        },
+        {
+          "text": " ",
+          "start_time": 13.679,
+          "end_time": 13.779
+        },
+        {
+          "text": "help",
+          "start_time": 13.779,
+          "end_time": 14.019
+        }
+      ]
+    },
+    {
+      "text": "restore it.\"",
+      "start_time": 14.079,
+      "end_time": 14.699,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "restore",
+          "start_time": 14.079,
+          "end_time": 14.5
+        },
+        {
+          "text": " ",
+          "start_time": 14.5,
+          "end_time": 14.559
+        },
+        {
+          "text": "it.\"",
+          "start_time": 14.559,
+          "end_time": 14.699
+        }
+      ]
+    },
+    {
+      "text": "Nearby, Lumi cried, \"Help,",
+      "start_time": 15.839,
+      "end_time": 18.26,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Nearby,",
+          "start_time": 15.839,
+          "end_time": 16.379
+        },
+        {
+          "text": " ",
+          "start_time": 16.379,
+          "end_time": 16.579
+        },
+        {
+          "text": "Lumi",
+          "start_time": 16.579,
+          "end_time": 16.92
+        },
+        {
+          "text": " ",
+          "start_time": 16.92,
+          "end_time": 17.0
+        },
+        {
+          "text": "cried,",
+          "start_time": 17.0,
+          "end_time": 17.34
+        },
+        {
+          "text": " ",
+          "start_time": 17.34,
+          "end_time": 17.799
+        },
+        {
+          "text": "\"Help,",
+          "start_time": 17.799,
+          "end_time": 18.26
+        }
+      ]
+    },
+    {
+      "text": "I can't move.",
+      "start_time": 19.039,
+      "end_time": 20.0,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "I",
+          "start_time": 19.039,
+          "end_time": 19.139
+        },
+        {
+          "text": " ",
+          "start_time": 19.139,
+          "end_time": 19.219
+        },
+        {
+          "text": "can't",
+          "start_time": 19.219,
+          "end_time": 19.479
+        },
+        {
+          "text": " ",
+          "start_time": 19.479,
+          "end_time": 19.6
+        },
+        {
+          "text": "move.",
+          "start_time": 19.6,
+          "end_time": 20.0
+        }
+      ]
+    },
+    {
+      "text": "The bridge is singing too loudly.\"",
+      "start_time": 20.619,
+      "end_time": 22.779,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "The",
+          "start_time": 20.619,
+          "end_time": 20.739
+        },
+        {
+          "text": " ",
+          "start_time": 20.739,
+          "end_time": 20.799
+        },
+        {
+          "text": "bridge",
+          "start_time": 20.799,
+          "end_time": 21.139
+        },
+        {
+          "text": " ",
+          "start_time": 21.139,
+          "end_time": 21.239
+        },
+        {
+          "text": "is",
+          "start_time": 21.239,
+          "end_time": 21.479
+        },
+        {
+          "text": " ",
+          "start_time": 21.479,
+          "end_time": 21.559
+        },
+        {
+          "text": "singing",
+          "start_time": 21.559,
+          "end_time": 21.939
+        },
+        {
+          "text": " ",
+          "start_time": 21.939,
+          "end_time": 21.999
+        },
+        {
+          "text": "too",
+          "start_time": 22.0,
+          "end_time": 22.12
+        },
+        {
+          "text": " ",
+          "start_time": 22.12,
+          "end_time": 22.219
+        },
+        {
+          "text": "loudly.\"",
+          "start_time": 22.219,
+          "end_time": 22.779
+        }
+      ]
+    },
+    {
+      "text": "The child looked toward the storm and",
+      "start_time": 23.879,
+      "end_time": 25.84,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "The",
+          "start_time": 23.879,
+          "end_time": 23.92
+        },
+        {
+          "text": " ",
+          "start_time": 23.92,
+          "end_time": 24.019
+        },
+        {
+          "text": "child",
+          "start_time": 24.019,
+          "end_time": 24.399
+        },
+        {
+          "text": " ",
+          "start_time": 24.399,
+          "end_time": 24.479
+        },
+        {
+          "text": "looked",
+          "start_time": 24.479,
+          "end_time": 24.7
+        },
+        {
+          "text": " ",
+          "start_time": 24.7,
+          "end_time": 24.799
+        },
+        {
+          "text": "toward",
+          "start_time": 24.799,
+          "end_time": 25.019
+        },
+        {
+          "text": " ",
+          "start_time": 25.019,
+          "end_time": 25.079
+        },
+        {
+          "text": "the",
+          "start_time": 25.079,
+          "end_time": 25.18
+        },
+        {
+          "text": " ",
+          "start_time": 25.18,
+          "end_time": 25.26
+        },
+        {
+          "text": "storm",
+          "start_time": 25.26,
+          "end_time": 25.639
+        },
+        {
+          "text": " ",
+          "start_time": 25.639,
+          "end_time": 25.68
+        },
+        {
+          "text": "and",
+          "start_time": 25.68,
+          "end_time": 25.84
+        }
+      ]
+    },
+    {
+      "text": "said,",
+      "start_time": 25.899,
+      "end_time": 26.119,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "said,",
+          "start_time": 25.899,
+          "end_time": 26.119
+        }
+      ]
+    },
+    {
+      "text": "\"We need the first shard before the storm",
+      "start_time": 26.739,
+      "end_time": 28.939,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"We",
+          "start_time": 26.739,
+          "end_time": 26.959
+        },
+        {
+          "text": " ",
+          "start_time": 26.959,
+          "end_time": 27.019
+        },
+        {
+          "text": "need",
+          "start_time": 27.019,
+          "end_time": 27.18
+        },
+        {
+          "text": " ",
+          "start_time": 27.18,
+          "end_time": 27.239
+        },
+        {
+          "text": "the",
+          "start_time": 27.239,
+          "end_time": 27.379
+        },
+        {
+          "text": " ",
+          "start_time": 27.379,
+          "end_time": 27.439
+        },
+        {
+          "text": "first",
+          "start_time": 27.439,
+          "end_time": 27.719
+        },
+        {
+          "text": " ",
+          "start_time": 27.719,
+          "end_time": 27.84
+        },
+        {
+          "text": "shard",
+          "start_time": 27.84,
+          "end_time": 28.159
+        },
+        {
+          "text": " ",
+          "start_time": 28.159,
+          "end_time": 28.199
+        },
+        {
+          "text": "before",
+          "start_time": 28.199,
+          "end_time": 28.459
+        },
+        {
+          "text": " ",
+          "start_time": 28.459,
+          "end_time": 28.519
+        },
+        {
+          "text": "the",
+          "start_time": 28.519,
+          "end_time": 28.559
+        },
+        {
+          "text": " ",
+          "start_time": 28.559,
+          "end_time": 28.68
+        },
+        {
+          "text": "storm",
+          "start_time": 28.68,
+          "end_time": 28.939
+        }
+      ]
+    },
+    {
+      "text": "swallows it.",
+      "start_time": 29.039,
+      "end_time": 29.739,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "swallows",
+          "start_time": 29.039,
+          "end_time": 29.5
+        },
+        {
+          "text": " ",
+          "start_time": 29.5,
+          "end_time": 29.559
+        },
+        {
+          "text": "it.",
+          "start_time": 29.559,
+          "end_time": 29.739
+        }
+      ]
+    },
+    {
+      "text": "But first,",
+      "start_time": 30.679,
+      "end_time": 31.319,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "But",
+          "start_time": 30.679,
+          "end_time": 30.84
+        },
+        {
+          "text": " ",
+          "start_time": 30.84,
+          "end_time": 30.92
+        },
+        {
+          "text": "first,",
+          "start_time": 30.92,
+          "end_time": 31.319
+        }
+      ]
+    },
+    {
+      "text": "we save the dragon.\"",
+      "start_time": 32.399,
+      "end_time": 33.799,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "we",
+          "start_time": 32.399,
+          "end_time": 32.619
+        },
+        {
+          "text": " ",
+          "start_time": 32.619,
+          "end_time": 32.7
+        },
+        {
+          "text": "save",
+          "start_time": 32.7,
+          "end_time": 33.04
+        },
+        {
+          "text": " ",
+          "start_time": 33.04,
+          "end_time": 33.099
+        },
+        {
+          "text": "the",
+          "start_time": 33.099,
+          "end_time": 33.159
+        },
+        {
+          "text": " ",
+          "start_time": 33.159,
+          "end_time": 33.299
+        },
+        {
+          "text": "dragon.\"",
+          "start_time": 33.299,
+          "end_time": 33.799
+        }
+      ]
+    }
+  ]
+}

@@ -7,6 +7,14 @@ import { AudioConfig, getBook, getBookPage, PageData } from "@/lib/api";
 import { getParentFromSession } from "@/lib/session";
 
 type BookState = "closed-front" | "opening" | "open" | "flipping" | "closing" | "closed-back";
+type SubtitleWord = { text: string; start_time: number; end_time: number };
+type SubtitleSegment = {
+  text: string;
+  start_time: number;
+  end_time: number;
+  words: SubtitleWord[];
+};
+type SubtitleTrack = { segments: SubtitleSegment[] };
 
 export default function StoryPage() {
   const router = useRouter();
@@ -33,8 +41,11 @@ export default function StoryPage() {
   const [audioUnlockNeeded, setAudioUnlockNeeded] = useState(false);
   const [autoFlipSecondsLeft, setAutoFlipSecondsLeft] = useState<number | null>(null);
   const [dismissedDialogPage, setDismissedDialogPage] = useState<number | null>(null);
+  const [subtitleWords, setSubtitleWords] = useState<SubtitleWord[]>([]);
+  const [activeSubtitleWordIndex, setActiveSubtitleWordIndex] = useState<number>(-1);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioDelayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const subtitleHideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasPlayedFrontRef = useRef(false);
   const hasPlayedBackRef = useRef(false);
   const skipNextAutoPageAudioRef = useRef<number | null>(null);
@@ -46,6 +57,9 @@ export default function StoryPage() {
     onEnded?: () => void;
     options?: { overrideDelayMs?: number; shouldAutoAdvanceOnEnd?: boolean };
   } | null>(null);
+  const subtitleTrackRef = useRef<SubtitleTrack | null>(null);
+  const subtitleSegmentIndexRef = useRef<number>(-1);
+  const subtitleWordIndexRef = useRef<number>(-1);
 
   useEffect(() => {
     const timer = setTimeout(() => setIntroFade(false), 1400);
@@ -84,11 +98,46 @@ export default function StoryPage() {
 
   const stopAudioPlayback = useCallback(() => {
     if (audioDelayTimeoutRef.current) clearTimeout(audioDelayTimeoutRef.current);
+    if (subtitleHideTimeoutRef.current) clearTimeout(subtitleHideTimeoutRef.current);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
     setIsAudioPlaying(false);
+    subtitleTrackRef.current = null;
+    subtitleSegmentIndexRef.current = -1;
+    subtitleWordIndexRef.current = -1;
+    setSubtitleWords([]);
+    setActiveSubtitleWordIndex(-1);
+  }, []);
+
+  const subtitleUrlForAudio = useCallback((audioUrl: string) => {
+    return audioUrl.replace(/\.(mp3|wav|ogg|m4a)(\?.*)?$/i, ".json");
+  }, []);
+
+  const loadSubtitleTrack = useCallback(async (audioUrl: string) => {
+    const subtitleUrl = subtitleUrlForAudio(audioUrl);
+    try {
+      const response = await fetch(subtitleUrl);
+      if (!response.ok) {
+        subtitleTrackRef.current = null;
+        return;
+      }
+      const data = (await response.json()) as SubtitleTrack;
+      subtitleTrackRef.current = Array.isArray(data?.segments) ? data : null;
+    } catch {
+      subtitleTrackRef.current = null;
+    }
+  }, [subtitleUrlForAudio]);
+
+  const scheduleSubtitleHide = useCallback((delayMs = 1200) => {
+    if (subtitleHideTimeoutRef.current) clearTimeout(subtitleHideTimeoutRef.current);
+    subtitleHideTimeoutRef.current = setTimeout(() => {
+      subtitleSegmentIndexRef.current = -1;
+      subtitleWordIndexRef.current = -1;
+      setSubtitleWords([]);
+      setActiveSubtitleWordIndex(-1);
+    }, delayMs);
   }, []);
 
   const clearAutoFlipCountdown = useCallback(() => {
@@ -129,10 +178,52 @@ export default function StoryPage() {
       audioDelayTimeoutRef.current = setTimeout(() => {
         const audio = new Audio(src);
         audioRef.current = audio;
+        void loadSubtitleTrack(src);
         audio.onplay = () => setIsAudioPlaying(true);
         audio.onpause = () => setIsAudioPlaying(false);
+        audio.ontimeupdate = () => {
+          const track = subtitleTrackRef.current;
+          if (!track) return;
+          const now = audio.currentTime;
+          const segmentIndex = track.segments.findIndex(
+            (segment) => now >= segment.start_time && now <= segment.end_time
+          );
+
+          if (segmentIndex === -1) {
+            if (subtitleSegmentIndexRef.current !== -1) {
+              // Keep previous subtitle briefly after spoken segment ends.
+              scheduleSubtitleHide(1200);
+            }
+            return;
+          }
+
+          if (subtitleHideTimeoutRef.current) {
+            clearTimeout(subtitleHideTimeoutRef.current);
+            subtitleHideTimeoutRef.current = null;
+          }
+
+          const segment = track.segments[segmentIndex];
+          if (subtitleSegmentIndexRef.current !== segmentIndex) {
+            subtitleSegmentIndexRef.current = segmentIndex;
+            subtitleWordIndexRef.current = -1;
+            setSubtitleWords(segment.words || []);
+            setActiveSubtitleWordIndex(-1);
+          }
+
+          const wordIndex = (segment.words || []).findIndex(
+            (word) => now >= word.start_time && now <= word.end_time
+          );
+          if (wordIndex !== -1 && wordIndex !== subtitleWordIndexRef.current) {
+            subtitleWordIndexRef.current = wordIndex;
+            setActiveSubtitleWordIndex(wordIndex);
+          }
+        };
         audio.onended = () => {
           setIsAudioPlaying(false);
+          subtitleSegmentIndexRef.current = -1;
+          subtitleWordIndexRef.current = -1;
+          setSubtitleWords([]);
+          setActiveSubtitleWordIndex(-1);
           if (shouldAutoAdvanceOnEnd) {
             startAutoFlipCountdown(() => {
               const triggerNext = advancePageRef.current;
@@ -154,7 +245,7 @@ export default function StoryPage() {
         });
       }, delay);
     },
-    [resolveAudioUrl, startAutoFlipCountdown, stopAudioPlayback]
+    [loadSubtitleTrack, resolveAudioUrl, scheduleSubtitleHide, startAutoFlipCountdown, stopAudioPlayback]
   );
 
   const unlockAudioAndResume = useCallback(async () => {
@@ -353,6 +444,25 @@ export default function StoryPage() {
             <button className="menuButton" onClick={unlockAudioAndResume}>
               Tap to enable sound
             </button>
+          </div>
+        ) : null}
+
+        {subtitleWords.length > 0 ? (
+          <div className="subtitleOverlay">
+            <p className="subtitleText">
+              {subtitleWords.map((word, index) => {
+                const highlighted =
+                  index === activeSubtitleWordIndex && word.text.trim().length > 0;
+                return (
+                  <span
+                    key={`${word.start_time}-${index}`}
+                    className={highlighted ? "subtitleWordActive" : "subtitleWord"}
+                  >
+                    {word.text}
+                  </span>
+                );
+              })}
+            </p>
           </div>
         ) : null}
 

@@ -1,0 +1,517 @@
+{
+  "language_code": "eng",
+  "segments": [
+    {
+      "text": "Would you like to invite Finn to sit with",
+      "start_time": 0.219,
+      "end_time": 2.619,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Would",
+          "start_time": 0.219,
+          "end_time": 0.419
+        },
+        {
+          "text": " ",
+          "start_time": 0.419,
+          "end_time": 0.459
+        },
+        {
+          "text": "you",
+          "start_time": 0.459,
+          "end_time": 0.539
+        },
+        {
+          "text": " ",
+          "start_time": 0.539,
+          "end_time": 0.599
+        },
+        {
+          "text": "like",
+          "start_time": 0.599,
+          "end_time": 0.839
+        },
+        {
+          "text": " ",
+          "start_time": 0.839,
+          "end_time": 0.879
+        },
+        {
+          "text": "to",
+          "start_time": 0.879,
+          "end_time": 0.979
+        },
+        {
+          "text": " ",
+          "start_time": 0.979,
+          "end_time": 1.019
+        },
+        {
+          "text": "invite",
+          "start_time": 1.019,
+          "end_time": 1.399
+        },
+        {
+          "text": " ",
+          "start_time": 1.399,
+          "end_time": 1.539
+        },
+        {
+          "text": "Finn",
+          "start_time": 1.539,
+          "end_time": 1.839
+        },
+        {
+          "text": " ",
+          "start_time": 1.839,
+          "end_time": 1.959
+        },
+        {
+          "text": "to",
+          "start_time": 1.959,
+          "end_time": 2.159
+        },
+        {
+          "text": " ",
+          "start_time": 2.159,
+          "end_time": 2.219
+        },
+        {
+          "text": "sit",
+          "start_time": 2.22,
+          "end_time": 2.399
+        },
+        {
+          "text": " ",
+          "start_time": 2.399,
+          "end_time": 2.459
+        },
+        {
+          "text": "with",
+          "start_time": 2.46,
+          "end_time": 2.619
+        }
+      ]
+    },
+    {
+      "text": "you and say, \u201cEveryone gets a place\u201d?",
+      "start_time": 2.659,
+      "end_time": 5.799,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "you",
+          "start_time": 2.659,
+          "end_time": 2.839
+        },
+        {
+          "text": " ",
+          "start_time": 2.839,
+          "end_time": 2.879
+        },
+        {
+          "text": "and",
+          "start_time": 2.879,
+          "end_time": 3.079
+        },
+        {
+          "text": " ",
+          "start_time": 3.079,
+          "end_time": 3.139
+        },
+        {
+          "text": "say,",
+          "start_time": 3.139,
+          "end_time": 3.379
+        },
+        {
+          "text": " ",
+          "start_time": 3.379,
+          "end_time": 3.959
+        },
+        {
+          "text": "\u201cEveryone",
+          "start_time": 3.959,
+          "end_time": 4.779
+        },
+        {
+          "text": " ",
+          "start_time": 4.779,
+          "end_time": 4.899
+        },
+        {
+          "text": "gets",
+          "start_time": 4.9,
+          "end_time": 5.119
+        },
+        {
+          "text": " ",
+          "start_time": 5.119,
+          "end_time": 5.159
+        },
+        {
+          "text": "a",
+          "start_time": 5.159,
+          "end_time": 5.179
+        },
+        {
+          "text": " ",
+          "start_time": 5.179,
+          "end_time": 5.279
+        },
+        {
+          "text": "place\u201d?",
+          "start_time": 5.279,
+          "end_time": 5.799
+        }
+      ]
+    },
+    {
+      "text": "Or would you like to tell Captain Coral or",
+      "start_time": 7.0,
+      "end_time": 10.28,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Or",
+          "start_time": 7.0,
+          "end_time": 7.259
+        },
+        {
+          "text": " ",
+          "start_time": 7.259,
+          "end_time": 7.639
+        },
+        {
+          "text": "would",
+          "start_time": 7.639,
+          "end_time": 7.799
+        },
+        {
+          "text": " ",
+          "start_time": 7.799,
+          "end_time": 7.819
+        },
+        {
+          "text": "you",
+          "start_time": 7.819,
+          "end_time": 7.899
+        },
+        {
+          "text": " ",
+          "start_time": 7.899,
+          "end_time": 7.959
+        },
+        {
+          "text": "like",
+          "start_time": 7.96,
+          "end_time": 8.18
+        },
+        {
+          "text": " ",
+          "start_time": 8.18,
+          "end_time": 8.199
+        },
+        {
+          "text": "to",
+          "start_time": 8.199,
+          "end_time": 8.32
+        },
+        {
+          "text": " ",
+          "start_time": 8.32,
+          "end_time": 8.34
+        },
+        {
+          "text": "tell",
+          "start_time": 8.34,
+          "end_time": 8.579
+        },
+        {
+          "text": " ",
+          "start_time": 8.579,
+          "end_time": 8.679
+        },
+        {
+          "text": "Captain",
+          "start_time": 8.679,
+          "end_time": 9.039
+        },
+        {
+          "text": " ",
+          "start_time": 9.039,
+          "end_time": 9.179
+        },
+        {
+          "text": "Coral",
+          "start_time": 9.179,
+          "end_time": 9.579
+        },
+        {
+          "text": " ",
+          "start_time": 9.579,
+          "end_time": 10.139
+        },
+        {
+          "text": "or",
+          "start_time": 10.139,
+          "end_time": 10.28
+        }
+      ]
+    },
+    {
+      "text": "another grown pirate that something",
+      "start_time": 10.399,
+      "end_time": 12.86,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "another",
+          "start_time": 10.399,
+          "end_time": 10.68
+        },
+        {
+          "text": " ",
+          "start_time": 10.68,
+          "end_time": 10.8
+        },
+        {
+          "text": "grown",
+          "start_time": 10.8,
+          "end_time": 11.119
+        },
+        {
+          "text": " ",
+          "start_time": 11.119,
+          "end_time": 11.179
+        },
+        {
+          "text": "pirate",
+          "start_time": 11.179,
+          "end_time": 11.539
+        },
+        {
+          "text": " ",
+          "start_time": 11.539,
+          "end_time": 12.059
+        },
+        {
+          "text": "that",
+          "start_time": 12.059,
+          "end_time": 12.239
+        },
+        {
+          "text": " ",
+          "start_time": 12.239,
+          "end_time": 12.3
+        },
+        {
+          "text": "something",
+          "start_time": 12.3,
+          "end_time": 12.86
+        }
+      ]
+    },
+    {
+      "text": "unfair is happening?",
+      "start_time": 12.96,
+      "end_time": 14.399,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "unfair",
+          "start_time": 12.96,
+          "end_time": 13.659
+        },
+        {
+          "text": " ",
+          "start_time": 13.659,
+          "end_time": 13.739
+        },
+        {
+          "text": "is",
+          "start_time": 13.739,
+          "end_time": 13.859
+        },
+        {
+          "text": " ",
+          "start_time": 13.859,
+          "end_time": 13.979
+        },
+        {
+          "text": "happening?",
+          "start_time": 13.979,
+          "end_time": 14.399
+        }
+      ]
+    },
+    {
+      "text": "Or would you rather stay quiet so the loud",
+      "start_time": 15.719,
+      "end_time": 19.639,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Or",
+          "start_time": 15.719,
+          "end_time": 16.199
+        },
+        {
+          "text": " ",
+          "start_time": 16.199,
+          "end_time": 16.639
+        },
+        {
+          "text": "would",
+          "start_time": 16.639,
+          "end_time": 16.78
+        },
+        {
+          "text": " ",
+          "start_time": 16.78,
+          "end_time": 16.819
+        },
+        {
+          "text": "you",
+          "start_time": 16.819,
+          "end_time": 16.94
+        },
+        {
+          "text": " ",
+          "start_time": 16.94,
+          "end_time": 17.0
+        },
+        {
+          "text": "rather",
+          "start_time": 17.0,
+          "end_time": 17.299
+        },
+        {
+          "text": " ",
+          "start_time": 17.299,
+          "end_time": 17.439
+        },
+        {
+          "text": "stay",
+          "start_time": 17.44,
+          "end_time": 17.819
+        },
+        {
+          "text": " ",
+          "start_time": 17.819,
+          "end_time": 17.899
+        },
+        {
+          "text": "quiet",
+          "start_time": 17.899,
+          "end_time": 18.84
+        },
+        {
+          "text": " ",
+          "start_time": 18.84,
+          "end_time": 18.92
+        },
+        {
+          "text": "so",
+          "start_time": 18.92,
+          "end_time": 19.039
+        },
+        {
+          "text": " ",
+          "start_time": 19.039,
+          "end_time": 19.079
+        },
+        {
+          "text": "the",
+          "start_time": 19.079,
+          "end_time": 19.119
+        },
+        {
+          "text": " ",
+          "start_time": 19.119,
+          "end_time": 19.279
+        },
+        {
+          "text": "loud",
+          "start_time": 19.279,
+          "end_time": 19.639
+        }
+      ]
+    },
+    {
+      "text": "pirates do not get upset?",
+      "start_time": 19.779,
+      "end_time": 21.639,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "pirates",
+          "start_time": 19.779,
+          "end_time": 20.26
+        },
+        {
+          "text": " ",
+          "start_time": 20.26,
+          "end_time": 20.359
+        },
+        {
+          "text": "do",
+          "start_time": 20.359,
+          "end_time": 20.5
+        },
+        {
+          "text": " ",
+          "start_time": 20.5,
+          "end_time": 20.539
+        },
+        {
+          "text": "not",
+          "start_time": 20.539,
+          "end_time": 20.819
+        },
+        {
+          "text": " ",
+          "start_time": 20.819,
+          "end_time": 20.879
+        },
+        {
+          "text": "get",
+          "start_time": 20.879,
+          "end_time": 21.02
+        },
+        {
+          "text": " ",
+          "start_time": 21.02,
+          "end_time": 21.079
+        },
+        {
+          "text": "upset?",
+          "start_time": 21.079,
+          "end_time": 21.639
+        }
+      ]
+    }
+  ]
+}

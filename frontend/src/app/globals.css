@@ -406,6 +406,37 @@ body {
   animation: dialogOverlayFade 0.2s ease forwards;
 }
 
+.subtitleOverlay {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 23;
+  max-width: 86%;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(10, 10, 16, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.subtitleText {
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+  font-size: 1.18rem;
+  color: #f8f8f8;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+}
+
+.subtitleWord {
+  color: #f8f8f8;
+}
+
+.subtitleWordActive {
+  color: #ffd66f;
+  font-weight: inherit;
+}
+
 .autoFlipIndicator {
   position: absolute;
   top: 14px;

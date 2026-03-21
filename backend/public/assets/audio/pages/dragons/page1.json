@@ -1,0 +1,637 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "Welcome to Starfall,",
+      "start_time": 1.679,
+      "end_time": 3.579,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Welcome",
+          "start_time": 1.679,
+          "end_time": 2.18
+        },
+        {
+          "text": " ",
+          "start_time": 2.18,
+          "end_time": 2.299
+        },
+        {
+          "text": "to",
+          "start_time": 2.299,
+          "end_time": 2.399
+        },
+        {
+          "text": " ",
+          "start_time": 2.399,
+          "end_time": 2.579
+        },
+        {
+          "text": "Starfall,",
+          "start_time": 2.579,
+          "end_time": 3.579
+        }
+      ]
+    },
+    {
+      "text": "the only place where pirate ships sail the",
+      "start_time": 4.36,
+      "end_time": 6.98,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "the",
+          "start_time": 4.36,
+          "end_time": 4.48
+        },
+        {
+          "text": " ",
+          "start_time": 4.48,
+          "end_time": 4.599
+        },
+        {
+          "text": "only",
+          "start_time": 4.599,
+          "end_time": 4.839
+        },
+        {
+          "text": " ",
+          "start_time": 4.839,
+          "end_time": 4.959
+        },
+        {
+          "text": "place",
+          "start_time": 4.96,
+          "end_time": 5.279
+        },
+        {
+          "text": " ",
+          "start_time": 5.279,
+          "end_time": 5.359
+        },
+        {
+          "text": "where",
+          "start_time": 5.359,
+          "end_time": 5.48
+        },
+        {
+          "text": " ",
+          "start_time": 5.48,
+          "end_time": 5.659
+        },
+        {
+          "text": "pirate",
+          "start_time": 5.659,
+          "end_time": 6.079
+        },
+        {
+          "text": " ",
+          "start_time": 6.079,
+          "end_time": 6.139
+        },
+        {
+          "text": "ships",
+          "start_time": 6.139,
+          "end_time": 6.48
+        },
+        {
+          "text": " ",
+          "start_time": 6.48,
+          "end_time": 6.559
+        },
+        {
+          "text": "sail",
+          "start_time": 6.559,
+          "end_time": 6.819
+        },
+        {
+          "text": " ",
+          "start_time": 6.819,
+          "end_time": 6.859
+        },
+        {
+          "text": "the",
+          "start_time": 6.859,
+          "end_time": 6.98
+        }
+      ]
+    },
+    {
+      "text": "sky,",
+      "start_time": 7.019,
+      "end_time": 7.5,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "sky,",
+          "start_time": 7.019,
+          "end_time": 7.5
+        }
+      ]
+    },
+    {
+      "text": "mermaids sing to the moon,",
+      "start_time": 8.26,
+      "end_time": 9.779,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "mermaids",
+          "start_time": 8.26,
+          "end_time": 8.859
+        },
+        {
+          "text": " ",
+          "start_time": 8.859,
+          "end_time": 8.92
+        },
+        {
+          "text": "sing",
+          "start_time": 8.92,
+          "end_time": 9.119
+        },
+        {
+          "text": " ",
+          "start_time": 9.119,
+          "end_time": 9.179
+        },
+        {
+          "text": "to",
+          "start_time": 9.179,
+          "end_time": 9.239
+        },
+        {
+          "text": " ",
+          "start_time": 9.239,
+          "end_time": 9.279
+        },
+        {
+          "text": "the",
+          "start_time": 9.279,
+          "end_time": 9.34
+        },
+        {
+          "text": " ",
+          "start_time": 9.34,
+          "end_time": 9.439
+        },
+        {
+          "text": "moon,",
+          "start_time": 9.439,
+          "end_time": 9.779
+        }
+      ]
+    },
+    {
+      "text": "and baby dragons nap on clouds.",
+      "start_time": 10.46,
+      "end_time": 13.359,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "and",
+          "start_time": 10.46,
+          "end_time": 10.599
+        },
+        {
+          "text": " ",
+          "start_time": 10.599,
+          "end_time": 10.759
+        },
+        {
+          "text": "baby",
+          "start_time": 10.76,
+          "end_time": 11.119
+        },
+        {
+          "text": " ",
+          "start_time": 11.119,
+          "end_time": 11.179
+        },
+        {
+          "text": "dragons",
+          "start_time": 11.179,
+          "end_time": 11.8
+        },
+        {
+          "text": " ",
+          "start_time": 11.8,
+          "end_time": 11.979
+        },
+        {
+          "text": "nap",
+          "start_time": 11.979,
+          "end_time": 12.319
+        },
+        {
+          "text": " ",
+          "start_time": 12.319,
+          "end_time": 12.439
+        },
+        {
+          "text": "on",
+          "start_time": 12.439,
+          "end_time": 12.579
+        },
+        {
+          "text": " ",
+          "start_time": 12.579,
+          "end_time": 12.719
+        },
+        {
+          "text": "clouds.",
+          "start_time": 12.719,
+          "end_time": 13.359
+        }
+      ]
+    },
+    {
+      "text": "And that shining star up there",
+      "start_time": 14.479,
+      "end_time": 16.479,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "And",
+          "start_time": 14.479,
+          "end_time": 14.639
+        },
+        {
+          "text": " ",
+          "start_time": 14.639,
+          "end_time": 14.719
+        },
+        {
+          "text": "that",
+          "start_time": 14.719,
+          "end_time": 14.939
+        },
+        {
+          "text": " ",
+          "start_time": 14.939,
+          "end_time": 15.079
+        },
+        {
+          "text": "shining",
+          "start_time": 15.079,
+          "end_time": 15.46
+        },
+        {
+          "text": " ",
+          "start_time": 15.46,
+          "end_time": 15.599
+        },
+        {
+          "text": "star",
+          "start_time": 15.599,
+          "end_time": 15.899
+        },
+        {
+          "text": " ",
+          "start_time": 15.899,
+          "end_time": 15.979
+        },
+        {
+          "text": "up",
+          "start_time": 15.979,
+          "end_time": 16.1
+        },
+        {
+          "text": " ",
+          "start_time": 16.1,
+          "end_time": 16.159
+        },
+        {
+          "text": "there",
+          "start_time": 16.159,
+          "end_time": 16.479
+        }
+      ]
+    },
+    {
+      "text": "is the Heart Star.",
+      "start_time": 17.239,
+      "end_time": 18.579,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "is",
+          "start_time": 17.239,
+          "end_time": 17.379
+        },
+        {
+          "text": " ",
+          "start_time": 17.379,
+          "end_time": 17.459
+        },
+        {
+          "text": "the",
+          "start_time": 17.459,
+          "end_time": 17.559
+        },
+        {
+          "text": " ",
+          "start_time": 17.559,
+          "end_time": 17.719
+        },
+        {
+          "text": "Heart",
+          "start_time": 17.719,
+          "end_time": 18.0
+        },
+        {
+          "text": " ",
+          "start_time": 18.0,
+          "end_time": 18.1
+        },
+        {
+          "text": "Star.",
+          "start_time": 18.1,
+          "end_time": 18.579
+        }
+      ]
+    },
+    {
+      "text": "It keeps courage warm, laughter bright,",
+      "start_time": 19.579,
+      "end_time": 22.659,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "It",
+          "start_time": 19.579,
+          "end_time": 19.719
+        },
+        {
+          "text": " ",
+          "start_time": 19.719,
+          "end_time": 19.799
+        },
+        {
+          "text": "keeps",
+          "start_time": 19.799,
+          "end_time": 20.079
+        },
+        {
+          "text": " ",
+          "start_time": 20.079,
+          "end_time": 20.219
+        },
+        {
+          "text": "courage",
+          "start_time": 20.219,
+          "end_time": 20.579
+        },
+        {
+          "text": " ",
+          "start_time": 20.579,
+          "end_time": 20.699
+        },
+        {
+          "text": "warm,",
+          "start_time": 20.699,
+          "end_time": 21.119
+        },
+        {
+          "text": " ",
+          "start_time": 21.119,
+          "end_time": 21.699
+        },
+        {
+          "text": "laughter",
+          "start_time": 21.699,
+          "end_time": 22.219
+        },
+        {
+          "text": " ",
+          "start_time": 22.219,
+          "end_time": 22.299
+        },
+        {
+          "text": "bright,",
+          "start_time": 22.299,
+          "end_time": 22.659
+        }
+      ]
+    },
+    {
+      "text": "and dreams safely tucked inside the night.",
+      "start_time": 23.34,
+      "end_time": 26.559,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "and",
+          "start_time": 23.34,
+          "end_time": 23.539
+        },
+        {
+          "text": " ",
+          "start_time": 23.539,
+          "end_time": 23.599
+        },
+        {
+          "text": "dreams",
+          "start_time": 23.6,
+          "end_time": 24.5
+        },
+        {
+          "text": " ",
+          "start_time": 24.5,
+          "end_time": 24.559
+        },
+        {
+          "text": "safely",
+          "start_time": 24.559,
+          "end_time": 25.039
+        },
+        {
+          "text": " ",
+          "start_time": 25.039,
+          "end_time": 25.099
+        },
+        {
+          "text": "tucked",
+          "start_time": 25.1,
+          "end_time": 25.439
+        },
+        {
+          "text": " ",
+          "start_time": 25.439,
+          "end_time": 25.499
+        },
+        {
+          "text": "inside",
+          "start_time": 25.5,
+          "end_time": 26.039
+        },
+        {
+          "text": " ",
+          "start_time": 26.039,
+          "end_time": 26.099
+        },
+        {
+          "text": "the",
+          "start_time": 26.099,
+          "end_time": 26.199
+        },
+        {
+          "text": " ",
+          "start_time": 26.199,
+          "end_time": 26.259
+        },
+        {
+          "text": "night.",
+          "start_time": 26.26,
+          "end_time": 26.559
+        }
+      ]
+    },
+    {
+      "text": "[crashing] Oh, barnacles and moon",
+      "start_time": 27.68,
+      "end_time": 29.34,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "[crashing]",
+          "start_time": 27.68,
+          "end_time": 27.7
+        },
+        {
+          "text": " ",
+          "start_time": 27.7,
+          "end_time": 27.839
+        },
+        {
+          "text": "Oh,",
+          "start_time": 27.84,
+          "end_time": 27.939
+        },
+        {
+          "text": " ",
+          "start_time": 27.939,
+          "end_time": 28.379
+        },
+        {
+          "text": "barnacles",
+          "start_time": 28.379,
+          "end_time": 28.859
+        },
+        {
+          "text": " ",
+          "start_time": 28.859,
+          "end_time": 28.899
+        },
+        {
+          "text": "and",
+          "start_time": 28.899,
+          "end_time": 28.979
+        },
+        {
+          "text": " ",
+          "start_time": 28.979,
+          "end_time": 29.119
+        },
+        {
+          "text": "moon",
+          "start_time": 29.119,
+          "end_time": 29.34
+        }
+      ]
+    },
+    {
+      "text": "biscuits!",
+      "start_time": 29.379,
+      "end_time": 29.859,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "biscuits!",
+          "start_time": 29.379,
+          "end_time": 29.859
+        }
+      ]
+    },
+    {
+      "text": "That is not good",
+      "start_time": 30.799,
+      "end_time": 32.639,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "That",
+          "start_time": 30.799,
+          "end_time": 31.079
+        },
+        {
+          "text": " ",
+          "start_time": 31.079,
+          "end_time": 31.159
+        },
+        {
+          "text": "is",
+          "start_time": 31.159,
+          "end_time": 31.359
+        },
+        {
+          "text": " ",
+          "start_time": 31.359,
+          "end_time": 31.639
+        },
+        {
+          "text": "not",
+          "start_time": 31.639,
+          "end_time": 32.079
+        },
+        {
+          "text": " ",
+          "start_time": 32.079,
+          "end_time": 32.159
+        },
+        {
+          "text": "good",
+          "start_time": 32.159,
+          "end_time": 32.639
+        }
+      ]
+    }
+  ]
+}

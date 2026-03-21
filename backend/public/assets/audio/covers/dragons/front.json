@@ -1,0 +1,157 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "Hello, Jad. Welcome to the world of",
+      "start_time": 0.099,
+      "end_time": 2.839,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Hello,",
+          "start_time": 0.099,
+          "end_time": 0.399
+        },
+        {
+          "text": " ",
+          "start_time": 0.399,
+          "end_time": 0.539
+        },
+        {
+          "text": "Jad.",
+          "start_time": 0.539,
+          "end_time": 0.919
+        },
+        {
+          "text": " ",
+          "start_time": 0.919,
+          "end_time": 1.48
+        },
+        {
+          "text": "Welcome",
+          "start_time": 1.48,
+          "end_time": 1.979
+        },
+        {
+          "text": " ",
+          "start_time": 1.979,
+          "end_time": 2.019
+        },
+        {
+          "text": "to",
+          "start_time": 2.019,
+          "end_time": 2.099
+        },
+        {
+          "text": " ",
+          "start_time": 2.099,
+          "end_time": 2.159
+        },
+        {
+          "text": "the",
+          "start_time": 2.159,
+          "end_time": 2.18
+        },
+        {
+          "text": " ",
+          "start_time": 2.18,
+          "end_time": 2.339
+        },
+        {
+          "text": "world",
+          "start_time": 2.339,
+          "end_time": 2.659
+        },
+        {
+          "text": " ",
+          "start_time": 2.659,
+          "end_time": 2.699
+        },
+        {
+          "text": "of",
+          "start_time": 2.7,
+          "end_time": 2.839
+        }
+      ]
+    },
+    {
+      "text": "dragons. Uh, buckle down for the journey",
+      "start_time": 2.879,
+      "end_time": 6.8,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "dragons.",
+          "start_time": 2.879,
+          "end_time": 3.48
+        },
+        {
+          "text": " ",
+          "start_time": 3.48,
+          "end_time": 3.98
+        },
+        {
+          "text": "Uh,",
+          "start_time": 3.98,
+          "end_time": 4.039
+        },
+        {
+          "text": " ",
+          "start_time": 4.039,
+          "end_time": 4.48
+        },
+        {
+          "text": "buckle",
+          "start_time": 4.48,
+          "end_time": 4.92
+        },
+        {
+          "text": " ",
+          "start_time": 4.92,
+          "end_time": 5.099
+        },
+        {
+          "text": "down",
+          "start_time": 5.099,
+          "end_time": 5.48
+        },
+        {
+          "text": " ",
+          "start_time": 5.48,
+          "end_time": 5.599
+        },
+        {
+          "text": "for",
+          "start_time": 5.599,
+          "end_time": 5.699
+        },
+        {
+          "text": " ",
+          "start_time": 5.699,
+          "end_time": 5.779
+        },
+        {
+          "text": "the",
+          "start_time": 5.779,
+          "end_time": 5.839
+        },
+        {
+          "text": " ",
+          "start_time": 5.839,
+          "end_time": 5.959
+        },
+        {
+          "text": "journey",
+          "start_time": 5.96,
+          "end_time": 6.8
+        }
+      ]
+    }
+  ]
+}
