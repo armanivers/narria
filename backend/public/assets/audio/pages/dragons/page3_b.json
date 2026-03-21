@@ -1,0 +1,153 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "Every hero chooses their first step.",
+      "start_time": 0.14,
+      "end_time": 3.179,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Every",
+          "start_time": 0.14,
+          "end_time": 0.659
+        },
+        {
+          "text": " ",
+          "start_time": 0.659,
+          "end_time": 0.719
+        },
+        {
+          "text": "hero",
+          "start_time": 0.719,
+          "end_time": 1.179
+        },
+        {
+          "text": " ",
+          "start_time": 1.179,
+          "end_time": 1.399
+        },
+        {
+          "text": "chooses",
+          "start_time": 1.399,
+          "end_time": 1.959
+        },
+        {
+          "text": " ",
+          "start_time": 1.959,
+          "end_time": 2.019
+        },
+        {
+          "text": "their",
+          "start_time": 2.019,
+          "end_time": 2.299
+        },
+        {
+          "text": " ",
+          "start_time": 2.299,
+          "end_time": 2.319
+        },
+        {
+          "text": "first",
+          "start_time": 2.319,
+          "end_time": 2.679
+        },
+        {
+          "text": " ",
+          "start_time": 2.679,
+          "end_time": 2.799
+        },
+        {
+          "text": "step.",
+          "start_time": 2.799,
+          "end_time": 3.179
+        }
+      ]
+    },
+    {
+      "text": "Now tell me,",
+      "start_time": 4.139,
+      "end_time": 5.0,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Now",
+          "start_time": 4.139,
+          "end_time": 4.42
+        },
+        {
+          "text": " ",
+          "start_time": 4.42,
+          "end_time": 4.46
+        },
+        {
+          "text": "tell",
+          "start_time": 4.46,
+          "end_time": 4.759
+        },
+        {
+          "text": " ",
+          "start_time": 4.759,
+          "end_time": 4.779
+        },
+        {
+          "text": "me,",
+          "start_time": 4.779,
+          "end_time": 5.0
+        }
+      ]
+    },
+    {
+      "text": "what shall we do?",
+      "start_time": 5.839,
+      "end_time": 7.0,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "what",
+          "start_time": 5.839,
+          "end_time": 6.0
+        },
+        {
+          "text": " ",
+          "start_time": 6.0,
+          "end_time": 6.079
+        },
+        {
+          "text": "shall",
+          "start_time": 6.079,
+          "end_time": 6.299
+        },
+        {
+          "text": " ",
+          "start_time": 6.299,
+          "end_time": 6.339
+        },
+        {
+          "text": "we",
+          "start_time": 6.339,
+          "end_time": 6.5
+        },
+        {
+          "text": " ",
+          "start_time": 6.5,
+          "end_time": 6.559
+        },
+        {
+          "text": "do?",
+          "start_time": 6.559,
+          "end_time": 7.0
+        }
+      ]
+    }
+  ]
+}

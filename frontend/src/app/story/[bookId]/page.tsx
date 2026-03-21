@@ -56,6 +56,12 @@ export default function StoryPage() {
   const autoFlipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoFlipIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const advancePageRef = useRef<(() => Promise<void>) | null>(null);
+  const continueFromChoiceRef = useRef(false);
+  const pendingChoiceOverrideRef = useRef<{
+    pageNumber: number;
+    image: string;
+    audio: AudioConfig | null;
+  } | null>(null);
   const pendingAudioRef = useRef<{
     config: AudioConfig;
     onEnded?: () => void;
@@ -360,6 +366,7 @@ export default function StoryPage() {
   }, [router]);
 
   const continueAfterChoice = useCallback(() => {
+    continueFromChoiceRef.current = true;
     const triggerNext = advancePageRef.current;
     if (triggerNext) {
       void triggerNext();
@@ -388,8 +395,10 @@ export default function StoryPage() {
     if (isBusy) return;
     stopAudioPlayback();
     clearAutoFlipCountdown();
+    const fromChoice = continueFromChoiceRef.current;
+    continueFromChoiceRef.current = false;
 
-    if (state === "open" && focusedPage >= 1) {
+    if (!fromChoice && state === "open" && focusedPage >= 1) {
       const current = pagesByNumber[focusedPage];
       if (current?.hasDialogChoice && !selectedChoiceByPage[focusedPage]) {
         setDialogPromptPage(focusedPage);
@@ -426,6 +435,21 @@ export default function StoryPage() {
     const nextPage = focusedPage + 1;
     if (nextPage % 2 === 0) {
       setFocusedPage(nextPage);
+      if (fromChoice) {
+        const nextPageData = await loadPage(nextPage);
+        const pendingOverride =
+          pendingChoiceOverrideRef.current?.pageNumber === nextPage
+            ? pendingChoiceOverrideRef.current
+            : null;
+        const nextAudio = pendingOverride?.audio || nextPageData?.audio || null;
+        if (nextAudio?.src) {
+          skipNextAutoPageAudioRef.current = nextPage;
+          scheduleAudioPlayback(nextAudio, () => {
+            handlePageAudioEnded(nextPage);
+          }, { overrideDelayMs: 0 });
+        }
+        pendingChoiceOverrideRef.current = null;
+      }
       return;
     }
 
@@ -435,11 +459,26 @@ export default function StoryPage() {
     setFlipTick((value) => value + 1);
     setFocusedPage(nextPage);
     setDialogPromptPage(null);
+    if (fromChoice) {
+      const nextPageData = await loadPage(nextPage);
+      const pendingOverride =
+        pendingChoiceOverrideRef.current?.pageNumber === nextPage
+          ? pendingChoiceOverrideRef.current
+          : null;
+      const nextAudio = pendingOverride?.audio || nextPageData?.audio || null;
+      if (nextAudio?.src) {
+        skipNextAutoPageAudioRef.current = nextPage;
+        scheduleAudioPlayback(nextAudio, () => {
+          handlePageAudioEnded(nextPage);
+        }, { overrideDelayMs: 0 });
+      }
+      pendingChoiceOverrideRef.current = null;
+    }
     setTimeout(() => {
       setState("open");
       setIsBusy(false);
     }, 600);
-  }, [clearAutoFlipCountdown, finishBook, focusedPage, isBusy, loadPage, loadSpread, pagesByNumber, scheduleAudioPlayback, selectedChoiceByPage, state, stopAudioPlayback, totalPages]);
+  }, [clearAutoFlipCountdown, finishBook, focusedPage, handlePageAudioEnded, isBusy, loadPage, loadSpread, pagesByNumber, scheduleAudioPlayback, selectedChoiceByPage, state, stopAudioPlayback, totalPages]);
 
   useEffect(() => {
     advancePageRef.current = advancePage;
@@ -533,23 +572,24 @@ export default function StoryPage() {
             audio: outcome.audio
           }
         }));
+        pendingChoiceOverrideRef.current = {
+          pageNumber: focusedPage + 1,
+          image: outcome.image.image,
+          audio: outcome.audio
+        };
       }
 
       clearAutoFlipCountdown();
       stopAudioPlayback();
       setDialogPromptPage(null);
 
-      const revealDelay = shouldMaskRightPageUntilChoice ? 850 : 0;
-      setTimeout(() => {
-        continueAfterChoice();
-      }, revealDelay);
+      continueAfterChoice();
     },
     [
       clearAutoFlipCountdown,
       continueAfterChoice,
       currentPageData?.choiceOutcomes,
       focusedPage,
-      shouldMaskRightPageUntilChoice,
       stopAudioPlayback,
       totalPages
     ]
