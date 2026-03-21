@@ -26,7 +26,18 @@ export default function MenuPage() {
       .catch(() => setBooks([]));
   }, [router]);
 
-  function startStory() {
+  async function startStory() {
+    try {
+      // Unlock media playback from this explicit user gesture.
+      const probe = new Audio();
+      probe.muted = true;
+      await probe.play();
+      probe.pause();
+      probe.currentTime = 0;
+    } catch {
+      // If unlock fails, story page fallback overlay will still handle it.
+    }
+
     saveSelectedBook(selectedBook);
     router.push(`/story/${selectedBook}`);
   }
@@ -45,7 +56,9 @@ export default function MenuPage() {
               onClick={() => setSelectedBook(book.id)}
             >
               <h3>{book.name}</h3>
-              <p style={{ marginTop: 8, color: "#cabce8" }}>{book.pages} pages</p>
+              <p style={{ marginTop: 8, color: "#cabce8" }}>
+                {Number.isFinite(book.pages) ? book.pages : 0} pages
+              </p>
             </button>
           ))}
         </div>

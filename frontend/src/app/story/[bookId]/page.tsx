@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import BookScene from "@/components/book/BookScene";
-import { getBookPage, getBooks } from "@/lib/api";
+import { AudioConfig, getBook, getBookPage, PageData } from "@/lib/api";
 import { getParentFromSession } from "@/lib/session";
 
 type BookState = "closed-front" | "opening" | "open" | "flipping" | "closing" | "closed-back";
@@ -13,8 +13,14 @@ export default function StoryPage() {
   const params = useParams<{ bookId: string }>();
   const bookId = useMemo(() => params.bookId, [params.bookId]);
   const [state, setState] = useState<BookState>("closed-front");
-  const [spreadStart, setSpreadStart] = useState(0);
+  const [focusedPage, setFocusedPage] = useState(0);
+  const [spreadStart, setSpreadStart] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [bookName, setBookName] = useState("");
+  const [coverAudio, setCoverAudio] = useState<{
+    front: AudioConfig;
+    back: AudioConfig;
+  } | null>(null);
   const [leftPageImage, setLeftPageImage] = useState<string | null>(null);
   const [rightPageImage, setRightPageImage] = useState<string | null>(null);
   const [label, setLabel] = useState("Next Page");
@@ -22,6 +28,22 @@ export default function StoryPage() {
   const [isBusy, setIsBusy] = useState(false);
   const [introFade, setIntroFade] = useState(true);
   const [outroFade, setOutroFade] = useState(false);
+  const [pagesByNumber, setPagesByNumber] = useState<Record<number, PageData>>({});
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [audioUnlockNeeded, setAudioUnlockNeeded] = useState(false);
+  const [autoFlipSecondsLeft, setAutoFlipSecondsLeft] = useState<number | null>(null);
+  const [dismissedDialogPage, setDismissedDialogPage] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioDelayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasPlayedFrontRef = useRef(false);
+  const hasPlayedBackRef = useRef(false);
+  const skipNextAutoPageAudioRef = useRef<number | null>(null);
+  const autoFlipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoFlipIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pendingAudioRef = useRef<{
+    config: AudioConfig;
+    onEnded?: () => void;
+  } | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIntroFade(false), 1400);
@@ -35,36 +57,172 @@ export default function StoryPage() {
       return;
     }
 
-    getBooks().then((response) => {
-      const current = response.books.find((book) => book.id === bookId);
-      if (!current) {
+    getBook(bookId).then((response) => {
+      if (!response.book) {
         router.replace("/menu");
         return;
       }
-      setTotalPages(current.pages);
+      setBookName(response.book.name);
+      setTotalPages(response.book.pages);
+      setCoverAudio(response.book.coverAudio || null);
     });
   }, [bookId, router]);
 
-  async function loadSpread(startPage: number) {
-    const left = await getBookPage(bookId, startPage);
-    let rightImage = left.image.image;
-    if (startPage + 1 <= totalPages) {
-      const right = await getBookPage(bookId, startPage + 1);
-      rightImage = right.image.image;
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+
+  const resolveAudioUrl = useCallback(
+    (src?: string) => {
+      if (!src) return "";
+      if (src.startsWith("http://") || src.startsWith("https://")) return src;
+      if (src.startsWith("/")) return `${apiBaseUrl}${src}`;
+      return `${apiBaseUrl}/assets/audio/pages/${bookId}/${src}`;
+    },
+    [apiBaseUrl, bookId]
+  );
+
+  const stopAudioPlayback = useCallback(() => {
+    if (audioDelayTimeoutRef.current) clearTimeout(audioDelayTimeoutRef.current);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    setIsAudioPlaying(false);
+  }, []);
+
+  const clearAutoFlipCountdown = useCallback(() => {
+    if (autoFlipTimeoutRef.current) clearTimeout(autoFlipTimeoutRef.current);
+    if (autoFlipIntervalRef.current) clearInterval(autoFlipIntervalRef.current);
+    setAutoFlipSecondsLeft(null);
+  }, []);
+
+  const startAutoFlipCountdown = useCallback(
+    (onDone: () => void) => {
+      clearAutoFlipCountdown();
+      setAutoFlipSecondsLeft(3);
+      let seconds = 3;
+      autoFlipIntervalRef.current = setInterval(() => {
+        seconds -= 1;
+        setAutoFlipSecondsLeft(Math.max(0, seconds));
+      }, 1000);
+      autoFlipTimeoutRef.current = setTimeout(() => {
+        clearAutoFlipCountdown();
+        onDone();
+      }, 3000);
+    },
+    [clearAutoFlipCountdown]
+  );
+
+  const scheduleAudioPlayback = useCallback(
+    (
+      audioConfig: AudioConfig | null | undefined,
+      onEnded?: () => void,
+      options?: { overrideDelayMs?: number }
+    ) => {
+      const src = resolveAudioUrl(audioConfig?.src);
+      if (!src) return;
+      stopAudioPlayback();
+
+      const delay = options?.overrideDelayMs ?? audioConfig?.startDelayMs ?? 1000;
+      audioDelayTimeoutRef.current = setTimeout(() => {
+        const audio = new Audio(src);
+        audioRef.current = audio;
+        audio.onplay = () => setIsAudioPlaying(true);
+        audio.onpause = () => setIsAudioPlaying(false);
+        if (onEnded) {
+          audio.onended = () => {
+            setIsAudioPlaying(false);
+            startAutoFlipCountdown(onEnded);
+          };
+        } else {
+          audio.onended = () => setIsAudioPlaying(false);
+        }
+        audio.play().catch(() => {
+          // Browser autoplay policies can block sound; require one-click unlock.
+          setIsAudioPlaying(false);
+          setAudioUnlockNeeded(true);
+          pendingAudioRef.current = audioConfig ? { config: audioConfig, onEnded } : null;
+        });
+      }, delay);
+    },
+    [resolveAudioUrl, startAutoFlipCountdown, stopAudioPlayback]
+  );
+
+  const unlockAudioAndResume = useCallback(async () => {
+    try {
+      const probe = new Audio();
+      probe.muted = true;
+      await probe.play();
+      probe.pause();
+    } catch {
+      // If this still fails, keep the button visible.
+      return;
     }
 
-    setLeftPageImage(left.image.image);
-    setRightPageImage(rightImage);
-    setSpreadStart(startPage);
-  }
+    setAudioUnlockNeeded(false);
+    const pending = pendingAudioRef.current;
+    pendingAudioRef.current = null;
+    if (pending) {
+      scheduleAudioPlayback(pending.config, pending.onEnded);
+    }
+  }, [scheduleAudioPlayback]);
 
-  async function nextPage() {
+  useEffect(() => {
+    return () => {
+      stopAudioPlayback();
+      clearAutoFlipCountdown();
+    };
+  }, [clearAutoFlipCountdown, stopAudioPlayback]);
+
+  const loadPage = useCallback(
+    async (pageNumber: number) => {
+      if (pagesByNumber[pageNumber]) return pagesByNumber[pageNumber];
+      const pageData = await getBookPage(bookId, pageNumber);
+      setPagesByNumber((prev) => ({ ...prev, [pageNumber]: pageData }));
+      return pageData;
+    },
+    [bookId, pagesByNumber]
+  );
+
+  const loadSpread = useCallback(
+    async (startPage: number) => {
+      const left = await loadPage(startPage);
+      let right = left;
+      if (startPage + 1 <= totalPages) {
+        right = await loadPage(startPage + 1);
+      }
+
+      setLeftPageImage(left.image.image);
+      setRightPageImage(right.image.image);
+      setSpreadStart(startPage);
+    },
+    [loadPage, totalPages]
+  );
+
+  const finishBook = useCallback(() => {
+    setLabel("Closing...");
+    setIsBusy(true);
+    setState("closing");
+    setTimeout(() => setState("closed-back"), 600);
+    setTimeout(() => setOutroFade(true), 700);
+    setTimeout(() => router.push("/menu"), 2400);
+  }, [router]);
+
+  const advancePage = useCallback(async () => {
     if (isBusy) return;
+    stopAudioPlayback();
+    clearAutoFlipCountdown();
 
     if (state === "closed-front") {
       setIsBusy(true);
       setState("opening");
       await loadSpread(1);
+      setFocusedPage(1);
+      const pageOneData = await loadPage(1);
+      if (pageOneData?.audio?.src) {
+        // User gesture path: play immediately on first next click.
+        skipNextAutoPageAudioRef.current = 1;
+        scheduleAudioPlayback(pageOneData.audio, undefined, { overrideDelayMs: 0 });
+      }
       setTimeout(() => {
         setState("open");
         setIsBusy(false);
@@ -72,46 +230,137 @@ export default function StoryPage() {
       return;
     }
 
-    if (spreadStart + 2 <= totalPages) {
-      setIsBusy(true);
-      setState("flipping");
-      await loadSpread(spreadStart + 2);
-      setFlipTick((value) => value + 1);
-      setTimeout(() => {
-        setState("open");
-        setIsBusy(false);
-      }, 600);
+    if (focusedPage >= totalPages) {
+      finishBook();
       return;
     }
 
-    setLabel("Closing...");
+    const nextPage = focusedPage + 1;
+    if (nextPage % 2 === 0) {
+      setFocusedPage(nextPage);
+      return;
+    }
+
     setIsBusy(true);
-    setState("closing");
-    setTimeout(() => setState("closed-back"), 600);
-    setTimeout(() => setOutroFade(true), 700);
-    setTimeout(() => router.push("/menu"), 2400);
-  }
+    setState("flipping");
+    await loadSpread(nextPage);
+    setFlipTick((value) => value + 1);
+    setFocusedPage(nextPage);
+    setTimeout(() => {
+      setState("open");
+      setIsBusy(false);
+    }, 600);
+  }, [clearAutoFlipCountdown, finishBook, focusedPage, isBusy, loadPage, loadSpread, scheduleAudioPlayback, state, stopAudioPlayback, totalPages]);
+
+  useEffect(() => {
+    if (state !== "open" || focusedPage < 1) return;
+    if (skipNextAutoPageAudioRef.current === focusedPage) {
+      skipNextAutoPageAudioRef.current = null;
+      return;
+    }
+    const pageData = pagesByNumber[focusedPage];
+    if (!pageData?.audio) return;
+
+    const run = setTimeout(() => {
+      scheduleAudioPlayback(pageData.audio, () => {
+        advancePage();
+      });
+    }, 0);
+
+    return () => {
+      clearTimeout(run);
+      stopAudioPlayback();
+    };
+  }, [advancePage, focusedPage, pagesByNumber, scheduleAudioPlayback, state, stopAudioPlayback]);
+
+  useEffect(() => {
+    if (introFade || !coverAudio?.front || hasPlayedFrontRef.current) return;
+    if (state !== "closed-front") return;
+
+    hasPlayedFrontRef.current = true;
+    const run = setTimeout(() => {
+      scheduleAudioPlayback(coverAudio.front);
+    }, 0);
+    return () => clearTimeout(run);
+  }, [coverAudio, introFade, scheduleAudioPlayback, state]);
+
+  useEffect(() => {
+    if (!coverAudio?.back || hasPlayedBackRef.current) return;
+    if (state !== "closed-back") return;
+
+    hasPlayedBackRef.current = true;
+    const run = setTimeout(() => {
+      scheduleAudioPlayback(coverAudio.back);
+    }, 0);
+    return () => clearTimeout(run);
+  }, [coverAudio, scheduleAudioPlayback, state]);
+
+  const currentPageData = focusedPage > 0 ? pagesByNumber[focusedPage] : null;
+  const rightPageNumber = spreadStart + 1 <= totalPages ? spreadStart + 1 : null;
+  const showDialogModal = Boolean(
+    currentPageData?.hasDialogChoice &&
+      currentPageData?.dialog &&
+      dismissedDialogPage !== focusedPage
+  );
 
   return (
     <main className="screen">
       <section className="panel storyContainer storyPanel">
         {introFade ? <div className="storyIntroOverlay" /> : null}
         {outroFade ? <div className="storyOutroOverlay" /> : null}
+        {autoFlipSecondsLeft !== null ? (
+          <div className="autoFlipIndicator">
+            <span className="autoFlipSpinner" />
+            Flipping in {autoFlipSecondsLeft}s
+          </div>
+        ) : null}
         <BookScene
           state={state}
           leftPageImage={leftPageImage}
           rightPageImage={rightPageImage}
           flipTick={flipTick}
+          leftPageNumber={spreadStart}
+          rightPageNumber={rightPageNumber}
+          focusedPage={focusedPage}
         />
 
         <div className="storyControls">
           <p>
-            Pages {spreadStart || 0}-{Math.min(spreadStart + 1, totalPages)}/{totalPages}
+            {bookName} - Focus page {focusedPage || 0}/{totalPages}
           </p>
-          <button className="menuButton" onClick={nextPage} disabled={isBusy}>
+          {isAudioPlaying ? <div className="audioPlayingBadge">🔊 Playing</div> : null}
+          <button className="menuButton" onClick={advancePage} disabled={isBusy}>
             {label}
           </button>
         </div>
+
+        {audioUnlockNeeded ? (
+          <div className="audioUnlockOverlay">
+            <button className="menuButton" onClick={unlockAudioAndResume}>
+              Tap to enable sound
+            </button>
+          </div>
+        ) : null}
+
+        {showDialogModal ? (
+          <div className="dialogModalOverlay" onClick={() => setDismissedDialogPage(focusedPage)}>
+            <div className="dialogModalCard" onClick={(event) => event.stopPropagation()}>
+              <p className="dialogQuestion">{currentPageData?.dialog?.question}</p>
+              <div className="dialogOptions">
+                {currentPageData?.dialog?.options.slice(0, 3).map((option) => (
+                  <button
+                    key={option}
+                    className="menuButton secondaryButton"
+                    type="button"
+                    onClick={() => setDismissedDialogPage(focusedPage)}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </section>
     </main>
   );

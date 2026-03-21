@@ -123,6 +123,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
 .storyIntroOverlay {
@@ -222,10 +223,34 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  position: relative;
+  transition: filter 0.25s ease, opacity 0.25s ease;
 }
 
 .book2dSpine {
   background: linear-gradient(180deg, #b79e74, #9b825a);
+}
+
+.book2dFocus {
+  filter: brightness(1);
+  opacity: 1;
+}
+
+.book2dDim {
+  filter: brightness(0.42);
+  opacity: 0.95;
+}
+
+.book2dPageBadge {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  background: rgba(24, 18, 10, 0.72);
+  color: #fff8e8;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  letter-spacing: 0.2px;
 }
 
 .book2dSlidePage {
@@ -298,5 +323,116 @@ body {
   }
   100% {
     opacity: 1;
+  }
+}
+
+.dialogQuestion {
+  margin-bottom: 10px;
+  color: #f4ebff;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.dialogOptions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dialogModalOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: rgba(5, 5, 10, 0.62);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: dialogOverlayFade 0.22s ease forwards;
+}
+
+.dialogModalCard {
+  width: min(560px, 88%);
+  border-radius: 14px;
+  padding: 20px;
+  background: linear-gradient(180deg, #30234d, #241a39);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.45);
+  animation: dialogCardPop 0.26s ease forwards;
+}
+
+@keyframes dialogOverlayFade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogCardPop {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.audioPlayingBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  color: #ffe7b8;
+  background: rgba(120, 84, 23, 0.35);
+  border: 1px solid rgba(255, 211, 132, 0.45);
+}
+
+.audioUnlockOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 21;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 6, 12, 0.38);
+  border-radius: 18px;
+  animation: dialogOverlayFade 0.2s ease forwards;
+}
+
+.autoFlipIndicator {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 22;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  color: #efe8ff;
+  background: rgba(22, 17, 34, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.autoFlipSpinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

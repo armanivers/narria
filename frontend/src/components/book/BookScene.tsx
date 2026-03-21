@@ -8,12 +8,18 @@ export default function BookScene({
   state,
   leftPageImage,
   rightPageImage,
-  flipTick
+  flipTick,
+  leftPageNumber,
+  rightPageNumber,
+  focusedPage
 }: {
   state: BookState;
   leftPageImage: string | null;
   rightPageImage: string | null;
   flipTick: number;
+  leftPageNumber: number | null;
+  rightPageNumber: number | null;
+  focusedPage: number;
 }) {
   const showSpread = state !== "closed-front" && state !== "closed-back";
   const showFront = state === "closed-front" || state === "opening";
@@ -28,6 +34,9 @@ export default function BookScene({
   const rightStyle: CSSProperties = rightPageImage
     ? { backgroundImage: `url(${rightPageImage})` }
     : {};
+
+  const focusLeft = focusedPage === leftPageNumber;
+  const focusRight = focusedPage === rightPageNumber;
 
   return (
     <div className="book2dStage">
@@ -45,9 +54,16 @@ export default function BookScene({
 
         {showSpread ? (
           <div className="book2dSpread">
-            <div className="book2dPage book2dLeft" style={leftStyle} />
+            <div className={`book2dPage book2dLeft ${focusLeft ? "book2dFocus" : "book2dDim"}`} style={leftStyle}>
+              {leftPageNumber ? <span className="book2dPageBadge">Page {leftPageNumber}</span> : null}
+            </div>
             <div className="book2dSpine" />
-            <div className="book2dPage book2dRight" style={rightStyle} />
+            <div
+              className={`book2dPage book2dRight ${focusRight ? "book2dFocus" : "book2dDim"}`}
+              style={rightStyle}
+            >
+              {rightPageNumber ? <span className="book2dPageBadge">Page {rightPageNumber}</span> : null}
+            </div>
             {isFlipping ? (
               <div key={flipTick} className="book2dSlidePage" style={rightStyle} />
             ) : null}

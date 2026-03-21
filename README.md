@@ -61,6 +61,40 @@ Set `NEXT_PUBLIC_API_BASE_URL` in `frontend/.env.local` if needed.
 
 Image endpoint currently returns placeholder URLs. Swap `backend/src/services/imageService.js` with Gemini API calls later.
 
+## Book data and asset locations
+
+Book database is stored in:
+
+- `backend/data/books.json`
+
+Static assets are served by backend at `/assets/...` and should be placed in:
+
+- `backend/public/assets/audio/covers/<bookId>/front.mp3`
+- `backend/public/assets/audio/covers/<bookId>/back.mp3`
+- `backend/public/assets/audio/pages/<bookId>/page-<n>.mp3`
+- `backend/public/assets/images/<bookId>/page-<n>.png` (or `.jpg`)
+
+Current created folders:
+
+- `backend/public/assets/audio/covers/wizards`
+- `backend/public/assets/audio/covers/dragons`
+- `backend/public/assets/audio/covers/princess`
+- `backend/public/assets/audio/covers/mermaids`
+- `backend/public/assets/audio/pages/wizards`
+- `backend/public/assets/audio/pages/dragons`
+- `backend/public/assets/audio/pages/princess`
+- `backend/public/assets/audio/pages/mermaids`
+- `backend/public/assets/images/wizards`
+- `backend/public/assets/images/dragons`
+- `backend/public/assets/images/princess`
+- `backend/public/assets/images/mermaids`
+
+In `backend/data/books.json`, set audio paths like:
+
+- cover front: `"/assets/audio/covers/wizards/front.mp3"`
+- cover back: `"/assets/audio/covers/wizards/back.mp3"`
+- page audio: `"/assets/audio/pages/wizards/page-1.mp3"`
+
 ## Manual sanity checklist
 
 - [ ] Login works with static credentials

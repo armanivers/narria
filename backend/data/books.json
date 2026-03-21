@@ -1,22 +1,228 @@
 [
   {
     "id": "wizards",
-    "name": "Wizards",
-    "pages": 4
+    "name": "Wizards of Moonhill",
+    "coverAudio": {
+      "front": {
+        "src": "",
+        "startDelayMs": 800
+      },
+      "back": {
+        "src": "",
+        "startDelayMs": 800
+      }
+    },
+    "pages": [
+      {
+        "pageNumber": 1,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 2,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "Which spell should the wizard try first?",
+          "options": ["Light spell", "Shield spell", "Wind spell"]
+        }
+      },
+      {
+        "pageNumber": 3,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1200
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 4,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "Where should the wizard travel next?",
+          "options": ["Crystal cave", "Forest tower"]
+        }
+      }
+    ]
   },
   {
     "id": "dragons",
-    "name": "Dragons",
-    "pages": 4
+    "name": "Dragons of Ember Peak",
+    "coverAudio": {
+      "front": {
+        "src": "front.mp3",
+        "startDelayMs": 800
+      },
+      "back": {
+        "src": "",
+        "startDelayMs": 800
+      }
+    },
+    "pages": [
+      {
+        "pageNumber": 1,
+        "audio": {
+          "src": "page1.mp3",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 2,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "How should the rider greet the dragon?",
+          "options": ["With a bow", "With a song", "With a gift"]
+        }
+      },
+      {
+        "pageNumber": 3,
+        "audio": {
+          "src": "",
+          "startDelayMs": 900
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 4,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      }
+    ]
   },
   {
     "id": "princess",
-    "name": "Princess",
-    "pages": 4
+    "name": "Princess of Starlight",
+    "coverAudio": {
+      "front": {
+        "src": "",
+        "startDelayMs": 800
+      },
+      "back": {
+        "src": "",
+        "startDelayMs": 800
+      }
+    },
+    "pages": [
+      {
+        "pageNumber": 1,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1100
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 2,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "Which path should the princess follow?",
+          "options": ["Moon bridge", "Garden gate"]
+        }
+      },
+      {
+        "pageNumber": 3,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 4,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "Who should join the royal quest?",
+          "options": ["Knight", "Inventor", "Poet"]
+        }
+      }
+    ]
   },
   {
     "id": "mermaids",
-    "name": "Mermaids",
-    "pages": 4
+    "name": "Mermaids of Coral Bay",
+    "coverAudio": {
+      "front": {
+        "src": "",
+        "startDelayMs": 800
+      },
+      "back": {
+        "src": "",
+        "startDelayMs": 800
+      }
+    },
+    "pages": [
+      {
+        "pageNumber": 1,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 2,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": true,
+        "dialog": {
+          "question": "What should the mermaid collect first?",
+          "options": ["Pearl", "Sea map"]
+        }
+      },
+      {
+        "pageNumber": 3,
+        "audio": {
+          "src": "",
+          "startDelayMs": 950
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      },
+      {
+        "pageNumber": 4,
+        "audio": {
+          "src": "",
+          "startDelayMs": 1000
+        },
+        "hasDialogChoice": false,
+        "dialog": null
+      }
+    ]
   }
 ]

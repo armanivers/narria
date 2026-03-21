@@ -18,14 +18,36 @@ export type Book = {
   pages: number;
 };
 
-type PageResponse = {
+export type AudioConfig = {
+  src: string;
+  startDelayMs?: number;
+};
+
+export type DialogChoice = {
+  question: string;
+  options: string[];
+};
+
+export type PageData = {
   bookId: string;
+  bookName: string;
   pageNumber: number;
   totalPages: number;
   image: {
     kind: "url";
     image: string;
   };
+  audio: AudioConfig | null;
+  hasDialogChoice: boolean;
+  dialog: DialogChoice | null;
+};
+
+export type BookDetails = Book & {
+  coverAudio: {
+    front: AudioConfig;
+    back: AudioConfig;
+  };
+  pageConfigs: unknown[];
 };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -33,7 +55,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: {
       "Content-Type": "application/json",
-      ...(init?.headers || {})
+      ...init?.headers
     }
   });
 
@@ -74,9 +96,23 @@ export async function createChildProfile(input: {
 }
 
 export async function getBooks() {
-  return request<{ books: Book[] }>("/books");
+  const response = await request<{
+    books: Array<{ id: string; name: string; pages: number | unknown[] | null }>;
+  }>("/books");
+
+  return {
+    books: response.books.map((book) => ({
+      id: book.id,
+      name: book.name,
+      pages: typeof book.pages === "number" ? book.pages : Array.isArray(book.pages) ? book.pages.length : 0
+    }))
+  };
+}
+
+export async function getBook(bookId: string) {
+  return request<{ book: BookDetails }>(`/books/${bookId}`);
 }
 
 export async function getBookPage(bookId: string, pageNumber: number) {
-  return request<PageResponse>(`/books/${bookId}/pages/${pageNumber}`);
+  return request<PageData>(`/books/${bookId}/pages/${pageNumber}`);
 }
