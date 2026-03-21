@@ -2,150 +2,724 @@
   "language_code": null,
   "segments": [
     {
-      "text": "Every hero chooses their first step.",
-      "start_time": 0.14,
-      "end_time": 3.179,
+      "text": "\"For a moment, you stayed back.\" Lumi's",
+      "start_time": 0.119,
+      "end_time": 3.039,
       "speaker": {
         "id": "speaker_0",
         "name": "Speaker 0"
       },
       "words": [
         {
-          "text": "Every",
-          "start_time": 0.14,
-          "end_time": 0.659
+          "text": "\"For",
+          "start_time": 0.119,
+          "end_time": 0.299
         },
         {
           "text": " ",
-          "start_time": 0.659,
-          "end_time": 0.719
+          "start_time": 0.299,
+          "end_time": 0.379
         },
         {
-          "text": "hero",
-          "start_time": 0.719,
-          "end_time": 1.179
-        },
-        {
-          "text": " ",
-          "start_time": 1.179,
-          "end_time": 1.399
-        },
-        {
-          "text": "chooses",
-          "start_time": 1.399,
-          "end_time": 1.959
+          "text": "a",
+          "start_time": 0.379,
+          "end_time": 0.459
         },
         {
           "text": " ",
-          "start_time": 1.959,
-          "end_time": 2.019
+          "start_time": 0.459,
+          "end_time": 0.499
         },
         {
-          "text": "their",
-          "start_time": 2.019,
-          "end_time": 2.299
+          "text": "moment,",
+          "start_time": 0.5,
+          "end_time": 0.899
         },
         {
           "text": " ",
-          "start_time": 2.299,
-          "end_time": 2.319
+          "start_time": 0.899,
+          "end_time": 1.019
+        },
+        {
+          "text": "you",
+          "start_time": 1.019,
+          "end_time": 1.159
+        },
+        {
+          "text": " ",
+          "start_time": 1.159,
+          "end_time": 1.299
+        },
+        {
+          "text": "stayed",
+          "start_time": 1.299,
+          "end_time": 1.639
+        },
+        {
+          "text": " ",
+          "start_time": 1.639,
+          "end_time": 1.719
+        },
+        {
+          "text": "back.\"",
+          "start_time": 1.719,
+          "end_time": 2.039
+        },
+        {
+          "text": " ",
+          "start_time": 2.039,
+          "end_time": 2.639
+        },
+        {
+          "text": "Lumi's",
+          "start_time": 2.639,
+          "end_time": 3.039
+        }
+      ]
+    },
+    {
+      "text": "little voice trembled.",
+      "start_time": 3.099,
+      "end_time": 4.279,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "little",
+          "start_time": 3.099,
+          "end_time": 3.259
+        },
+        {
+          "text": " ",
+          "start_time": 3.259,
+          "end_time": 3.399
+        },
+        {
+          "text": "voice",
+          "start_time": 3.399,
+          "end_time": 3.74
+        },
+        {
+          "text": " ",
+          "start_time": 3.74,
+          "end_time": 3.819
+        },
+        {
+          "text": "trembled.",
+          "start_time": 3.819,
+          "end_time": 4.279
+        }
+      ]
+    },
+    {
+      "text": "\"I don't like being up here alone.\"",
+      "start_time": 4.94,
+      "end_time": 7.179,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"I",
+          "start_time": 4.94,
+          "end_time": 5.159
+        },
+        {
+          "text": " ",
+          "start_time": 5.159,
+          "end_time": 5.199
+        },
+        {
+          "text": "don't",
+          "start_time": 5.199,
+          "end_time": 5.5
+        },
+        {
+          "text": " ",
+          "start_time": 5.5,
+          "end_time": 5.579
+        },
+        {
+          "text": "like",
+          "start_time": 5.579,
+          "end_time": 5.799
+        },
+        {
+          "text": " ",
+          "start_time": 5.799,
+          "end_time": 5.959
+        },
+        {
+          "text": "being",
+          "start_time": 5.96,
+          "end_time": 6.179
+        },
+        {
+          "text": " ",
+          "start_time": 6.179,
+          "end_time": 6.239
+        },
+        {
+          "text": "up",
+          "start_time": 6.239,
+          "end_time": 6.379
+        },
+        {
+          "text": " ",
+          "start_time": 6.379,
+          "end_time": 6.439
+        },
+        {
+          "text": "here",
+          "start_time": 6.44,
+          "end_time": 6.599
+        },
+        {
+          "text": " ",
+          "start_time": 6.599,
+          "end_time": 6.739
+        },
+        {
+          "text": "alone.\"",
+          "start_time": 6.739,
+          "end_time": 7.179
+        }
+      ]
+    },
+    {
+      "text": "Captain Coral answered without anger.",
+      "start_time": 8.059,
+      "end_time": 10.26,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Captain",
+          "start_time": 8.059,
+          "end_time": 8.399
+        },
+        {
+          "text": " ",
+          "start_time": 8.399,
+          "end_time": 8.5
+        },
+        {
+          "text": "Coral",
+          "start_time": 8.5,
+          "end_time": 8.939
+        },
+        {
+          "text": " ",
+          "start_time": 8.939,
+          "end_time": 9.059
+        },
+        {
+          "text": "answered",
+          "start_time": 9.059,
+          "end_time": 9.42
+        },
+        {
+          "text": " ",
+          "start_time": 9.42,
+          "end_time": 9.479
+        },
+        {
+          "text": "without",
+          "start_time": 9.479,
+          "end_time": 9.84
+        },
+        {
+          "text": " ",
+          "start_time": 9.84,
+          "end_time": 9.92
+        },
+        {
+          "text": "anger.",
+          "start_time": 9.92,
+          "end_time": 10.26
+        }
+      ]
+    },
+    {
+      "text": "\"Sometimes waiting feels safest,\" he said",
+      "start_time": 10.92,
+      "end_time": 14.479,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Sometimes",
+          "start_time": 10.92,
+          "end_time": 11.759
+        },
+        {
+          "text": " ",
+          "start_time": 11.759,
+          "end_time": 11.919
+        },
+        {
+          "text": "waiting",
+          "start_time": 11.92,
+          "end_time": 12.42
+        },
+        {
+          "text": " ",
+          "start_time": 12.42,
+          "end_time": 12.639
+        },
+        {
+          "text": "feels",
+          "start_time": 12.639,
+          "end_time": 13.06
+        },
+        {
+          "text": " ",
+          "start_time": 13.06,
+          "end_time": 13.119
+        },
+        {
+          "text": "safest,\"",
+          "start_time": 13.119,
+          "end_time": 13.679
+        },
+        {
+          "text": " ",
+          "start_time": 13.679,
+          "end_time": 14.139
+        },
+        {
+          "text": "he",
+          "start_time": 14.139,
+          "end_time": 14.259
+        },
+        {
+          "text": " ",
+          "start_time": 14.259,
+          "end_time": 14.319
+        },
+        {
+          "text": "said",
+          "start_time": 14.319,
+          "end_time": 14.479
+        }
+      ]
+    },
+    {
+      "text": "gently. \"But some moments ask for",
+      "start_time": 14.599,
+      "end_time": 17.479,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "gently.",
+          "start_time": 14.599,
+          "end_time": 15.0
+        },
+        {
+          "text": " ",
+          "start_time": 15.0,
+          "end_time": 15.539
+        },
+        {
+          "text": "\"But",
+          "start_time": 15.539,
+          "end_time": 15.739
+        },
+        {
+          "text": " ",
+          "start_time": 15.739,
+          "end_time": 15.899
+        },
+        {
+          "text": "some",
+          "start_time": 15.899,
+          "end_time": 16.119
+        },
+        {
+          "text": " ",
+          "start_time": 16.119,
+          "end_time": 16.199
+        },
+        {
+          "text": "moments",
+          "start_time": 16.199,
+          "end_time": 16.719
+        },
+        {
+          "text": " ",
+          "start_time": 16.719,
+          "end_time": 16.84
+        },
+        {
+          "text": "ask",
+          "start_time": 16.84,
+          "end_time": 17.139
+        },
+        {
+          "text": " ",
+          "start_time": 17.139,
+          "end_time": 17.199
+        },
+        {
+          "text": "for",
+          "start_time": 17.199,
+          "end_time": 17.479
+        }
+      ]
+    },
+    {
+      "text": "one small brave step.\"",
+      "start_time": 17.619,
+      "end_time": 19.879,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "one",
+          "start_time": 17.619,
+          "end_time": 17.92
+        },
+        {
+          "text": " ",
+          "start_time": 17.92,
+          "end_time": 18.199
+        },
+        {
+          "text": "small",
+          "start_time": 18.199,
+          "end_time": 18.739
+        },
+        {
+          "text": " ",
+          "start_time": 18.739,
+          "end_time": 18.959
+        },
+        {
+          "text": "brave",
+          "start_time": 18.959,
+          "end_time": 19.379
+        },
+        {
+          "text": " ",
+          "start_time": 19.379,
+          "end_time": 19.539
+        },
+        {
+          "text": "step.\"",
+          "start_time": 19.539,
+          "end_time": 19.879
+        }
+      ]
+    },
+    {
+      "text": "Then he added,",
+      "start_time": 20.579,
+      "end_time": 21.359,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Then",
+          "start_time": 20.579,
+          "end_time": 20.779
+        },
+        {
+          "text": " ",
+          "start_time": 20.779,
+          "end_time": 20.859
+        },
+        {
+          "text": "he",
+          "start_time": 20.859,
+          "end_time": 20.959
+        },
+        {
+          "text": " ",
+          "start_time": 20.959,
+          "end_time": 21.079
+        },
+        {
+          "text": "added,",
+          "start_time": 21.079,
+          "end_time": 21.359
+        }
+      ]
+    },
+    {
+      "text": "\"Even late bravery still counts.\"",
+      "start_time": 21.979,
+      "end_time": 24.539,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Even",
+          "start_time": 21.979,
+          "end_time": 22.42
+        },
+        {
+          "text": " ",
+          "start_time": 22.42,
+          "end_time": 22.6
+        },
+        {
+          "text": "late",
+          "start_time": 22.6,
+          "end_time": 22.84
+        },
+        {
+          "text": " ",
+          "start_time": 22.84,
+          "end_time": 22.959
+        },
+        {
+          "text": "bravery",
+          "start_time": 22.959,
+          "end_time": 23.639
+        },
+        {
+          "text": " ",
+          "start_time": 23.639,
+          "end_time": 23.739
+        },
+        {
+          "text": "still",
+          "start_time": 23.739,
+          "end_time": 23.939
+        },
+        {
+          "text": " ",
+          "start_time": 23.939,
+          "end_time": 24.059
+        },
+        {
+          "text": "counts.\"",
+          "start_time": 24.059,
+          "end_time": 24.539
+        }
+      ]
+    },
+    {
+      "text": "The first shard had chosen its path.",
+      "start_time": 25.5,
+      "end_time": 27.859,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "The",
+          "start_time": 25.5,
+          "end_time": 25.539
+        },
+        {
+          "text": " ",
+          "start_time": 25.539,
+          "end_time": 25.719
         },
         {
           "text": "first",
-          "start_time": 2.319,
-          "end_time": 2.679
+          "start_time": 25.719,
+          "end_time": 26.019
         },
         {
           "text": " ",
-          "start_time": 2.679,
-          "end_time": 2.799
+          "start_time": 26.019,
+          "end_time": 26.139
         },
         {
-          "text": "step.",
-          "start_time": 2.799,
-          "end_time": 3.179
+          "text": "shard",
+          "start_time": 26.139,
+          "end_time": 26.519
+        },
+        {
+          "text": " ",
+          "start_time": 26.519,
+          "end_time": 26.559
+        },
+        {
+          "text": "had",
+          "start_time": 26.559,
+          "end_time": 26.76
+        },
+        {
+          "text": " ",
+          "start_time": 26.76,
+          "end_time": 26.819
+        },
+        {
+          "text": "chosen",
+          "start_time": 26.819,
+          "end_time": 27.139
+        },
+        {
+          "text": " ",
+          "start_time": 27.139,
+          "end_time": 27.18
+        },
+        {
+          "text": "its",
+          "start_time": 27.18,
+          "end_time": 27.34
+        },
+        {
+          "text": " ",
+          "start_time": 27.34,
+          "end_time": 27.42
+        },
+        {
+          "text": "path.",
+          "start_time": 27.42,
+          "end_time": 27.859
         }
       ]
     },
     {
-      "text": "Now tell me,",
-      "start_time": 4.139,
-      "end_time": 5.0,
+      "text": "Next, it called them beneath the waves to",
+      "start_time": 28.899,
+      "end_time": 32.559,
       "speaker": {
         "id": "speaker_0",
         "name": "Speaker 0"
       },
       "words": [
         {
-          "text": "Now",
-          "start_time": 4.139,
-          "end_time": 4.42
+          "text": "Next,",
+          "start_time": 28.899,
+          "end_time": 29.299
         },
         {
           "text": " ",
-          "start_time": 4.42,
-          "end_time": 4.46
+          "start_time": 29.299,
+          "end_time": 29.659
         },
         {
-          "text": "tell",
-          "start_time": 4.46,
-          "end_time": 4.759
+          "text": "it",
+          "start_time": 29.659,
+          "end_time": 29.84
         },
         {
           "text": " ",
-          "start_time": 4.759,
-          "end_time": 4.779
+          "start_time": 29.84,
+          "end_time": 29.92
         },
         {
-          "text": "me,",
-          "start_time": 4.779,
-          "end_time": 5.0
+          "text": "called",
+          "start_time": 29.92,
+          "end_time": 30.219
+        },
+        {
+          "text": " ",
+          "start_time": 30.219,
+          "end_time": 30.279
+        },
+        {
+          "text": "them",
+          "start_time": 30.279,
+          "end_time": 30.5
+        },
+        {
+          "text": " ",
+          "start_time": 30.5,
+          "end_time": 30.539
+        },
+        {
+          "text": "beneath",
+          "start_time": 30.539,
+          "end_time": 31.0
+        },
+        {
+          "text": " ",
+          "start_time": 31.0,
+          "end_time": 31.079
+        },
+        {
+          "text": "the",
+          "start_time": 31.079,
+          "end_time": 31.139
+        },
+        {
+          "text": " ",
+          "start_time": 31.139,
+          "end_time": 31.279
+        },
+        {
+          "text": "waves",
+          "start_time": 31.279,
+          "end_time": 32.399
+        },
+        {
+          "text": " ",
+          "start_time": 32.399,
+          "end_time": 32.459
+        },
+        {
+          "text": "to",
+          "start_time": 32.459,
+          "end_time": 32.559
         }
       ]
     },
     {
-      "text": "what shall we do?",
-      "start_time": 5.839,
-      "end_time": 7.0,
+      "text": "the mermaid's whisper cave.",
+      "start_time": 32.599,
+      "end_time": 34.779,
       "speaker": {
         "id": "speaker_0",
         "name": "Speaker 0"
       },
       "words": [
         {
-          "text": "what",
-          "start_time": 5.839,
-          "end_time": 6.0
+          "text": "the",
+          "start_time": 32.599,
+          "end_time": 32.68
         },
         {
           "text": " ",
-          "start_time": 6.0,
-          "end_time": 6.079
+          "start_time": 32.68,
+          "end_time": 32.86
         },
         {
-          "text": "shall",
-          "start_time": 6.079,
-          "end_time": 6.299
-        },
-        {
-          "text": " ",
-          "start_time": 6.299,
-          "end_time": 6.339
-        },
-        {
-          "text": "we",
-          "start_time": 6.339,
-          "end_time": 6.5
+          "text": "mermaid's",
+          "start_time": 32.86,
+          "end_time": 33.739
         },
         {
           "text": " ",
-          "start_time": 6.5,
-          "end_time": 6.559
+          "start_time": 33.739,
+          "end_time": 33.819
         },
         {
-          "text": "do?",
-          "start_time": 6.559,
-          "end_time": 7.0
+          "text": "whisper",
+          "start_time": 33.819,
+          "end_time": 34.259
+        },
+        {
+          "text": " ",
+          "start_time": 34.259,
+          "end_time": 34.319
+        },
+        {
+          "text": "cave.",
+          "start_time": 34.319,
+          "end_time": 34.779
         }
       ]
     }

@@ -2,150 +2,698 @@
   "language_code": null,
   "segments": [
     {
-      "text": "Every hero chooses their first step.",
-      "start_time": 0.14,
-      "end_time": 3.179,
+      "text": "You turned to Captain Coral and said,",
+      "start_time": 0.099,
+      "end_time": 2.119,
       "speaker": {
         "id": "speaker_0",
         "name": "Speaker 0"
       },
       "words": [
         {
-          "text": "Every",
-          "start_time": 0.14,
-          "end_time": 0.659
+          "text": "You",
+          "start_time": 0.099,
+          "end_time": 0.299
         },
         {
           "text": " ",
-          "start_time": 0.659,
-          "end_time": 0.719
+          "start_time": 0.299,
+          "end_time": 0.319
         },
         {
-          "text": "hero",
-          "start_time": 0.719,
-          "end_time": 1.179
-        },
-        {
-          "text": " ",
-          "start_time": 1.179,
-          "end_time": 1.399
-        },
-        {
-          "text": "chooses",
-          "start_time": 1.399,
-          "end_time": 1.959
+          "text": "turned",
+          "start_time": 0.319,
+          "end_time": 0.579
         },
         {
           "text": " ",
-          "start_time": 1.959,
-          "end_time": 2.019
+          "start_time": 0.579,
+          "end_time": 0.62
         },
         {
-          "text": "their",
-          "start_time": 2.019,
-          "end_time": 2.299
+          "text": "to",
+          "start_time": 0.62,
+          "end_time": 0.699
         },
         {
           "text": " ",
-          "start_time": 2.299,
-          "end_time": 2.319
+          "start_time": 0.699,
+          "end_time": 0.779
+        },
+        {
+          "text": "Captain",
+          "start_time": 0.779,
+          "end_time": 1.139
+        },
+        {
+          "text": " ",
+          "start_time": 1.139,
+          "end_time": 1.259
+        },
+        {
+          "text": "Coral",
+          "start_time": 1.259,
+          "end_time": 1.659
+        },
+        {
+          "text": " ",
+          "start_time": 1.659,
+          "end_time": 1.719
+        },
+        {
+          "text": "and",
+          "start_time": 1.719,
+          "end_time": 1.839
+        },
+        {
+          "text": " ",
+          "start_time": 1.839,
+          "end_time": 1.919
+        },
+        {
+          "text": "said,",
+          "start_time": 1.919,
+          "end_time": 2.119
+        }
+      ]
+    },
+    {
+      "text": "\"Come with me.",
+      "start_time": 2.679,
+      "end_time": 3.399,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Come",
+          "start_time": 2.679,
+          "end_time": 2.919
+        },
+        {
+          "text": " ",
+          "start_time": 2.919,
+          "end_time": 2.959
+        },
+        {
+          "text": "with",
+          "start_time": 2.96,
+          "end_time": 3.099
+        },
+        {
+          "text": " ",
+          "start_time": 3.099,
+          "end_time": 3.199
+        },
+        {
+          "text": "me.",
+          "start_time": 3.199,
+          "end_time": 3.399
+        }
+      ]
+    },
+    {
+      "text": "We can help Lumi together.\"",
+      "start_time": 4.139,
+      "end_time": 5.659,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "We",
+          "start_time": 4.139,
+          "end_time": 4.259
+        },
+        {
+          "text": " ",
+          "start_time": 4.259,
+          "end_time": 4.299
+        },
+        {
+          "text": "can",
+          "start_time": 4.299,
+          "end_time": 4.44
+        },
+        {
+          "text": " ",
+          "start_time": 4.44,
+          "end_time": 4.48
+        },
+        {
+          "text": "help",
+          "start_time": 4.48,
+          "end_time": 4.659
+        },
+        {
+          "text": " ",
+          "start_time": 4.659,
+          "end_time": 4.739
+        },
+        {
+          "text": "Lumi",
+          "start_time": 4.739,
+          "end_time": 5.039
+        },
+        {
+          "text": " ",
+          "start_time": 5.039,
+          "end_time": 5.159
+        },
+        {
+          "text": "together.\"",
+          "start_time": 5.159,
+          "end_time": 5.659
+        }
+      ]
+    },
+    {
+      "text": "Captain Coral nodded with bright approval.",
+      "start_time": 6.44,
+      "end_time": 9.0,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Captain",
+          "start_time": 6.44,
+          "end_time": 6.779
+        },
+        {
+          "text": " ",
+          "start_time": 6.779,
+          "end_time": 6.899
+        },
+        {
+          "text": "Coral",
+          "start_time": 6.899,
+          "end_time": 7.319
+        },
+        {
+          "text": " ",
+          "start_time": 7.319,
+          "end_time": 7.439
+        },
+        {
+          "text": "nodded",
+          "start_time": 7.44,
+          "end_time": 7.819
+        },
+        {
+          "text": " ",
+          "start_time": 7.819,
+          "end_time": 7.879
+        },
+        {
+          "text": "with",
+          "start_time": 7.879,
+          "end_time": 8.06
+        },
+        {
+          "text": " ",
+          "start_time": 8.06,
+          "end_time": 8.159
+        },
+        {
+          "text": "bright",
+          "start_time": 8.159,
+          "end_time": 8.399
+        },
+        {
+          "text": " ",
+          "start_time": 8.399,
+          "end_time": 8.539
+        },
+        {
+          "text": "approval.",
+          "start_time": 8.539,
+          "end_time": 9.0
+        }
+      ]
+    },
+    {
+      "text": "\"Now that is proper pirate thinking,\" he",
+      "start_time": 9.559,
+      "end_time": 13.119,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Now",
+          "start_time": 9.559,
+          "end_time": 9.859
+        },
+        {
+          "text": " ",
+          "start_time": 9.859,
+          "end_time": 10.079
+        },
+        {
+          "text": "that",
+          "start_time": 10.079,
+          "end_time": 10.42
+        },
+        {
+          "text": " ",
+          "start_time": 10.42,
+          "end_time": 10.639
+        },
+        {
+          "text": "is",
+          "start_time": 10.639,
+          "end_time": 10.899
+        },
+        {
+          "text": " ",
+          "start_time": 10.899,
+          "end_time": 10.979
+        },
+        {
+          "text": "proper",
+          "start_time": 10.979,
+          "end_time": 11.359
+        },
+        {
+          "text": " ",
+          "start_time": 11.359,
+          "end_time": 11.559
+        },
+        {
+          "text": "pirate",
+          "start_time": 11.559,
+          "end_time": 12.0
+        },
+        {
+          "text": " ",
+          "start_time": 12.0,
+          "end_time": 12.079
+        },
+        {
+          "text": "thinking,\"",
+          "start_time": 12.079,
+          "end_time": 12.559
+        },
+        {
+          "text": " ",
+          "start_time": 12.559,
+          "end_time": 13.0
+        },
+        {
+          "text": "he",
+          "start_time": 13.0,
+          "end_time": 13.119
+        }
+      ]
+    },
+    {
+      "text": "said. \"Brave does not mean alone.\"",
+      "start_time": 13.199,
+      "end_time": 16.6,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "said.",
+          "start_time": 13.199,
+          "end_time": 13.46
+        },
+        {
+          "text": " ",
+          "start_time": 13.46,
+          "end_time": 13.899
+        },
+        {
+          "text": "\"Brave",
+          "start_time": 13.899,
+          "end_time": 14.639
+        },
+        {
+          "text": " ",
+          "start_time": 14.639,
+          "end_time": 14.959
+        },
+        {
+          "text": "does",
+          "start_time": 14.96,
+          "end_time": 15.199
+        },
+        {
+          "text": " ",
+          "start_time": 15.199,
+          "end_time": 15.259
+        },
+        {
+          "text": "not",
+          "start_time": 15.259,
+          "end_time": 15.48
+        },
+        {
+          "text": " ",
+          "start_time": 15.48,
+          "end_time": 15.619
+        },
+        {
+          "text": "mean",
+          "start_time": 15.619,
+          "end_time": 15.88
+        },
+        {
+          "text": " ",
+          "start_time": 15.88,
+          "end_time": 15.96
+        },
+        {
+          "text": "alone.\"",
+          "start_time": 15.96,
+          "end_time": 16.6
+        }
+      ]
+    },
+    {
+      "text": "Lumi fluttered with delight.",
+      "start_time": 17.6,
+      "end_time": 19.199,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Lumi",
+          "start_time": 17.6,
+          "end_time": 18.0
+        },
+        {
+          "text": " ",
+          "start_time": 18.0,
+          "end_time": 18.079
+        },
+        {
+          "text": "fluttered",
+          "start_time": 18.079,
+          "end_time": 18.479
+        },
+        {
+          "text": " ",
+          "start_time": 18.479,
+          "end_time": 18.539
+        },
+        {
+          "text": "with",
+          "start_time": 18.539,
+          "end_time": 18.719
+        },
+        {
+          "text": " ",
+          "start_time": 18.719,
+          "end_time": 18.779
+        },
+        {
+          "text": "delight.",
+          "start_time": 18.779,
+          "end_time": 19.199
+        }
+      ]
+    },
+    {
+      "text": "\"The shard likes teamwork,\" he squeaked.",
+      "start_time": 20.079,
+      "end_time": 23.019,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"The",
+          "start_time": 20.079,
+          "end_time": 20.18
+        },
+        {
+          "text": " ",
+          "start_time": 20.18,
+          "end_time": 20.379
+        },
+        {
+          "text": "shard",
+          "start_time": 20.379,
+          "end_time": 20.759
+        },
+        {
+          "text": " ",
+          "start_time": 20.759,
+          "end_time": 20.819
+        },
+        {
+          "text": "likes",
+          "start_time": 20.819,
+          "end_time": 21.159
+        },
+        {
+          "text": " ",
+          "start_time": 21.159,
+          "end_time": 21.219
+        },
+        {
+          "text": "teamwork,\"",
+          "start_time": 21.219,
+          "end_time": 21.839
+        },
+        {
+          "text": " ",
+          "start_time": 21.839,
+          "end_time": 22.359
+        },
+        {
+          "text": "he",
+          "start_time": 22.359,
+          "end_time": 22.5
+        },
+        {
+          "text": " ",
+          "start_time": 22.5,
+          "end_time": 22.559
+        },
+        {
+          "text": "squeaked.",
+          "start_time": 22.559,
+          "end_time": 23.019
+        }
+      ]
+    },
+    {
+      "text": "The first shard had chosen its path.",
+      "start_time": 23.939,
+      "end_time": 26.599,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "The",
+          "start_time": 23.939,
+          "end_time": 24.079
+        },
+        {
+          "text": " ",
+          "start_time": 24.079,
+          "end_time": 24.159
         },
         {
           "text": "first",
-          "start_time": 2.319,
-          "end_time": 2.679
+          "start_time": 24.159,
+          "end_time": 24.519
         },
         {
           "text": " ",
-          "start_time": 2.679,
-          "end_time": 2.799
+          "start_time": 24.519,
+          "end_time": 24.639
         },
         {
-          "text": "step.",
-          "start_time": 2.799,
-          "end_time": 3.179
+          "text": "shard",
+          "start_time": 24.639,
+          "end_time": 25.079
+        },
+        {
+          "text": " ",
+          "start_time": 25.079,
+          "end_time": 25.139
+        },
+        {
+          "text": "had",
+          "start_time": 25.139,
+          "end_time": 25.319
+        },
+        {
+          "text": " ",
+          "start_time": 25.319,
+          "end_time": 25.379
+        },
+        {
+          "text": "chosen",
+          "start_time": 25.379,
+          "end_time": 25.719
+        },
+        {
+          "text": " ",
+          "start_time": 25.719,
+          "end_time": 25.779
+        },
+        {
+          "text": "its",
+          "start_time": 25.779,
+          "end_time": 25.979
+        },
+        {
+          "text": " ",
+          "start_time": 25.979,
+          "end_time": 26.039
+        },
+        {
+          "text": "path.",
+          "start_time": 26.039,
+          "end_time": 26.599
         }
       ]
     },
     {
-      "text": "Now tell me,",
-      "start_time": 4.139,
-      "end_time": 5.0,
+      "text": "Next, it called them beneath the waves to",
+      "start_time": 27.599,
+      "end_time": 31.659,
       "speaker": {
         "id": "speaker_0",
         "name": "Speaker 0"
       },
       "words": [
         {
-          "text": "Now",
-          "start_time": 4.139,
-          "end_time": 4.42
+          "text": "Next,",
+          "start_time": 27.599,
+          "end_time": 28.18
         },
         {
           "text": " ",
-          "start_time": 4.42,
-          "end_time": 4.46
+          "start_time": 28.18,
+          "end_time": 28.579
         },
         {
-          "text": "tell",
-          "start_time": 4.46,
-          "end_time": 4.759
+          "text": "it",
+          "start_time": 28.579,
+          "end_time": 28.739
         },
         {
           "text": " ",
-          "start_time": 4.759,
-          "end_time": 4.779
+          "start_time": 28.739,
+          "end_time": 28.799
         },
         {
-          "text": "me,",
-          "start_time": 4.779,
-          "end_time": 5.0
+          "text": "called",
+          "start_time": 28.799,
+          "end_time": 29.079
+        },
+        {
+          "text": " ",
+          "start_time": 29.079,
+          "end_time": 29.139
+        },
+        {
+          "text": "them",
+          "start_time": 29.139,
+          "end_time": 29.34
+        },
+        {
+          "text": " ",
+          "start_time": 29.34,
+          "end_time": 29.459
+        },
+        {
+          "text": "beneath",
+          "start_time": 29.459,
+          "end_time": 29.979
+        },
+        {
+          "text": " ",
+          "start_time": 29.979,
+          "end_time": 30.019
+        },
+        {
+          "text": "the",
+          "start_time": 30.019,
+          "end_time": 30.079
+        },
+        {
+          "text": " ",
+          "start_time": 30.079,
+          "end_time": 30.219
+        },
+        {
+          "text": "waves",
+          "start_time": 30.219,
+          "end_time": 31.5
+        },
+        {
+          "text": " ",
+          "start_time": 31.5,
+          "end_time": 31.559
+        },
+        {
+          "text": "to",
+          "start_time": 31.559,
+          "end_time": 31.659
         }
       ]
     },
     {
-      "text": "what shall we do?",
-      "start_time": 5.839,
-      "end_time": 7.0,
+      "text": "the mermaid's whisper cave.",
+      "start_time": 31.719,
+      "end_time": 34.0,
       "speaker": {
         "id": "speaker_0",
         "name": "Speaker 0"
       },
       "words": [
         {
-          "text": "what",
-          "start_time": 5.839,
-          "end_time": 6.0
+          "text": "the",
+          "start_time": 31.719,
+          "end_time": 31.76
         },
         {
           "text": " ",
-          "start_time": 6.0,
-          "end_time": 6.079
+          "start_time": 31.76,
+          "end_time": 31.92
         },
         {
-          "text": "shall",
-          "start_time": 6.079,
-          "end_time": 6.299
-        },
-        {
-          "text": " ",
-          "start_time": 6.299,
-          "end_time": 6.339
-        },
-        {
-          "text": "we",
-          "start_time": 6.339,
-          "end_time": 6.5
+          "text": "mermaid's",
+          "start_time": 31.92,
+          "end_time": 32.819
         },
         {
           "text": " ",
-          "start_time": 6.5,
-          "end_time": 6.559
+          "start_time": 32.819,
+          "end_time": 32.88
         },
         {
-          "text": "do?",
-          "start_time": 6.559,
-          "end_time": 7.0
+          "text": "whisper",
+          "start_time": 32.88,
+          "end_time": 33.379
+        },
+        {
+          "text": " ",
+          "start_time": 33.379,
+          "end_time": 33.459
+        },
+        {
+          "text": "cave.",
+          "start_time": 33.459,
+          "end_time": 34.0
         }
       ]
     }

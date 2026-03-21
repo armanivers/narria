@@ -38,6 +38,7 @@ export default function StoryPage() {
   const [outroFade, setOutroFade] = useState(false);
   const [pagesByNumber, setPagesByNumber] = useState<Record<number, PageData>>({});
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [isAudioPaused, setIsAudioPaused] = useState(false);
   const [audioUnlockNeeded, setAudioUnlockNeeded] = useState(false);
   const [autoFlipSecondsLeft, setAutoFlipSecondsLeft] = useState<number | null>(null);
   const [dialogPromptPage, setDialogPromptPage] = useState<number | null>(null);
@@ -70,6 +71,8 @@ export default function StoryPage() {
   const subtitleTrackRef = useRef<SubtitleTrack | null>(null);
   const subtitleSegmentIndexRef = useRef<number>(-1);
   const subtitleWordIndexRef = useRef<number>(-1);
+  /** Short SFX for spread change; separate from narration `audioRef`. */
+  const pageFlipSfxRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIntroFade(false), 1400);
@@ -124,6 +127,7 @@ export default function StoryPage() {
       audioRef.current.currentTime = 0;
     }
     setIsAudioPlaying(false);
+    setIsAudioPaused(false);
     subtitleTrackRef.current = null;
     subtitleSegmentIndexRef.current = -1;
     subtitleWordIndexRef.current = -1;
@@ -199,8 +203,16 @@ export default function StoryPage() {
         const audio = new Audio(src);
         audioRef.current = audio;
         void loadSubtitleTrack(src);
-        audio.onplay = () => setIsAudioPlaying(true);
-        audio.onpause = () => setIsAudioPlaying(false);
+        audio.onplay = () => {
+          setIsAudioPlaying(true);
+          setIsAudioPaused(false);
+        };
+        audio.onpause = () => {
+          setIsAudioPlaying(false);
+          if (!audio.ended && audio.currentTime > 0) {
+            setIsAudioPaused(true);
+          }
+        };
         audio.ontimeupdate = () => {
           const track = subtitleTrackRef.current;
           if (!track) return;
@@ -240,6 +252,7 @@ export default function StoryPage() {
         };
         audio.onended = () => {
           setIsAudioPlaying(false);
+          setIsAudioPaused(false);
           subtitleSegmentIndexRef.current = -1;
           subtitleWordIndexRef.current = -1;
           setSubtitleWords([]);
@@ -260,6 +273,7 @@ export default function StoryPage() {
         audio.play().catch(() => {
           // Browser autoplay policies can block sound; require one-click unlock.
           setIsAudioPlaying(false);
+          setIsAudioPaused(false);
           setAudioUnlockNeeded(true);
           pendingAudioRef.current = audioConfig ? { config: audioConfig, onEnded, options } : null;
         });
@@ -287,10 +301,44 @@ export default function StoryPage() {
     }
   }, [scheduleAudioPlayback]);
 
+  const toggleAudioPlayback = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!audio.paused) {
+      audio.pause();
+      return;
+    }
+    void audio.play().catch(() => {
+      setAudioUnlockNeeded(true);
+    });
+  }, []);
+
+  const playPageFlipSound = useCallback(() => {
+    try {
+      if (!pageFlipSfxRef.current) {
+        const el = new Audio("/pageflip.mp3");
+        el.preload = "auto";
+        pageFlipSfxRef.current = el;
+      }
+      const sfx = pageFlipSfxRef.current;
+      sfx.volume = 0.7;
+      sfx.currentTime = 0;
+      void sfx.play().catch(() => {
+        /* Autoplay or missing file — ignore */
+      });
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   useEffect(() => {
     return () => {
       stopAudioPlayback();
       clearAutoFlipCountdown();
+      if (pageFlipSfxRef.current) {
+        pageFlipSfxRef.current.pause();
+        pageFlipSfxRef.current.currentTime = 0;
+      }
     };
   }, [clearAutoFlipCountdown, stopAudioPlayback]);
 
@@ -454,6 +502,7 @@ export default function StoryPage() {
     }
 
     setIsBusy(true);
+    playPageFlipSound();
     setState("flipping");
     await loadSpread(nextPage);
     setFlipTick((value) => value + 1);
@@ -478,7 +527,22 @@ export default function StoryPage() {
       setState("open");
       setIsBusy(false);
     }, 600);
-  }, [clearAutoFlipCountdown, finishBook, focusedPage, handlePageAudioEnded, isBusy, loadPage, loadSpread, pagesByNumber, scheduleAudioPlayback, selectedChoiceByPage, state, stopAudioPlayback, totalPages]);
+  }, [
+    clearAutoFlipCountdown,
+    finishBook,
+    focusedPage,
+    handlePageAudioEnded,
+    isBusy,
+    loadPage,
+    loadSpread,
+    pagesByNumber,
+    playPageFlipSound,
+    scheduleAudioPlayback,
+    selectedChoiceByPage,
+    state,
+    stopAudioPlayback,
+    totalPages
+  ]);
 
   useEffect(() => {
     advancePageRef.current = advancePage;
@@ -534,17 +598,18 @@ export default function StoryPage() {
     return () => clearTimeout(run);
   }, [coverAudio, scheduleAudioPlayback, state]);
 
-  const currentPageDataRaw = focusedPage > 0 ? pagesByNumber[focusedPage] : null;
-  const currentPageOverride = focusedPage > 0 ? choiceMediaOverrideByPage[focusedPage] : null;
-  const currentPageData = currentPageDataRaw
-    ? {
-        ...currentPageDataRaw,
-        image: currentPageOverride
-          ? { ...currentPageDataRaw.image, image: currentPageOverride.image }
-          : currentPageDataRaw.image,
-        audio: currentPageOverride ? currentPageOverride.audio : currentPageDataRaw.audio
-      }
-    : null;
+  const currentPageData = useMemo(() => {
+    const currentPageDataRaw = focusedPage > 0 ? pagesByNumber[focusedPage] : null;
+    const currentPageOverride = focusedPage > 0 ? choiceMediaOverrideByPage[focusedPage] : null;
+    if (!currentPageDataRaw) return null;
+    return {
+      ...currentPageDataRaw,
+      image: currentPageOverride
+        ? { ...currentPageDataRaw.image, image: currentPageOverride.image }
+        : currentPageDataRaw.image,
+      audio: currentPageOverride ? currentPageOverride.audio : currentPageDataRaw.audio
+    };
+  }, [choiceMediaOverrideByPage, focusedPage, pagesByNumber]);
   const rightPageNumber = spreadStart + 1 <= totalPages ? spreadStart + 1 : null;
   const rightPageOverride = rightPageNumber ? choiceMediaOverrideByPage[rightPageNumber] : null;
   const displayedRightPageImage = rightPageOverride?.image || rightPageImage;
@@ -559,6 +624,22 @@ export default function StoryPage() {
       currentPageData?.dialog &&
       dialogPromptPage === focusedPage
   );
+  const showReplayButton = autoFlipSecondsLeft !== null && !currentPageData?.hasDialogChoice;
+  const pageIndicator = focusedPage > 0 ? `${focusedPage}/${totalPages}` : `Cover/${totalPages}`;
+
+  const restartCurrentPageAudio = useCallback(() => {
+    clearAutoFlipCountdown();
+    stopAudioPlayback();
+    if (focusedPage > 0 && currentPageData?.audio?.src) {
+      scheduleAudioPlayback(currentPageData.audio, () => {
+        handlePageAudioEnded(currentPageData.pageNumber);
+      }, { overrideDelayMs: 0 });
+      return;
+    }
+    if (focusedPage === 0 && coverAudio?.front?.src) {
+      scheduleAudioPlayback(coverAudio.front, undefined, { overrideDelayMs: 0 });
+    }
+  }, [clearAutoFlipCountdown, coverAudio, currentPageData, focusedPage, handlePageAudioEnded, scheduleAudioPlayback, stopAudioPlayback]);
 
   const handleChoiceSelect = useCallback(
     (option: string) => {
@@ -600,6 +681,17 @@ export default function StoryPage() {
       <section className="panel storyContainer storyPanel">
         {introFade ? <div className="storyIntroOverlay" /> : null}
         {outroFade ? <div className="storyOutroOverlay" /> : null}
+        <div className="storyTopBar">
+          {isAudioPlaying || isAudioPaused ? (
+            <button className="audioControlButton" onClick={toggleAudioPlayback}>
+              {isAudioPaused ? "▶ Continue Audio" : "⏸ Pause Audio"}
+            </button>
+          ) : (
+            <span />
+          )}
+          <div className="pageIndicatorBubble">{pageIndicator}</div>
+          <span />
+        </div>
         {autoFlipSecondsLeft !== null ? (
           <div className="autoFlipIndicator">
             <span className="autoFlipCircle">{autoFlipSecondsLeft}</span>
@@ -614,13 +706,18 @@ export default function StoryPage() {
           rightPageNumber={rightPageNumber}
           focusedPage={focusedPage}
           maskRightPageUntilChoice={shouldMaskRightPageUntilChoice}
+          frontCoverTitle={bookName}
         />
 
         <div className="storyControls">
           <p>
             {bookName} - Focus page {focusedPage || 0}/{totalPages}
           </p>
-          {isAudioPlaying ? <div className="audioPlayingBadge">🔊 Playing</div> : null}
+          {showReplayButton ? (
+            <button className="menuButton secondaryButton" onClick={restartCurrentPageAudio}>
+              Restart Page
+            </button>
+          ) : null}
           <button className="menuButton" onClick={advancePage} disabled={isBusy}>
             {label}
           </button>

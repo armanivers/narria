@@ -12,7 +12,8 @@ export default function BookScene({
   leftPageNumber,
   rightPageNumber,
   focusedPage,
-  maskRightPageUntilChoice
+  maskRightPageUntilChoice,
+  frontCoverTitle
 }: {
   state: BookState;
   leftPageImage: string | null;
@@ -22,6 +23,7 @@ export default function BookScene({
   rightPageNumber: number | null;
   focusedPage: number;
   maskRightPageUntilChoice: boolean;
+  frontCoverTitle: string;
 }) {
   const showSpread = state !== "closed-front" && state !== "closed-back";
   const showFront = state === "closed-front" || state === "opening";
@@ -49,7 +51,7 @@ export default function BookScene({
       >
         {showFront ? (
           <div className={`book2dCoverFront ${state === "opening" ? "book2dCoverOpening" : ""}`}>
-            Narria Storybook
+            {frontCoverTitle || "Narria Storybook"}
           </div>
         ) : null}
         {showBack ? <div className="book2dCoverBack">The End</div> : null}
