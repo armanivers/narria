@@ -26,17 +26,18 @@ export default function MenuPage() {
       .catch(() => setBooks([]));
   }, [router]);
 
-  async function startStory() {
-    try {
-      // Unlock media playback from this explicit user gesture.
-      const probe = new Audio();
-      probe.muted = true;
-      await probe.play();
-      probe.pause();
-      probe.currentTime = 0;
-    } catch {
-      // If unlock fails, story page fallback overlay will still handle it.
-    }
+  function startStory() {
+    // Try to unlock audio without blocking navigation.
+    const probe = new Audio();
+    probe.muted = true;
+    void probe.play()
+      .then(() => {
+        probe.pause();
+        probe.currentTime = 0;
+      })
+      .catch(() => {
+        // Story page fallback overlay handles blocked audio.
+      });
 
     saveSelectedBook(selectedBook);
     router.push(`/story/${selectedBook}`);

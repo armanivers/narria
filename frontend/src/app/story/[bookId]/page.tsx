@@ -40,9 +40,11 @@ export default function StoryPage() {
   const skipNextAutoPageAudioRef = useRef<number | null>(null);
   const autoFlipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoFlipIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const advancePageRef = useRef<(() => Promise<void>) | null>(null);
   const pendingAudioRef = useRef<{
     config: AudioConfig;
     onEnded?: () => void;
+    options?: { overrideDelayMs?: number; shouldAutoAdvanceOnEnd?: boolean };
   } | null>(null);
 
   useEffect(() => {
@@ -116,31 +118,39 @@ export default function StoryPage() {
     (
       audioConfig: AudioConfig | null | undefined,
       onEnded?: () => void,
-      options?: { overrideDelayMs?: number }
+      options?: { overrideDelayMs?: number; shouldAutoAdvanceOnEnd?: boolean }
     ) => {
       const src = resolveAudioUrl(audioConfig?.src);
       if (!src) return;
       stopAudioPlayback();
 
       const delay = options?.overrideDelayMs ?? audioConfig?.startDelayMs ?? 1000;
+      const shouldAutoAdvanceOnEnd = options?.shouldAutoAdvanceOnEnd ?? false;
       audioDelayTimeoutRef.current = setTimeout(() => {
         const audio = new Audio(src);
         audioRef.current = audio;
         audio.onplay = () => setIsAudioPlaying(true);
         audio.onpause = () => setIsAudioPlaying(false);
-        if (onEnded) {
-          audio.onended = () => {
-            setIsAudioPlaying(false);
-            startAutoFlipCountdown(onEnded);
-          };
-        } else {
-          audio.onended = () => setIsAudioPlaying(false);
-        }
+        audio.onended = () => {
+          setIsAudioPlaying(false);
+          if (shouldAutoAdvanceOnEnd) {
+            startAutoFlipCountdown(() => {
+              const triggerNext = advancePageRef.current;
+              if (triggerNext) {
+                void triggerNext();
+              }
+            });
+            return;
+          }
+          if (onEnded) {
+            onEnded();
+          }
+        };
         audio.play().catch(() => {
           // Browser autoplay policies can block sound; require one-click unlock.
           setIsAudioPlaying(false);
           setAudioUnlockNeeded(true);
-          pendingAudioRef.current = audioConfig ? { config: audioConfig, onEnded } : null;
+          pendingAudioRef.current = audioConfig ? { config: audioConfig, onEnded, options } : null;
         });
       }, delay);
     },
@@ -162,7 +172,7 @@ export default function StoryPage() {
     const pending = pendingAudioRef.current;
     pendingAudioRef.current = null;
     if (pending) {
-      scheduleAudioPlayback(pending.config, pending.onEnded);
+      scheduleAudioPlayback(pending.config, pending.onEnded, pending.options);
     }
   }, [scheduleAudioPlayback]);
 
@@ -221,7 +231,10 @@ export default function StoryPage() {
       if (pageOneData?.audio?.src) {
         // User gesture path: play immediately on first next click.
         skipNextAutoPageAudioRef.current = 1;
-        scheduleAudioPlayback(pageOneData.audio, undefined, { overrideDelayMs: 0 });
+        scheduleAudioPlayback(pageOneData.audio, undefined, {
+          overrideDelayMs: 0,
+          shouldAutoAdvanceOnEnd: true
+        });
       }
       setTimeout(() => {
         setState("open");
@@ -253,6 +266,10 @@ export default function StoryPage() {
   }, [clearAutoFlipCountdown, finishBook, focusedPage, isBusy, loadPage, loadSpread, scheduleAudioPlayback, state, stopAudioPlayback, totalPages]);
 
   useEffect(() => {
+    advancePageRef.current = advancePage;
+  }, [advancePage]);
+
+  useEffect(() => {
     if (state !== "open" || focusedPage < 1) return;
     if (skipNextAutoPageAudioRef.current === focusedPage) {
       skipNextAutoPageAudioRef.current = null;
@@ -262,9 +279,7 @@ export default function StoryPage() {
     if (!pageData?.audio) return;
 
     const run = setTimeout(() => {
-      scheduleAudioPlayback(pageData.audio, () => {
-        advancePage();
-      });
+      scheduleAudioPlayback(pageData.audio, undefined, { shouldAutoAdvanceOnEnd: true });
     }, 0);
 
     return () => {
@@ -279,7 +294,7 @@ export default function StoryPage() {
 
     hasPlayedFrontRef.current = true;
     const run = setTimeout(() => {
-      scheduleAudioPlayback(coverAudio.front);
+      scheduleAudioPlayback(coverAudio.front, undefined, { shouldAutoAdvanceOnEnd: true });
     }, 0);
     return () => clearTimeout(run);
   }, [coverAudio, introFade, scheduleAudioPlayback, state]);
@@ -310,8 +325,7 @@ export default function StoryPage() {
         {outroFade ? <div className="storyOutroOverlay" /> : null}
         {autoFlipSecondsLeft !== null ? (
           <div className="autoFlipIndicator">
-            <span className="autoFlipSpinner" />
-            Flipping in {autoFlipSecondsLeft}s
+            <span className="autoFlipCircle">{autoFlipSecondsLeft}</span>
           </div>
         ) : null}
         <BookScene

@@ -63,11 +63,11 @@
     "coverAudio": {
       "front": {
         "src": "front.mp3",
-        "startDelayMs": 800
+        "startDelayMs": 0
       },
       "back": {
         "src": "",
-        "startDelayMs": 800
+        "startDelayMs": 0
       }
     },
     "pages": [
@@ -75,7 +75,7 @@
         "pageNumber": 1,
         "audio": {
           "src": "page1.mp3",
-          "startDelayMs": 1000
+          "startDelayMs": 0
         },
         "hasDialogChoice": false,
         "dialog": null

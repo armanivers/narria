@@ -411,28 +411,30 @@ body {
   top: 14px;
   right: 16px;
   z-index: 22;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border-radius: 999px;
-  padding: 8px 12px;
-  font-size: 0.82rem;
-  color: #efe8ff;
-  background: rgba(22, 17, 34, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: grid;
+  place-items: center;
 }
 
-.autoFlipSpinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  border-top-color: #fff;
+.autoFlipCircle {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f4ebff;
+  background: rgba(22, 17, 34, 0.88);
+  border: 2px solid rgba(255, 255, 255, 0.38);
   border-radius: 50%;
-  animation: spin 0.9s linear infinite;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25);
+  animation: pulseRing 1s ease infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@keyframes pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.26);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
   }
 }
