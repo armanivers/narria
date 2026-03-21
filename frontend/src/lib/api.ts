@@ -23,6 +23,24 @@ export type AudioConfig = {
   startDelayMs?: number;
 };
 
+/** Backend may send one clip, several, or string filenames; normalize to an ordered list. */
+export function normalizePageAudios(
+  audio: AudioConfig | AudioConfig[] | string | string[] | null | undefined
+): AudioConfig[] {
+  if (audio == null) return [];
+  const list = Array.isArray(audio) ? audio : [audio];
+  return list
+    .map((item) => {
+      if (typeof item === "string") {
+        const src = item.trim();
+        return src ? { src, startDelayMs: 0 } : null;
+      }
+      if (item && String(item.src || "").trim().length > 0) return item as AudioConfig;
+      return null;
+    })
+    .filter((t): t is AudioConfig => t != null);
+}
+
 export type DialogChoice = {
   question: string;
   options: string[];
@@ -37,12 +55,13 @@ export type PageData = {
     kind: "url";
     image: string;
   };
-  audio: AudioConfig | null;
+  /** Ordered clips for this page; played one after another. */
+  audio: AudioConfig[];
   choiceOutcomes: Record<
     string,
     {
       image: { kind: "url"; image: string };
-      audio: AudioConfig | null;
+      audio: AudioConfig[];
     }
   > | null;
   hasDialogChoice: boolean;
@@ -130,12 +149,33 @@ export async function getBookPage(bookId: string, pageNumber: number) {
 }
 
 export async function getProfilePhoto(parentId: string) {
-  return request<{ photoUrl: string | null }>(`/profile/photo/${parentId}`);
+  return request<{
+    photoUrl: string | null;
+    cartoonPhotoUrl: string | null;
+  }>(`/profile/photo/${parentId}`);
 }
 
 export async function saveProfilePhoto(parentId: string, imageDataUrl: string) {
-  return request<{ photoUrl: string }>("/profile/photo", {
+  return request<{
+    photoUrl: string;
+    cartoonPending?: boolean;
+    cartoonPhotoUrl: string | null;
+  }>("/profile/photo", {
     method: "POST",
     body: JSON.stringify({ parentId, imageDataUrl })
   });
+}
+
+/** ElevenLabs: generates MP3 on backend; returns URL under /assets/audio/personalized/ */
+export async function requestElevenLabsWelcomeAudio(input: {
+  name: string;
+  parentId?: string;
+}) {
+  return request<{ audioUrl: string; fileName: string; text: string }>(
+    "/audio/elevenlabs/welcome",
+    {
+      method: "POST",
+      body: JSON.stringify(input)
+    }
+  );
 }

@@ -4,19 +4,34 @@ const TOKEN_KEY = "storybook_token";
 const PARENT_KEY = "storybook_parent";
 const BOOK_KEY = "storybook_selected_book";
 
+function browserStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 export function saveSession(token: string, parent: Parent) {
-  localStorage.setItem(TOKEN_KEY, token);
-  localStorage.setItem(PARENT_KEY, JSON.stringify(parent));
+  const storage = browserStorage();
+  if (!storage) return;
+  storage.setItem(TOKEN_KEY, token);
+  storage.setItem(PARENT_KEY, JSON.stringify(parent));
 }
 
 export function clearSession() {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(PARENT_KEY);
-  localStorage.removeItem(BOOK_KEY);
+  const storage = browserStorage();
+  if (!storage) return;
+  storage.removeItem(TOKEN_KEY);
+  storage.removeItem(PARENT_KEY);
+  storage.removeItem(BOOK_KEY);
 }
 
 export function getParentFromSession(): Parent | null {
-  const raw = localStorage.getItem(PARENT_KEY);
+  const storage = browserStorage();
+  if (!storage) return null;
+  const raw = storage.getItem(PARENT_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as Parent;
@@ -26,9 +41,13 @@ export function getParentFromSession(): Parent | null {
 }
 
 export function saveSelectedBook(bookId: string) {
-  localStorage.setItem(BOOK_KEY, bookId);
+  const storage = browserStorage();
+  if (!storage) return;
+  storage.setItem(BOOK_KEY, bookId);
 }
 
-export function getSelectedBook() {
-  return localStorage.getItem(BOOK_KEY);
+export function getSelectedBook(): string | null {
+  const storage = browserStorage();
+  if (!storage) return null;
+  return storage.getItem(BOOK_KEY);
 }

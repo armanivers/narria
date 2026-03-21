@@ -34,6 +34,22 @@ npm run dev
 Frontend expects backend at `http://localhost:4000`.
 Set `NEXT_PUBLIC_API_BASE_URL` in `frontend/.env.local` if needed.
 
+### Backend: cartoon avatar (Gemini / Nano Banana)
+
+After a parent uploads a profile selfie, the backend can call the Gemini image API to generate a cartoon version.
+
+1. Copy `backend/.env.example` to `backend/.env` (or add `GEMINI_API_KEY` to a `.env` in the **repo root** — the backend loads both; `backend/.env` overrides on conflicts).
+2. Set `GEMINI_API_KEY` from [Google AI Studio](https://aistudio.google.com/app/apikey).
+3. Restart the backend and confirm the log line: `Gemini cartoon: enabled (GEMINI_API_KEY loaded)`.
+4. Optional: `GEMINI_IMAGE_MODEL` (default `gemini-2.5-flash-image`), `GEMINI_CARTOON_PROMPT` (custom prompt).
+
+The original photo is saved as `backend/public/assets/profiles/<parentId>.<ext>`.  
+The generated cartoon is saved next to it as `backend/public/assets/profiles/<parentId>_cartoon.<ext>` (extension follows the model output, usually `.png`).
+
+- `GET /profile/photo/:parentId` returns `photoUrl` and `cartoonPhotoUrl` (when the cartoon file exists).
+- `POST /audio/elevenlabs/welcome` — JSON body `{ "name": "Jad", "parentId": "parent-123" }` (`parentId` optional; used for a stable filename). Set `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` in backend `.env`. Writes `welcome_<id>.mp3` to `backend/public/assets/audio/personalized/`.
+- `POST /profile/photo` returns `cartoonPending: true` when Gemini is configured; cartoon generation runs in the background (poll GET until `cartoonPhotoUrl` is set).
+
 ## Demo credentials
 
 - `admin` / `admin`
@@ -58,6 +74,8 @@ Set `NEXT_PUBLIC_API_BASE_URL` in `frontend/.env.local` if needed.
 - `GET /books`
 - `GET /books/:bookId`
 - `GET /books/:bookId/pages/:pageNumber`
+- `GET /profile/photo/:parentId` / `POST /profile/photo`
+- `POST /audio/elevenlabs/welcome` — personalized welcome MP3 (ElevenLabs)
 
 Image endpoint currently returns placeholder URLs. Swap `backend/src/services/imageService.js` with Gemini API calls later.
 
@@ -94,6 +112,18 @@ In `backend/data/books.json`, set audio paths like:
 - cover front: `"/assets/audio/covers/wizards/front.mp3"`
 - cover back: `"/assets/audio/covers/wizards/back.mp3"`
 - page audio: `"/assets/audio/pages/wizards/page-1.mp3"`
+
+**Multiple clips on one page** (played in order, back-to-back; optional pause before each clip via `startDelayMs`):
+
+```json
+"audio": [
+  "intro.mp3",
+  { "src": "main.mp3", "startDelayMs": 0 },
+  { "src": "outro.mp3", "startDelayMs": 400 }
+]
+```
+
+You can also use a single object as before. The same array form works inside `choiceOutcomes` for branch audio.
 
 ## Manual sanity checklist
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import BookScene from "@/components/book/BookScene";
-import { AudioConfig, getBook, getBookPage, PageData } from "@/lib/api";
+import { AudioConfig, getBook, getBookPage, normalizePageAudios, PageData } from "@/lib/api";
 import { getParentFromSession } from "@/lib/session";
 
 type BookState = "closed-front" | "opening" | "open" | "flipping" | "closing" | "closed-back";
@@ -44,7 +44,7 @@ export default function StoryPage() {
   const [dialogPromptPage, setDialogPromptPage] = useState<number | null>(null);
   const [selectedChoiceByPage, setSelectedChoiceByPage] = useState<Record<number, string>>({});
   const [choiceMediaOverrideByPage, setChoiceMediaOverrideByPage] = useState<
-    Record<number, { image: string; audio: AudioConfig | null }>
+    Record<number, { image: string; audio: AudioConfig[] }>
   >({});
   const [subtitleWords, setSubtitleWords] = useState<SubtitleWord[]>([]);
   const [activeSubtitleWordIndex, setActiveSubtitleWordIndex] = useState<number>(-1);
@@ -61,7 +61,7 @@ export default function StoryPage() {
   const pendingChoiceOverrideRef = useRef<{
     pageNumber: number;
     image: string;
-    audio: AudioConfig | null;
+    audio: AudioConfig[];
   } | null>(null);
   const pendingAudioRef = useRef<{
     config: AudioConfig;
@@ -282,6 +282,42 @@ export default function StoryPage() {
     [loadSubtitleTrack, resolveAudioUrl, scheduleSubtitleHide, startAutoFlipCountdown, stopAudioPlayback]
   );
 
+  /** Play multiple clips in order; gap after each clip except before the first uses that clip's `startDelayMs` (default 0). */
+  const scheduleAudioPlaylist = useCallback(
+    (
+      tracks: AudioConfig[],
+      onLastEnded?: () => void,
+      options?: { shouldAutoAdvanceOnLastEnd?: boolean; firstOverrideDelayMs?: number }
+    ) => {
+      const playable = tracks.filter((t) => resolveAudioUrl(t.src));
+      if (playable.length === 0) return;
+
+      const playIndex = (index: number) => {
+        const config = playable[index];
+        const isLast = index === playable.length - 1;
+        scheduleAudioPlayback(
+          config,
+          () => {
+            if (!isLast) {
+              playIndex(index + 1);
+            } else {
+              onLastEnded?.();
+            }
+          },
+          {
+            overrideDelayMs:
+              index === 0
+                ? (options?.firstOverrideDelayMs ?? config.startDelayMs ?? 1000)
+                : (config.startDelayMs ?? 0),
+            shouldAutoAdvanceOnEnd: isLast && Boolean(options?.shouldAutoAdvanceOnLastEnd)
+          }
+        );
+      };
+      playIndex(0);
+    },
+    [resolveAudioUrl, scheduleAudioPlayback]
+  );
+
   const unlockAudioAndResume = useCallback(async () => {
     try {
       const probe = new Audio();
@@ -348,6 +384,7 @@ export default function StoryPage() {
       const raw = await getBookPage(bookId, pageNumber);
       const rawPageData: PageData = {
         ...raw,
+        audio: normalizePageAudios(raw.audio),
         image: {
           ...raw.image,
           image: resolveImageUrl(raw.image?.image)
@@ -361,7 +398,8 @@ export default function StoryPage() {
                   image: {
                     ...outcome.image,
                     image: resolveImageUrl(outcome.image?.image)
-                  }
+                  },
+                  audio: normalizePageAudios(outcome.audio)
                 }
               ])
             )
@@ -376,10 +414,11 @@ export default function StoryPage() {
       const outcome =
         previousPage && selectedChoice ? previousPage.choiceOutcomes?.[selectedChoice] || null : null;
       if (outcome) {
+        const branchAudio = normalizePageAudios(outcome.audio);
         pageData = {
           ...rawPageData,
           image: outcome.image || rawPageData.image,
-          audio: outcome.audio || rawPageData.audio
+          audio: branchAudio.length > 0 ? branchAudio : rawPageData.audio
         };
       }
 
@@ -460,12 +499,13 @@ export default function StoryPage() {
       await loadSpread(1);
       setFocusedPage(1);
       const pageOneData = await loadPage(1);
-      if (pageOneData?.audio?.src) {
+      const pageOneTracks = normalizePageAudios(pageOneData.audio);
+      if (pageOneTracks.length > 0) {
         // User gesture path: play immediately on first next click.
         skipNextAutoPageAudioRef.current = 1;
-        scheduleAudioPlayback(pageOneData.audio, undefined, {
-          overrideDelayMs: 0,
-          shouldAutoAdvanceOnEnd: true
+        scheduleAudioPlaylist(pageOneTracks, undefined, {
+          firstOverrideDelayMs: 0,
+          shouldAutoAdvanceOnLastEnd: true
         });
       }
       setTimeout(() => {
@@ -489,12 +529,15 @@ export default function StoryPage() {
           pendingChoiceOverrideRef.current?.pageNumber === nextPage
             ? pendingChoiceOverrideRef.current
             : null;
-        const nextAudio = pendingOverride?.audio || nextPageData?.audio || null;
-        if (nextAudio?.src) {
+        const overrideAudios = pendingOverride?.audio;
+        const nextTracks = normalizePageAudios(
+          overrideAudios && overrideAudios.length > 0 ? overrideAudios : nextPageData?.audio
+        );
+        if (nextTracks.length > 0) {
           skipNextAutoPageAudioRef.current = nextPage;
-          scheduleAudioPlayback(nextAudio, () => {
+          scheduleAudioPlaylist(nextTracks, () => {
             handlePageAudioEnded(nextPage);
-          }, { overrideDelayMs: 0 });
+          }, { firstOverrideDelayMs: 0 });
         }
         pendingChoiceOverrideRef.current = null;
       }
@@ -514,12 +557,15 @@ export default function StoryPage() {
         pendingChoiceOverrideRef.current?.pageNumber === nextPage
           ? pendingChoiceOverrideRef.current
           : null;
-      const nextAudio = pendingOverride?.audio || nextPageData?.audio || null;
-      if (nextAudio?.src) {
+      const overrideAudios = pendingOverride?.audio;
+      const nextTracks = normalizePageAudios(
+        overrideAudios && overrideAudios.length > 0 ? overrideAudios : nextPageData?.audio
+      );
+      if (nextTracks.length > 0) {
         skipNextAutoPageAudioRef.current = nextPage;
-        scheduleAudioPlayback(nextAudio, () => {
+        scheduleAudioPlaylist(nextTracks, () => {
           handlePageAudioEnded(nextPage);
-        }, { overrideDelayMs: 0 });
+        }, { firstOverrideDelayMs: 0 });
       }
       pendingChoiceOverrideRef.current = null;
     }
@@ -537,7 +583,7 @@ export default function StoryPage() {
     loadSpread,
     pagesByNumber,
     playPageFlipSound,
-    scheduleAudioPlayback,
+    scheduleAudioPlaylist,
     selectedChoiceByPage,
     state,
     stopAudioPlayback,
@@ -562,11 +608,12 @@ export default function StoryPage() {
           audio: override ? override.audio : basePageData.audio
         }
       : null;
-    if (!pageData?.audio) return;
+    const tracks = normalizePageAudios(pageData?.audio);
+    if (tracks.length === 0) return;
 
     const run = setTimeout(() => {
-      scheduleAudioPlayback(pageData.audio, () => {
-        handlePageAudioEnded(pageData.pageNumber);
+      scheduleAudioPlaylist(tracks, () => {
+        handlePageAudioEnded(pageData!.pageNumber);
       });
     }, 0);
 
@@ -574,7 +621,16 @@ export default function StoryPage() {
       clearTimeout(run);
       stopAudioPlayback();
     };
-  }, [advancePage, choiceMediaOverrideByPage, focusedPage, handlePageAudioEnded, pagesByNumber, scheduleAudioPlayback, state, stopAudioPlayback]);
+  }, [
+    advancePage,
+    choiceMediaOverrideByPage,
+    focusedPage,
+    handlePageAudioEnded,
+    pagesByNumber,
+    scheduleAudioPlaylist,
+    state,
+    stopAudioPlayback
+  ]);
 
   useEffect(() => {
     if (introFade || !coverAudio?.front || hasPlayedFrontRef.current) return;
@@ -630,33 +686,44 @@ export default function StoryPage() {
   const restartCurrentPageAudio = useCallback(() => {
     clearAutoFlipCountdown();
     stopAudioPlayback();
-    if (focusedPage > 0 && currentPageData?.audio?.src) {
-      scheduleAudioPlayback(currentPageData.audio, () => {
-        handlePageAudioEnded(currentPageData.pageNumber);
-      }, { overrideDelayMs: 0 });
+    const replayTracks = normalizePageAudios(currentPageData?.audio);
+    if (focusedPage > 0 && replayTracks.length > 0) {
+      scheduleAudioPlaylist(replayTracks, () => {
+        handlePageAudioEnded(currentPageData!.pageNumber);
+      }, { firstOverrideDelayMs: 0 });
       return;
     }
     if (focusedPage === 0 && coverAudio?.front?.src) {
       scheduleAudioPlayback(coverAudio.front, undefined, { overrideDelayMs: 0 });
     }
-  }, [clearAutoFlipCountdown, coverAudio, currentPageData, focusedPage, handlePageAudioEnded, scheduleAudioPlayback, stopAudioPlayback]);
+  }, [
+    clearAutoFlipCountdown,
+    coverAudio,
+    currentPageData,
+    focusedPage,
+    handlePageAudioEnded,
+    scheduleAudioPlaylist,
+    scheduleAudioPlayback,
+    stopAudioPlayback
+  ]);
 
   const handleChoiceSelect = useCallback(
     (option: string) => {
       setSelectedChoiceByPage((prev) => ({ ...prev, [focusedPage]: option }));
       const outcome = currentPageData?.choiceOutcomes?.[option] || null;
       if (outcome && focusedPage + 1 <= totalPages) {
+        const branchAudios = normalizePageAudios(outcome.audio);
         setChoiceMediaOverrideByPage((prev) => ({
           ...prev,
           [focusedPage + 1]: {
             image: outcome.image.image,
-            audio: outcome.audio
+            audio: branchAudios
           }
         }));
         pendingChoiceOverrideRef.current = {
           pageNumber: focusedPage + 1,
           image: outcome.image.image,
-          audio: outcome.audio
+          audio: branchAudios
         };
       }
 

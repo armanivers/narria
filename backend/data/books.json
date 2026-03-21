@@ -101,10 +101,10 @@
       {
         "pageNumber": 3,
         "image": "page3.jpg",
-        "audio": {
-          "src": "page3.mp3",
-          "startDelayMs": 0
-        },
+        "audio": [
+		  "page3_question_intro.mp3",
+		  "page3_choices.mp3"
+		],
         "hasDialogChoice": true,
         "dialog": {
           "question": "What shall we do?",

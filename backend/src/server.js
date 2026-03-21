@@ -1,18 +1,36 @@
+const {
+  loadBackendEnvironment,
+  getGeminiApiKey,
+  getElevenLabsApiKey,
+  getElevenLabsVoiceId
+} = require("./loadEnv");
+loadBackendEnvironment();
+
 const express = require("express");
 const cors = require("cors");
 const fs = require("node:fs");
 const path = require("node:path");
 const { getStoryPageImage } = require("./services/imageService");
+const {
+  generateAndSaveCartoonAvatar,
+  clearCartoonVariants
+} = require("./services/cartoonAvatarService");
+const {
+  synthesizeSpeechToMp3Buffer,
+  applyNameTemplate
+} = require("./services/elevenLabsService");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 const ASSETS_ROOT = path.join(__dirname, "..", "public", "assets");
 const PROFILE_ASSETS_DIR = path.join(ASSETS_ROOT, "profiles");
+const PERSONALIZED_AUDIO_DIR = path.join(ASSETS_ROOT, "audio", "personalized");
 
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 app.use("/assets", express.static(path.join(__dirname, "..", "public", "assets")));
 fs.mkdirSync(PROFILE_ASSETS_DIR, { recursive: true });
+fs.mkdirSync(PERSONALIZED_AUDIO_DIR, { recursive: true });
 
 const dataPath = (...parts) => path.join(__dirname, "..", "data", ...parts);
 
@@ -49,16 +67,38 @@ function resolveCoverAudioSrc(bookId, side, rawSrc) {
   return foundName ? `/assets/audio/covers/${bookId}/${foundName}` : "";
 }
 
-function resolvePageAudio(bookId, audio) {
-  if (!audio) return null;
-  if (!audio.src) {
-    return { ...audio, src: "" };
+/**
+ * Resolve one track: `{ src, startDelayMs }`, or a string filename (e.g. `"part1.mp3"`).
+ */
+function resolveSinglePageAudioTrack(bookId, item) {
+  if (item == null) return null;
+  if (typeof item === "string") {
+    const src = item.trim();
+    if (!src) return null;
+    if (src.startsWith("/")) return { src, startDelayMs: 0 };
+    return { src: `/assets/audio/pages/${bookId}/${src}`, startDelayMs: 0 };
   }
-  if (audio.src.startsWith("/")) return audio;
+  if (typeof item !== "object") return null;
+  if (!item.src) {
+    return { ...item, src: "" };
+  }
+  if (item.src.startsWith("/")) return item;
   return {
-    ...audio,
-    src: `/assets/audio/pages/${bookId}/${audio.src}`
+    ...item,
+    src: `/assets/audio/pages/${bookId}/${item.src}`
   };
+}
+
+/**
+ * Page audio: single object or ordered array. Empty / missing src entries are dropped.
+ * API always returns an array (may be empty).
+ */
+function resolvePageAudios(bookId, audio) {
+  if (audio == null) return [];
+  const list = Array.isArray(audio) ? audio : [audio];
+  return list
+    .map((item) => resolveSinglePageAudioTrack(bookId, item))
+    .filter((item) => item && String(item.src || "").length > 0);
 }
 
 function resolvePageImage(bookId, imageFileName, book, pageNumber) {
@@ -79,7 +119,7 @@ function resolveChoiceOutcomes(bookId, choiceOutcomes, book, pageNumber) {
       option,
       {
         image: resolvePageImage(bookId, safeOutcome.image || "", book, pageNumber),
-        audio: resolvePageAudio(bookId, safeOutcome.audio || null)
+        audio: resolvePageAudios(bookId, safeOutcome.audio ?? null)
       }
     ];
   });
@@ -121,6 +161,35 @@ function normalizeBook(rawBook) {
 
 function sanitizeProfileId(id) {
   return String(id || "").replaceAll(/[^a-zA-Z0-9_-]/g, "");
+}
+
+/** Stable filename for saved welcome MP3: prefer parent id, else slug from name. */
+function welcomeAudioFileBase(parentId, name) {
+  const fromParent = sanitizeProfileId(parentId);
+  if (fromParent) {
+    return `welcome_${fromParent}`;
+  }
+  const fromName = String(name || "")
+    .trim()
+    .replaceAll(/[^a-zA-Z0-9_-]/g, "")
+    .slice(0, 40);
+  return `welcome_${fromName || "guest"}`;
+}
+
+const PROFILE_IMAGE_MIME = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  webp: "image/webp"
+};
+
+function findProfilePhotoVariants(parentId, basenameSuffix = "") {
+  const candidates = ["png", "jpg", "jpeg", "webp"];
+  const base = `${parentId}${basenameSuffix}`;
+  const foundExt = candidates.find((ext) =>
+    fs.existsSync(path.join(PROFILE_ASSETS_DIR, `${base}.${ext}`))
+  );
+  return foundExt ? { ext: foundExt, url: `/assets/profiles/${base}.${foundExt}` } : null;
 }
 
 app.get("/health", (_req, res) => {
@@ -214,14 +283,75 @@ app.get("/profile/photo/:parentId", (req, res) => {
     return res.status(400).json({ error: "Invalid parentId" });
   }
 
-  const candidates = ["png", "jpg", "jpeg", "webp"];
-  const foundExt = candidates.find((ext) =>
-    fs.existsSync(path.join(PROFILE_ASSETS_DIR, `${parentId}.${ext}`))
-  );
+  const original = findProfilePhotoVariants(parentId, "");
+  const cartoon = findProfilePhotoVariants(parentId, "_cartoon");
 
   return res.json({
-    photoUrl: foundExt ? `/assets/profiles/${parentId}.${foundExt}` : null
+    photoUrl: original?.url ?? null,
+    cartoonPhotoUrl: cartoon?.url ?? null
   });
+});
+
+/**
+ * Generate personalized welcome audio via ElevenLabs TTS.
+ * Body: { name: string (required), parentId?: string }
+ * Saves MP3 under /assets/audio/personalized/welcome_<parentId|slug>.mp3
+ */
+app.post("/audio/elevenlabs/welcome", async (req, res) => {
+  const apiKey = getElevenLabsApiKey();
+  const voiceId = getElevenLabsVoiceId();
+  const { name, parentId } = req.body || {};
+  const displayName = String(name || "").trim();
+
+  if (!displayName) {
+    return res.status(400).json({ error: "name is required (child or listener name for the greeting)" });
+  }
+  if (!apiKey) {
+    return res.status(503).json({
+      error: "ELEVENLABS_API_KEY is not configured. Add it to backend/.env (see .env.example)."
+    });
+  }
+  if (!voiceId) {
+    return res.status(503).json({
+      error:
+        "ELEVENLABS_VOICE_ID is not configured. Copy a voice id from ElevenLabs (Voices page or API)."
+    });
+  }
+
+  const template =
+    process.env.ELEVENLABS_WELCOME_TEMPLATE?.trim() ||
+    "Hey {name}, welcome to Narria! We are so glad you are here.";
+  const spokenText = applyNameTemplate(template, displayName);
+  const modelId = process.env.ELEVENLABS_MODEL_ID?.trim() || undefined;
+
+  try {
+    console.log("[elevenlabs] welcome TTS request", {
+      fileBase: welcomeAudioFileBase(parentId, displayName),
+      textPreview: `${spokenText.slice(0, 80)}${spokenText.length > 80 ? "…" : ""}`
+    });
+    const buffer = await synthesizeSpeechToMp3Buffer({
+      apiKey,
+      voiceId,
+      text: spokenText,
+      modelId
+    });
+    const base = welcomeAudioFileBase(parentId, displayName);
+    const fileName = `${base}.mp3`;
+    const targetPath = path.join(PERSONALIZED_AUDIO_DIR, fileName);
+    fs.writeFileSync(targetPath, buffer);
+    const audioUrl = `/assets/audio/personalized/${fileName}`;
+    console.log("[elevenlabs] welcome TTS done", { audioUrl, bytes: buffer.length });
+    return res.status(201).json({
+      audioUrl,
+      fileName,
+      text: spokenText
+    });
+  } catch (err) {
+    console.error("[elevenlabs] welcome TTS failed:", err?.message || err);
+    return res.status(502).json({
+      error: err?.message || "ElevenLabs request failed"
+    });
+  }
 });
 
 app.post("/profile/photo", (req, res) => {
@@ -240,6 +370,8 @@ app.post("/profile/photo", (req, res) => {
   const buffer = Buffer.from(match[2], "base64");
   const targetPath = path.join(PROFILE_ASSETS_DIR, `${safeParentId}.${ext}`);
 
+  clearCartoonVariants(PROFILE_ASSETS_DIR, safeParentId);
+
   ["png", "jpg", "jpeg", "webp"]
     .filter((candidate) => candidate !== ext)
     .forEach((candidate) => {
@@ -248,8 +380,33 @@ app.post("/profile/photo", (req, res) => {
     });
 
   fs.writeFileSync(targetPath, buffer);
+
+  const mimeType = PROFILE_IMAGE_MIME[ext] || "image/jpeg";
+  // Use bytes from disk so Gemini always gets exactly what was saved (avoids any base64 edge cases).
+  const imageBase64ForGemini = fs.readFileSync(targetPath).toString("base64");
+  const geminiKey = getGeminiApiKey();
+  const cartoonEnabled = Boolean(geminiKey);
+
+  if (cartoonEnabled) {
+    console.log("[profile photo] scheduling Gemini cartoon for", safeParentId);
+    void generateAndSaveCartoonAvatar({
+      profilesDir: PROFILE_ASSETS_DIR,
+      safeParentId,
+      imageBase64: imageBase64ForGemini,
+      mimeType
+    }).catch((err) => {
+      console.error("[profile photo] cartoon task rejected:", err?.message || err);
+    });
+  } else {
+    console.log(
+      "[profile photo] Gemini cartoon skipped — set GEMINI_API_KEY in backend/.env or repo-root .env (see backend/.env.example)"
+    );
+  }
+
   return res.status(201).json({
-    photoUrl: `/assets/profiles/${safeParentId}.${ext}`
+    photoUrl: `/assets/profiles/${safeParentId}.${ext}`,
+    cartoonPending: cartoonEnabled,
+    cartoonPhotoUrl: null
   });
 });
 
@@ -277,7 +434,7 @@ app.get("/books/:bookId", (req, res) => {
       pageConfigs: book.pages.map((page) => ({
         ...page,
         image: resolvePageImage(book.id, page.image || "", book, page.pageNumber),
-        audio: resolvePageAudio(book.id, page.audio),
+        audio: resolvePageAudios(book.id, page.audio),
         choiceOutcomes: resolveChoiceOutcomes(book.id, page.choiceOutcomes, book, page.pageNumber)
       }))
     }
@@ -308,7 +465,7 @@ app.get("/books/:bookId/pages/:pageNumber", (req, res) => {
     pageNumber,
     totalPages: book.totalPages,
     image: imagePayload,
-    audio: resolvePageAudio(book.id, pageConfig.audio),
+    audio: resolvePageAudios(book.id, pageConfig.audio),
     choiceOutcomes: resolveChoiceOutcomes(book.id, pageConfig.choiceOutcomes, book, pageNumber),
     hasDialogChoice: Boolean(pageConfig.hasDialogChoice),
     dialog: pageConfig.dialog || null
@@ -317,4 +474,11 @@ app.get("/books/:bookId/pages/:pageNumber", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
+  console.log(
+    `[env] Gemini cartoon: ${getGeminiApiKey() ? "enabled (GEMINI_API_KEY loaded)" : "disabled — add GEMINI_API_KEY to .env"}`
+  );
+  const elevenReady = Boolean(getElevenLabsApiKey() && getElevenLabsVoiceId());
+  console.log(
+    `[env] ElevenLabs welcome TTS: ${elevenReady ? "configured (POST /audio/elevenlabs/welcome)" : "disabled — set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID"}`
+  );
 });
