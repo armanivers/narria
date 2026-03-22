@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { getGeminiApiKey, getElevenLabsApiKey, getElevenLabsVoiceId } = require("../loadEnv");
 const { synthesizeAndSaveUserVoiceClips } = require("./elevenLabsService");
+const { recordIntegrationNotice } = require("./integrationNoticeService");
 
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
 
@@ -269,10 +270,18 @@ async function generateAndSaveCartoonAvatar({
           );
         }
       } catch (voiceErr) {
+        const voiceText = redactSecrets(voiceErr?.message || String(voiceErr));
         console.error("[elevenlabs] user voice clips failed:", {
           parentId: safeParentId,
-          error: redactSecrets(voiceErr?.message || String(voiceErr))
+          error: voiceText
         });
+        recordIntegrationNotice(
+          safeParentId,
+          "elevenlabs",
+          voiceText.length > 160
+            ? `${voiceText.slice(0, 157)}…`
+            : voiceText || "ElevenLabs voice generation failed after photo upload."
+        );
       }
     }
   } catch (unexpected) {

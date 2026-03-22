@@ -6,6 +6,8 @@ node_modules/
 data/welcome_*.mp3
 # Story outcome JSON files (local / webhook goes to n8n)
 data/story-outcomes/
+# One-shot UI notices (Gemini / ElevenLabs / n8n)
+data/integration-notices.json
 
 # Per-user uploads & generated voice (do not commit PII / binaries)
 public/assets/profiles/

@@ -1,4 +1,14 @@
 import { defaultLocalBackendOrigin, narriaUseLocalBackend } from "./backendEnv";
+import { emitExternalApiToast, type NarriaExternalService } from "./externalApiToastEvents";
+
+function maybeEmitExternalToastFromErrorBody(data: unknown): void {
+  if (!data || typeof data !== "object") return;
+  const o = data as { narriaExternal?: string; error?: string };
+  const s = o.narriaExternal;
+  if (s === "gemini" || s === "elevenlabs" || s === "n8n") {
+    emitExternalApiToast({ service: s as NarriaExternalService, message: o.error });
+  }
+}
 
 /**
  * Base URL for JSON API + `/assets/...` paths.
@@ -195,7 +205,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    const data = (await response.json().catch(() => null)) as { error?: string } | null;
+    const data = (await response.json().catch(() => null)) as {
+      error?: string;
+      narriaExternal?: string;
+    } | null;
+    maybeEmitExternalToastFromErrorBody(data);
     const detail = data?.error?.trim();
     const statusBit = `${response.status} ${response.statusText || ""}`.trim();
     throw new Error(detail || `Request failed (${statusBit})`);
@@ -271,15 +285,28 @@ export async function submitStoryOutcome(payload: StoryOutcomePayload) {
   });
 }
 
+export type ProfileIntegrationNotice = {
+  service: NarriaExternalService;
+  message: string;
+};
+
 export async function getProfilePhoto(parentId: string) {
-  return request<{
+  const data = await request<{
     photoUrl: string | null;
     cartoonPhotoUrl: string | null;
     customNameAudioUrl: string | null;
     customFrontAudioUrl: string | null;
     /** Present when custom_front.json exists next to custom_front.mp3 for this parentId */
     customFrontSubtitlesUrl?: string | null;
+    /** One-shot notice from async Gemini/ElevenLabs/n8n (consumed on this response). */
+    integrationNotice?: ProfileIntegrationNotice | null;
   }>(`/profile/photo/${parentId}`);
+
+  const n = data.integrationNotice;
+  if (n && (n.service === "gemini" || n.service === "elevenlabs" || n.service === "n8n")) {
+    emitExternalApiToast({ service: n.service, message: n.message });
+  }
+  return data;
 }
 
 export async function saveProfilePhoto(

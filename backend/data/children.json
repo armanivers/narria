@@ -1,80 +1,8 @@
 [
   {
-    "id": "child-1774088305747",
-    "parentId": "parent-admin",
-    "childName": "Ari",
-    "age": 4
-  },
-  {
-    "id": "child-1774148291096",
-    "parentId": "parent-1774148283613",
-    "childName": "ar",
-    "age": 2
-  },
-  {
-    "id": "child-1774148492618",
-    "parentId": "parent-1774148459391",
-    "childName": "ariiiiii",
-    "age": 3
-  },
-  {
-    "id": "child-1774148811597",
-    "parentId": "parent-1774148752777",
-    "childName": "aaa",
-    "age": 9
-  },
-  {
-    "id": "child-1774149880167",
-    "parentId": "parent-1774149861013",
-    "childName": "lalala",
-    "age": 3
-  },
-  {
-    "id": "child-1774150324779",
-    "parentId": "parent-1774150311720",
-    "childName": "kokoko",
-    "age": 2
-  },
-  {
-    "id": "child-1774150487339",
-    "parentId": "parent-1774150476522",
-    "childName": "dada",
-    "age": 2
-  },
-  {
-    "id": "child-1774150671759",
-    "parentId": "parent-1774150659476",
-    "childName": "csaaaas",
-    "age": 2
-  },
-  {
-    "id": "child-1774150963465",
-    "parentId": "parent-1774150925859",
-    "childName": "gaaaaa",
-    "age": 2
-  },
-  {
-    "id": "child-1774151237702",
-    "parentId": "parent-1774151225878",
-    "childName": "fafa",
-    "age": 2
-  },
-  {
-    "id": "child-1774158439985",
-    "parentId": "parent-1774158428595",
-    "childName": "aa",
-    "age": 2
-  },
-  {
-    "id": "child-1774164336849",
-    "parentId": "parent-1774164322068",
-    "childName": "ari",
-    "age": 5
-  },
-  {
-    "id": "child-1774164464936",
-    "parentId": "parent-1774164452030",
-    "childName": "testiii",
+    "id": "child-1774183005992",
+    "parentId": "parent-1774182976256",
+    "childName": "Admin Child",
     "age": 2
   }
 ]

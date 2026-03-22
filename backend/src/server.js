@@ -21,6 +21,10 @@ const {
   synthesizeAndSaveUserVoiceClips,
   sanitizeUserVoiceFolderId
 } = require("./services/elevenLabsService");
+const {
+  recordIntegrationNotice,
+  takeIntegrationNotice
+} = require("./services/integrationNoticeService");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -581,13 +585,15 @@ app.post("/audio/elevenlabs/welcome", async (req, res) => {
   }
   if (!apiKey) {
     return res.status(503).json({
-      error: "ELEVENLABS_API_KEY is not configured. Add it to backend/.env (see .env.example)."
+      error: "ELEVENLABS_API_KEY is not configured. Add it to backend/.env (see .env.example).",
+      narriaExternal: "elevenlabs"
     });
   }
   if (!voiceId) {
     return res.status(503).json({
       error:
-        "ELEVENLABS_VOICE_ID is not configured. Copy a voice id from ElevenLabs (Voices page or API)."
+        "ELEVENLABS_VOICE_ID is not configured. Copy a voice id from ElevenLabs (Voices page or API).",
+      narriaExternal: "elevenlabs"
     });
   }
 
@@ -816,9 +822,20 @@ function forwardStoryOutcomeToWebhook(payload) {
       }
       const urlHint = url.length > 60 ? `${url.slice(0, 56)}…` : url;
       console.warn("[story-outcomes] n8n webhook returned", res.status, res.statusText, "—", urlHint);
+      recordIntegrationNotice(
+        payload.parentId,
+        "n8n",
+        `n8n webhook HTTP ${res.status} — check workflow / URL in N8N_STORY_OUTCOME_WEBHOOK_URL (${urlHint})`
+      );
     })
     .catch((err) => {
-      console.error("[story-outcomes] n8n webhook failed:", err?.message || err);
+      const msg = err?.message || String(err);
+      console.error("[story-outcomes] n8n webhook failed:", msg);
+      recordIntegrationNotice(
+        payload.parentId,
+        "n8n",
+        msg.length > 200 ? `${msg.slice(0, 197)}…` : `n8n webhook failed: ${msg}`
+      );
     });
 }
 
