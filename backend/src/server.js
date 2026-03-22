@@ -915,6 +915,22 @@ app.post("/story-outcomes", (req, res) => {
   }
 });
 
+/** Static sample report: place file at `backend/data/child_psych_report.pdf`. */
+app.get("/reports/child-psych-report", (req, res) => {
+  const pdfPath = dataPath("child_psych_report.pdf");
+  if (!fs.existsSync(pdfPath)) {
+    return res.status(404).json({
+      error: "child_psych_report.pdf is missing — add it under backend/data/"
+    });
+  }
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader(
+    "Content-Disposition",
+    'inline; filename="child_psych_report.pdf"'
+  );
+  return res.sendFile(path.resolve(pdfPath));
+});
+
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
   console.log(
