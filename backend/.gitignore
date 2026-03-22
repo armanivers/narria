@@ -10,3 +10,4 @@ data/story-outcomes/
 # Per-user uploads & generated voice (do not commit PII / binaries)
 public/assets/profiles/
 public/assets/audio/personalized/users/
+public/assets/images/personalized/users/

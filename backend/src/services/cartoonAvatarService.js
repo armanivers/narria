@@ -54,9 +54,9 @@ async function generateCartoonFromPhotoBase64({ base64, mimeType }) {
     process.env.GEMINI_IMAGE_MODEL?.trim() || "gemini-2.5-flash-image";
   const prompt =
     process.env.GEMINI_CARTOON_PROMPT?.trim() ||
-    "Make a friendly cartoon version of this kid based on the photo. Keep a clear likeness, cheerful children's book illustration style, soft colors, simple background. Output a single portrait suitable as an avatar.";
-
-  const url = `${GEMINI_API_BASE}/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    "Children’s comic illustration in cinematic fantasy animation style with painterly textures, soft dramatic lighting, warm rich colors, rounded appealing shapes, expressive faces and clean silhouettes, polished animated-film quality; consistent characters: brave child hero (simple explorer outfit, big expressive eyes), theatrical pirate captain (coral-red coat, friendly exaggerated features), tiny glowing baby dragon (soft rounded form), graceful mermaid (luminous water textures), shy pirate child (gentle face, hesitant posture), ancient storm-being (cloud, shadow, star fragments, ethereal, non-threatening); whimsical sky-ocean world with floating harbors, rainbow sea, crystal structures, glowing stars, magical clouds, lantern light, stylized sky ships; cohesive color harmony, strong shape language, high readability, child-friendly, no photorealism, no horror, no distortion, no clutter"
+  
+    const url = `${GEMINI_API_BASE}/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
   const requestStarted = Date.now();
   console.log("[gemini] generateContent request START", { model, mimeType });
