@@ -1,8 +1,11 @@
+import { defaultLocalBackendOrigin, narriaUseLocalBackend } from "./backendEnv";
+
 /**
  * Base URL for JSON API + `/assets/...` paths.
- * - Set `NEXT_PUBLIC_API_BASE_URL` to call Express directly (e.g. different host).
- * - Otherwise in the browser: same-origin `/api/narria` (see `next.config.ts` rewrite → Express).
- * - Otherwise (SSR / Node): `NARRIA_BACKEND_URL` or `http://127.0.0.1:4000`.
+ * - Development (`NODE_ENV=development` or `NARRIA_ENV=development`): uses local Express (`NARRIA_BACKEND_PORT`), ignores `NARRIA_BACKEND_URL` so a prod URL in `.env` does not break `next dev`.
+ * - Production: set `NARRIA_BACKEND_URL` on the host (e.g. Render). Rewrites and SSR use that origin.
+ * - `NEXT_PUBLIC_API_BASE_URL` (any mode): if set, always used as the API base (browser + SSR).
+ * - Browser without that: same-origin `/api/narria` (rewritten per `next.config.ts`).
  */
 export function getApiBase(): string {
   const explicit = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
@@ -12,7 +15,10 @@ export function getApiBase(): string {
     return "/api/narria";
   }
 
-  return (process.env.NARRIA_BACKEND_URL || "http://127.0.0.1:4000").replace(/\/$/, "");
+  const origin = narriaUseLocalBackend()
+    ? defaultLocalBackendOrigin()
+    : (process.env.NARRIA_BACKEND_URL?.trim() || defaultLocalBackendOrigin());
+  return origin.replace(/\/$/, "");
 }
 
 /** Backend serves `/assets/...`; use this for `<img src>` / audio URLs in the browser */

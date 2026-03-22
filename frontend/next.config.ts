@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 import path from "node:path";
+import { rewriteTargetBackendOrigin } from "./src/lib/backendEnv";
 
-/** Where Express runs; used to proxy `/api/narria/*` → backend (avoids 404 when the browser talks to Next on :3000). */
-const backendOrigin = (process.env.NARRIA_BACKEND_URL || "http://127.0.0.1:4000").replace(/\/$/, "");
+/** Where Express runs; dev → local; production → `NARRIA_BACKEND_URL` (see `src/lib/backendEnv.ts`). */
+const backendOrigin = rewriteTargetBackendOrigin();
 
 const nextConfig: NextConfig = {
   turbopack: {
