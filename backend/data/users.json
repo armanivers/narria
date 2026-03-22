@@ -2,6 +2,8 @@
   {
     "id": "parent-admin",
     "username": "admin",
+    "email": "admin@narria.local",
+    "name": "Admin",
     "password": "admin",
     "childName": "Ari",
     "childAge": 4
@@ -9,6 +11,8 @@
   {
     "id": "parent-demo",
     "username": "demo",
+    "email": "demo@narria.local",
+    "name": "Demo user",
     "password": "demo",
     "childName": null,
     "childAge": null

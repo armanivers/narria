@@ -28,7 +28,7 @@ export default function MenuPage() {
       return;
     }
     queueMicrotask(() => {
-      setParentName(parent.username);
+      setParentName(parent.name?.trim() || parent.username);
       setChildName(parent.childName?.trim() || null);
     });
     getBooks()

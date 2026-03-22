@@ -2,7 +2,7 @@
 
 import { FormEvent, Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { login } from "@/lib/api";
+import { login, register } from "@/lib/api";
 import { saveSession } from "@/lib/session";
 
 const DEMO_ADMIN_USER = "admin";
@@ -17,6 +17,7 @@ function AuthScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [accountName, setAccountName] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,9 +30,8 @@ function AuthScreen() {
     setUsername(DEMO_ADMIN_USER);
     setPassword(DEMO_ADMIN_PASS);
     setEmail("");
-    setNotice(
-      "Register is demo-only — nothing was saved. Use admin / admin below (already filled)."
-    );
+    setAccountName("");
+    setNotice("Account created — sign in with your username or email.");
     setError("");
     router.replace("/", { scroll: false });
   }, [searchParams, router]);
@@ -42,8 +42,21 @@ function AuthScreen() {
     setNotice("");
 
     if (mode === "register") {
-      // No API call, no persistence — send user to login with admin credentials prefilled.
-      router.push("/?fromRegister=1");
+      setLoading(true);
+      try {
+        const response = await register({
+          username: username.trim(),
+          password,
+          email: email.trim(),
+          name: accountName.trim() || undefined
+        });
+        saveSession(response.token, response.parent);
+        router.push("/child-profile");
+      } catch (submitError) {
+        setError(submitError instanceof Error ? submitError.message : "Registration failed");
+      } finally {
+        setLoading(false);
+      }
       return;
     }
 
@@ -80,7 +93,7 @@ function AuthScreen() {
         <p className="authTagline">
           {mode === "login"
             ? "Sign in to continue to your child’s profile and stories."
-            : "Create a demo account — you’ll be taken to login with admin access."}
+            : "Create an account — we save your details so you can sign in anytime."}
         </p>
 
         <div className="authTabs" role="tablist" aria-label="Authentication mode">
@@ -119,8 +132,22 @@ function AuthScreen() {
           {mode === "register" ? (
             <>
               <div>
+                <label className="authLabel" htmlFor="reg-name">
+                  Your name
+                </label>
+                <input
+                  id="reg-name"
+                  className="authInput"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="e.g. Jamie Rivera"
+                  value={accountName}
+                  onChange={(e) => setAccountName(e.target.value)}
+                />
+              </div>
+              <div>
                 <label className="authLabel" htmlFor="reg-email">
-                  Email (optional)
+                  Email
                 </label>
                 <input
                   id="reg-email"
@@ -130,6 +157,7 @@ function AuthScreen() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               <div>
@@ -143,6 +171,7 @@ function AuthScreen() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
+                  autoComplete="username"
                 />
               </div>
               <div>
@@ -166,12 +195,12 @@ function AuthScreen() {
             <>
               <div>
                 <label className="authLabel" htmlFor="login-user">
-                  Username
+                  Username or email
                 </label>
                 <input
                   id="login-user"
                   className="authInput"
-                  placeholder="admin"
+                  placeholder="admin or you@example.com"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
@@ -197,16 +226,27 @@ function AuthScreen() {
           )}
 
           <button className="authSubmit" type="submit" disabled={loading}>
-            {loading ? "Signing in…" : mode === "login" ? "Sign in" : "Create account"}
+            {loading
+              ? mode === "register"
+                ? "Creating account…"
+                : "Signing in…"
+              : mode === "login"
+                ? "Sign in"
+                : "Create account"}
           </button>
         </form>
 
         <p className="authHint">
-          Hackathon demo · Try{" "}
+          Demo accounts:{" "}
           <strong style={{ color: "var(--kid-ink)" }}>admin</strong> /{" "}
           <strong style={{ color: "var(--kid-ink)" }}>admin</strong> or{" "}
           <strong style={{ color: "var(--kid-ink)" }}>demo</strong> /{" "}
           <strong style={{ color: "var(--kid-ink)" }}>demo</strong>
+          <br />
+          <span style={{ fontSize: "0.88rem", opacity: 0.9 }}>
+            You can also sign in with{" "}
+            <code style={{ fontSize: "0.85em" }}>admin@narria.local</code>
+          </span>
         </p>
       </section>
     </main>

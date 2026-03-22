@@ -16,8 +16,8 @@ const {
   clearCartoonVariants
 } = require("./services/cartoonAvatarService");
 const {
-  synthesizeSpeechToMp3Buffer,
-  applyNameTemplate
+  synthesizeAndSaveUserVoiceClips,
+  sanitizeUserVoiceFolderId
 } = require("./services/elevenLabsService");
 
 const app = express();
@@ -25,12 +25,15 @@ const PORT = process.env.PORT || 4000;
 const ASSETS_ROOT = path.join(__dirname, "..", "public", "assets");
 const PROFILE_ASSETS_DIR = path.join(ASSETS_ROOT, "profiles");
 const PERSONALIZED_AUDIO_DIR = path.join(ASSETS_ROOT, "audio", "personalized");
+/** Per-user ElevenLabs output: custom_name.mp3, custom_front.mp3 */
+const USER_VOICE_DIR = path.join(PERSONALIZED_AUDIO_DIR, "users");
 
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 app.use("/assets", express.static(path.join(__dirname, "..", "public", "assets")));
 fs.mkdirSync(PROFILE_ASSETS_DIR, { recursive: true });
 fs.mkdirSync(PERSONALIZED_AUDIO_DIR, { recursive: true });
+fs.mkdirSync(USER_VOICE_DIR, { recursive: true });
 
 const dataPath = (...parts) => path.join(__dirname, "..", "data", ...parts);
 
@@ -44,10 +47,7 @@ function writeJson(fileName, value) {
   fs.writeFileSync(file, JSON.stringify(value, null, 2));
 }
 
-/** Directory for JSON + generated welcome MP3s (e.g. welcome_parent-admin.mp3) */
-const DATA_JSON_DIR = path.join(__dirname, "..", "data");
-
-/** Child name from users.json / children.json for personalized welcome TTS */
+/** Child name from users.json / children.json for personalized ElevenLabs clips */
 function resolveChildDisplayName(parentId) {
   if (!parentId) return null;
   try {
@@ -92,24 +92,50 @@ function resolveCoverAudioSrc(bookId, side, rawSrc) {
 }
 
 /**
- * Resolve one track: `{ src, startDelayMs }`, or a string filename (e.g. `"part1.mp3"`).
+ * Resolve one track: `{ src, startDelayMs?, custom? }`, or a string filename.
+ * When `custom === true`, `src` is a filename under `/assets/audio/personalized/users/<parentId>/`
+ * (requires `parentId` query on GET book / page).
  */
-function resolveSinglePageAudioTrack(bookId, item) {
+function resolveSinglePageAudioTrack(bookId, item, parentId) {
+  const safeParent = sanitizeProfileId(parentId);
   if (item == null) return null;
   if (typeof item === "string") {
     const src = item.trim();
     if (!src) return null;
-    if (src.startsWith("/")) return { src, startDelayMs: 0 };
-    return { src: `/assets/audio/pages/${bookId}/${src}`, startDelayMs: 0 };
+    if (src.startsWith("/")) return { src, startDelayMs: 0, custom: false };
+    return {
+      src: `/assets/audio/pages/${bookId}/${src}`,
+      startDelayMs: 0,
+      custom: false
+    };
   }
   if (typeof item !== "object") return null;
-  if (!item.src) {
-    return { ...item, src: "" };
+  const isCustom = item.custom === true;
+  const rawSrc = String(item.src || "").trim();
+  if (!rawSrc) {
+    return { ...item, src: "", custom: isCustom };
   }
-  if (item.src.startsWith("/")) return item;
+  if (rawSrc.startsWith("/")) {
+    return { ...item, src: rawSrc, custom: isCustom };
+  }
+  if (isCustom) {
+    if (!safeParent) {
+      return { ...item, src: "", custom: true };
+    }
+    const fileName = rawSrc.replace(/^\/+/, "");
+    if (fileName.includes("..") || fileName.includes("/") || fileName.includes("\\")) {
+      return { ...item, src: "", custom: true };
+    }
+    return {
+      ...item,
+      src: `/assets/audio/personalized/users/${safeParent}/${fileName}`,
+      custom: true
+    };
+  }
   return {
     ...item,
-    src: `/assets/audio/pages/${bookId}/${item.src}`
+    src: `/assets/audio/pages/${bookId}/${rawSrc}`,
+    custom: false
   };
 }
 
@@ -117,11 +143,11 @@ function resolveSinglePageAudioTrack(bookId, item) {
  * Page audio: single object or ordered array. Empty / missing src entries are dropped.
  * API always returns an array (may be empty).
  */
-function resolvePageAudios(bookId, audio) {
+function resolvePageAudios(bookId, audio, parentId) {
   if (audio == null) return [];
   const list = Array.isArray(audio) ? audio : [audio];
   return list
-    .map((item) => resolveSinglePageAudioTrack(bookId, item))
+    .map((item) => resolveSinglePageAudioTrack(bookId, item, parentId))
     .filter((item) => item && String(item.src || "").length > 0);
 }
 
@@ -135,7 +161,7 @@ function resolvePageImage(bookId, imageFileName, book, pageNumber) {
   return { kind: "url", image: imageUrl };
 }
 
-function resolveChoiceOutcomes(bookId, choiceOutcomes, book, pageNumber) {
+function resolveChoiceOutcomes(bookId, choiceOutcomes, book, pageNumber, parentId) {
   if (!choiceOutcomes || typeof choiceOutcomes !== "object") return null;
   const entries = Object.entries(choiceOutcomes).map(([option, outcome]) => {
     const safeOutcome = outcome || {};
@@ -143,14 +169,29 @@ function resolveChoiceOutcomes(bookId, choiceOutcomes, book, pageNumber) {
       option,
       {
         image: resolvePageImage(bookId, safeOutcome.image || "", book, pageNumber),
-        audio: resolvePageAudios(bookId, safeOutcome.audio ?? null)
+        audio: resolvePageAudios(bookId, safeOutcome.audio ?? null, parentId)
       }
     ];
   });
   return Object.fromEntries(entries);
 }
 
-function resolveCoverAudio(bookId, coverAudio) {
+function resolveCoverSideSrc(bookId, side, sideObj, parentId) {
+  const safeParent = sanitizeProfileId(parentId);
+  const raw = String(sideObj?.src || "").trim();
+  const isCustom = sideObj?.custom === true;
+  if (isCustom) {
+    if (!raw || !safeParent) return "";
+    const fileName = raw.replace(/^\/+/, "");
+    if (fileName.includes("..") || fileName.includes("/") || fileName.includes("\\")) {
+      return "";
+    }
+    return `/assets/audio/personalized/users/${safeParent}/${fileName}`;
+  }
+  return resolveCoverAudioSrc(bookId, side, raw);
+}
+
+function resolveCoverAudio(bookId, coverAudio, parentId) {
   const safeCover = coverAudio || {
     front: { src: "", startDelayMs: 800 },
     back: { src: "", startDelayMs: 800 }
@@ -160,11 +201,13 @@ function resolveCoverAudio(bookId, coverAudio) {
   return {
     front: {
       ...(safeFront || undefined),
-      src: resolveCoverAudioSrc(bookId, "front", safeFront?.src || "")
+      custom: safeFront?.custom === true,
+      src: resolveCoverSideSrc(bookId, "front", safeFront, parentId)
     },
     back: {
       ...(safeBack || undefined),
-      src: resolveCoverAudioSrc(bookId, "back", safeBack?.src || "")
+      custom: safeBack?.custom === true,
+      src: resolveCoverSideSrc(bookId, "back", safeBack, parentId)
     }
   };
 }
@@ -187,17 +230,52 @@ function sanitizeProfileId(id) {
   return String(id || "").replaceAll(/[^a-zA-Z0-9_-]/g, "");
 }
 
-/** Stable filename for saved welcome MP3: prefer parent id, else slug from name. */
-function welcomeAudioFileBase(parentId, name) {
-  const fromParent = sanitizeProfileId(parentId);
-  if (fromParent) {
-    return `welcome_${fromParent}`;
-  }
-  const fromName = String(name || "")
+function normalizeEmail(raw) {
+  return String(raw || "").trim().toLowerCase();
+}
+
+/** Minimal RFC-style check for hackathon JSON store */
+function isValidEmailFormat(s) {
+  const t = String(s || "").trim();
+  if (!t || t.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t);
+}
+
+function publicParentFromUser(user, childName, childAge) {
+  return {
+    id: user.id,
+    username: user.username,
+    email:
+      user.email != null && String(user.email).trim() !== ""
+        ? String(user.email).trim()
+        : null,
+    name:
+      user.name != null && String(user.name).trim() !== "" ? String(user.name).trim() : null,
+    childName,
+    childAge
+  };
+}
+
+/** Folder under /assets/audio/personalized/users/<id>/ for custom_name.mp3 + custom_front.mp3 */
+function userVoiceFolderKey(parentId, displayName) {
+  const fromParent = sanitizeUserVoiceFolderId(parentId);
+  if (fromParent) return fromParent;
+  const fromName = String(displayName || "")
     .trim()
     .replaceAll(/[^a-zA-Z0-9_-]/g, "")
     .slice(0, 40);
-  return `welcome_${fromName || "guest"}`;
+  return fromName || "guest";
+}
+
+function userVoiceClipUrls(folderKey) {
+  const base = path.join(USER_VOICE_DIR, folderKey);
+  const nameFile = path.join(base, "custom_name.mp3");
+  const frontFile = path.join(base, "custom_front.mp3");
+  const prefix = `/assets/audio/personalized/users/${folderKey}`;
+  return {
+    customNameAudioUrl: fs.existsSync(nameFile) ? `${prefix}/custom_name.mp3` : null,
+    customFrontAudioUrl: fs.existsSync(frontFile) ? `${prefix}/custom_front.mp3` : null
+  };
 }
 
 const PROFILE_IMAGE_MIME = {
@@ -222,10 +300,15 @@ app.get("/health", (_req, res) => {
 
 app.post("/auth/login", (req, res) => {
   const { username, password } = req.body || {};
+  const identifier = String(username || "").trim();
+  const idEmail = normalizeEmail(identifier);
   let users = readJson("users.json");
-  const match = users.find(
-    (user) => user.username === username && user.password === password
-  );
+  const match = users.find((user) => {
+    if (user.password !== password) return false;
+    const u = String(user.username || "").trim();
+    const e = normalizeEmail(user.email);
+    return u === identifier || (idEmail && e === idEmail);
+  });
 
   if (!match) {
     return res.status(401).json({ error: "Invalid credentials" });
@@ -266,31 +349,43 @@ app.post("/auth/login", (req, res) => {
 
   return res.json({
     token: `fake-jwt-${match.id}`,
-    parent: {
-      id: match.id,
-      username: match.username,
-      childName,
-      childAge
-    }
+    parent: publicParentFromUser(match, childName, childAge)
   });
 });
 
 app.post("/auth/register", (req, res) => {
-  const { username, password } = req.body || {};
-  if (!username || !password) {
+  const { username, password, email, name } = req.body || {};
+  const usernameTrim = String(username || "").trim();
+  const passwordStr = String(password || "");
+
+  if (!usernameTrim || !passwordStr) {
     return res.status(400).json({ error: "Username and password are required" });
   }
+  if (passwordStr.length < 4) {
+    return res.status(400).json({ error: "Password must be at least 4 characters" });
+  }
+
+  const emailNorm = normalizeEmail(email);
+  if (!emailNorm || !isValidEmailFormat(emailNorm)) {
+    return res.status(400).json({ error: "A valid email address is required" });
+  }
+
+  const displayName = String(name || "").trim() || null;
 
   const users = readJson("users.json");
-  const existing = users.find((user) => user.username === username);
-  if (existing) {
+  if (users.some((user) => String(user.username || "").trim() === usernameTrim)) {
     return res.status(409).json({ error: "Username already exists" });
+  }
+  if (users.some((user) => normalizeEmail(user.email) === emailNorm)) {
+    return res.status(409).json({ error: "An account with this email already exists" });
   }
 
   const newUser = {
     id: `parent-${Date.now()}`,
-    username,
-    password,
+    username: usernameTrim,
+    email: emailNorm,
+    name: displayName,
+    password: passwordStr,
     childName: null,
     childAge: null
   };
@@ -299,12 +394,7 @@ app.post("/auth/register", (req, res) => {
 
   return res.status(201).json({
     token: `fake-jwt-${newUser.id}`,
-    parent: {
-      id: newUser.id,
-      username: newUser.username,
-      childName: null,
-      childAge: null
-    }
+    parent: publicParentFromUser(newUser, null, null)
   });
 });
 
@@ -357,14 +447,10 @@ app.post("/profile/child", (req, res) => {
   };
   writeJson("users.json", users);
 
+  const u = users[userIndex];
   return res.status(201).json({
     child,
-    parent: {
-      id: users[userIndex].id,
-      username: users[userIndex].username,
-      childName: trimmedName,
-      childAge: safeAge
-    }
+    parent: publicParentFromUser(u, trimmedName, safeAge)
   });
 });
 
@@ -376,17 +462,25 @@ app.get("/profile/photo/:parentId", (req, res) => {
 
   const original = findProfilePhotoVariants(parentId, "");
   const cartoon = findProfilePhotoVariants(parentId, "_cartoon");
+  const voice = userVoiceClipUrls(parentId);
 
   return res.json({
     photoUrl: original?.url ?? null,
-    cartoonPhotoUrl: cartoon?.url ?? null
+    cartoonPhotoUrl: cartoon?.url ?? null,
+    customNameAudioUrl: voice.customNameAudioUrl,
+    customFrontAudioUrl: voice.customFrontAudioUrl
   });
 });
 
 /**
- * Generate personalized welcome audio via ElevenLabs TTS.
- * Body: { name: string (required), parentId?: string }
- * Saves MP3 under /assets/audio/personalized/welcome_<parentId|slug>.mp3
+ * Generate personalized voice clips via ElevenLabs (two API calls).
+ * Body: { name: string (required — kid's name, e.g. "Ari"), parentId?: string }
+ *
+ * Writes:
+ * - custom_name.mp3 — spoken text is exactly `name`
+ * - custom_front.mp3 — "Hello, {name}. Welcome to the world of dragons. …" (template overridable)
+ *
+ * Directory: /assets/audio/personalized/users/<parentId|slug>/
  */
 app.post("/audio/elevenlabs/welcome", async (req, res) => {
   const apiKey = getElevenLabsApiKey();
@@ -395,7 +489,7 @@ app.post("/audio/elevenlabs/welcome", async (req, res) => {
   const displayName = String(name || "").trim();
 
   if (!displayName) {
-    return res.status(400).json({ error: "name is required (child or listener name for the greeting)" });
+    return res.status(400).json({ error: "name is required (child name, e.g. Ari)" });
   }
   if (!apiKey) {
     return res.status(503).json({
@@ -409,36 +503,37 @@ app.post("/audio/elevenlabs/welcome", async (req, res) => {
     });
   }
 
-  const template =
-    process.env.ELEVENLABS_WELCOME_TEMPLATE?.trim() ||
-    "Hey {name}, welcome to Narria! We are so glad you are here.";
-  const spokenText = applyNameTemplate(template, displayName);
+  const folderKey = userVoiceFolderKey(parentId, displayName);
+  const userVoiceDir = path.join(USER_VOICE_DIR, folderKey);
   const modelId = process.env.ELEVENLABS_MODEL_ID?.trim() || undefined;
 
   try {
-    console.log("[elevenlabs] welcome TTS request", {
-      fileBase: welcomeAudioFileBase(parentId, displayName),
-      textPreview: `${spokenText.slice(0, 80)}${spokenText.length > 80 ? "…" : ""}`
+    console.log("[elevenlabs] user voice clips request", {
+      folderKey,
+      custom_name: displayName
     });
-    const buffer = await synthesizeSpeechToMp3Buffer({
+    const saved = await synthesizeAndSaveUserVoiceClips({
       apiKey,
       voiceId,
-      text: spokenText,
+      childName: displayName,
+      userVoiceDir,
       modelId
     });
-    const base = welcomeAudioFileBase(parentId, displayName);
-    const fileName = `${base}.mp3`;
-    const targetPath = path.join(PERSONALIZED_AUDIO_DIR, fileName);
-    fs.writeFileSync(targetPath, buffer);
-    const audioUrl = `/assets/audio/personalized/${fileName}`;
-    console.log("[elevenlabs] welcome TTS done", { audioUrl, bytes: buffer.length });
+    const prefix = `/assets/audio/personalized/users/${folderKey}`;
+    const customNameUrl = `${prefix}/custom_name.mp3`;
+    const customFrontUrl = `${prefix}/custom_front.mp3`;
+    console.log("[elevenlabs] user voice clips done", {
+      customNameUrl,
+      customFrontUrl
+    });
     return res.status(201).json({
-      audioUrl,
-      fileName,
-      text: spokenText
+      folderKey,
+      customNameUrl,
+      customFrontUrl,
+      texts: saved.texts
     });
   } catch (err) {
-    console.error("[elevenlabs] welcome TTS failed:", err?.message || err);
+    console.error("[elevenlabs] user voice clips failed:", err?.message || err);
     return res.status(502).json({
       error: err?.message || "ElevenLabs request failed"
     });
@@ -478,21 +573,23 @@ app.post("/profile/photo", (req, res) => {
   const geminiKey = getGeminiApiKey();
   const cartoonEnabled = Boolean(geminiKey);
 
-  if (cartoonEnabled) {
-    console.log("[profile photo] scheduling Gemini cartoon for", safeParentId);
-    void generateAndSaveCartoonAvatar({
-      profilesDir: PROFILE_ASSETS_DIR,
-      safeParentId,
-      imageBase64: imageBase64ForGemini,
-      mimeType,
-      childDisplayName: resolveChildDisplayName(safeParentId),
-      welcomeAudioDataDir: DATA_JSON_DIR
-    }).catch((err) => {
-      console.error("[profile photo] cartoon task rejected:", err?.message || err);
-    });
-  } else {
+  // Always schedule: Gemini runs only if GEMINI_API_KEY is set; ElevenLabs runs afterward if
+  // ELEVENLABS_* + child name exist (independent of Gemini — see cartoonAvatarService).
+  console.log("[profile photo] scheduling post-upload (cartoon if Gemini key + ElevenLabs voice)", safeParentId);
+  void generateAndSaveCartoonAvatar({
+    profilesDir: PROFILE_ASSETS_DIR,
+    safeParentId,
+    imageBase64: imageBase64ForGemini,
+    mimeType,
+    childDisplayName: resolveChildDisplayName(safeParentId),
+    userVoiceDir: path.join(USER_VOICE_DIR, safeParentId)
+  }).catch((err) => {
+    console.error("[profile photo] post-upload task rejected:", err?.message || err);
+  });
+
+  if (!cartoonEnabled) {
     console.log(
-      "[profile photo] Gemini cartoon skipped — set GEMINI_API_KEY in backend/.env or repo-root .env (see backend/.env.example)"
+      "[profile photo] Gemini cartoon disabled — set GEMINI_API_KEY for cartoon (ElevenLabs still runs if configured)"
     );
   }
 
@@ -513,6 +610,7 @@ app.get("/books", (_req, res) => {
 });
 
 app.get("/books/:bookId", (req, res) => {
+  const parentId = sanitizeProfileId(req.query.parentId);
   const books = readJson("books.json").map(normalizeBook);
   const book = books.find((item) => item.id === req.params.bookId);
   if (!book) {
@@ -523,18 +621,19 @@ app.get("/books/:bookId", (req, res) => {
       id: book.id,
       name: book.name,
       pages: book.totalPages,
-      coverAudio: resolveCoverAudio(book.id, book.coverAudio),
+      coverAudio: resolveCoverAudio(book.id, book.coverAudio, parentId),
       pageConfigs: book.pages.map((page) => ({
         ...page,
         image: resolvePageImage(book.id, page.image || "", book, page.pageNumber),
-        audio: resolvePageAudios(book.id, page.audio),
-        choiceOutcomes: resolveChoiceOutcomes(book.id, page.choiceOutcomes, book, page.pageNumber)
+        audio: resolvePageAudios(book.id, page.audio, parentId),
+        choiceOutcomes: resolveChoiceOutcomes(book.id, page.choiceOutcomes, book, page.pageNumber, parentId)
       }))
     }
   });
 });
 
 app.get("/books/:bookId/pages/:pageNumber", (req, res) => {
+  const parentId = sanitizeProfileId(req.query.parentId);
   const books = readJson("books.json").map(normalizeBook);
   const book = books.find((item) => item.id === req.params.bookId);
   const pageNumber = Number(req.params.pageNumber);
@@ -558,8 +657,8 @@ app.get("/books/:bookId/pages/:pageNumber", (req, res) => {
     pageNumber,
     totalPages: book.totalPages,
     image: imagePayload,
-    audio: resolvePageAudios(book.id, pageConfig.audio),
-    choiceOutcomes: resolveChoiceOutcomes(book.id, pageConfig.choiceOutcomes, book, pageNumber),
+    audio: resolvePageAudios(book.id, pageConfig.audio, parentId),
+    choiceOutcomes: resolveChoiceOutcomes(book.id, pageConfig.choiceOutcomes, book, pageNumber, parentId),
     hasDialogChoice: Boolean(pageConfig.hasDialogChoice),
     dialog: pageConfig.dialog || null
   });
@@ -572,6 +671,6 @@ app.listen(PORT, () => {
   );
   const elevenReady = Boolean(getElevenLabsApiKey() && getElevenLabsVoiceId());
   console.log(
-    `[env] ElevenLabs welcome TTS: ${elevenReady ? "configured (POST /audio/elevenlabs/welcome)" : "disabled — set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID"}`
+    `[env] ElevenLabs (custom_name + custom_front): ${elevenReady ? "configured (POST /audio/elevenlabs/welcome)" : "disabled — set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID"}`
   );
 });

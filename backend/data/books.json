@@ -5,11 +5,13 @@
     "coverAudio": {
       "front": {
         "src": "",
-        "startDelayMs": 800
+        "startDelayMs": 800,
+        "custom": false
       },
       "back": {
         "src": "",
-        "startDelayMs": 800
+        "startDelayMs": 800,
+        "custom": false
       }
     },
     "pages": [
@@ -17,7 +19,8 @@
         "pageNumber": 1,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -26,7 +29,8 @@
         "pageNumber": 2,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -42,7 +46,8 @@
         "pageNumber": 3,
         "audio": {
           "src": "",
-          "startDelayMs": 1200
+          "startDelayMs": 1200,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -51,7 +56,8 @@
         "pageNumber": 4,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -69,12 +75,14 @@
     "name": "Rainbow Sea Starfall",
     "coverAudio": {
       "front": {
-        "src": "front.mp3",
-        "startDelayMs": 0
+        "src": "custom_front.mp3",
+        "startDelayMs": 0,
+        "custom": true
       },
       "back": {
         "src": "",
-        "startDelayMs": 0
+        "startDelayMs": 0,
+        "custom": false
       }
     },
     "pages": [
@@ -83,7 +91,8 @@
         "image": "page1.jpg",
         "audio": {
           "src": "page1.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -93,7 +102,8 @@
         "image": "page2.jpg",
         "audio": {
           "src": "page2.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -102,9 +112,22 @@
         "pageNumber": 3,
         "image": "page3.jpg",
         "audio": [
-		  "page3_question_intro.mp3",
-		  "page3_choices.mp3"
-		],
+		  {
+            "src": "custom_name.mp3",
+            "startDelayMs": 0,
+            "custom": true
+          },
+          {
+            "src": "page3_question_intro.mp3",
+            "startDelayMs": 0,
+            "custom": false
+          },
+          {
+            "src": "page3_choices.mp3",
+            "startDelayMs": 0,
+            "custom": false
+          }
+        ],
         "hasDialogChoice": true,
         "dialog": {
           "question": "What shall we do?",
@@ -119,21 +142,24 @@
             "image": "page3_a.jpg",
             "audio": {
               "src": "page3_a.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Ask Captain Coral to come help rescue Lumi together": {
             "image": "page3_b.jpg",
             "audio": {
               "src": "page3_b.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Wait behind a crystal pillar until the storm gets quieter": {
             "image": "page3_c.jpg",
             "audio": {
               "src": "page3_c.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           }
         }
@@ -143,7 +169,8 @@
         "image": "page4.jpg",
         "audio": {
           "src": "page4.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -153,7 +180,8 @@
         "image": "page5.jpg",
         "audio": {
           "src": "page5.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -163,7 +191,8 @@
         "image": "page6.jpg",
         "audio": {
           "src": "page6.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -179,21 +208,24 @@
             "image": "page6_a.jpg",
             "audio": {
               "src": "page6_a.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Open the blue shell and say, This one feels lonely or sad": {
             "image": "page6_b.jpg",
             "audio": {
               "src": "page6_b.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Ignore the shells and search directly for the shard": {
             "image": "page6_c.jpg",
             "audio": {
               "src": "page6_c.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           }
         }
@@ -203,7 +235,8 @@
         "image": "page7.jpg",
         "audio": {
           "src": "page7.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -213,7 +246,8 @@
         "image": "page8.jpg",
         "audio": {
           "src": "page8.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -223,7 +257,8 @@
         "image": "page9.jpg",
         "audio": {
           "src": "page9.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -239,21 +274,24 @@
             "image": "page9_a.jpg",
             "audio": {
               "src": "page9_a.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Tell Captain Coral or another grown pirate that something unfair is happening": {
             "image": "page9_b.jpg",
             "audio": {
               "src": "page9_b.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Stay quiet so the loud pirates do not get upset": {
             "image": "page9_c.jpg",
             "audio": {
               "src": "page9_c.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           }
         }
@@ -263,7 +301,8 @@
         "image": "page10.jpg",
         "audio": {
           "src": "page10.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -273,7 +312,8 @@
         "image": "page11.jpg",
         "audio": {
           "src": "page11.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -283,7 +323,8 @@
         "image": "page12.jpg",
         "audio": {
           "src": "page12.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -299,21 +340,24 @@
             "image": "page12_a.jpg",
             "audio": {
               "src": "page12_a.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Tell Lumi and ask him to stay beside you while you think": {
             "image": "page12_b.jpg",
             "audio": {
               "src": "page12_b.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Close the chest and keep moving without opening it": {
             "image": "page12_c.jpg",
             "audio": {
               "src": "page12_c.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           }
         }
@@ -323,7 +367,8 @@
         "image": "page13.jpg",
         "audio": {
           "src": "page13.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -333,7 +378,8 @@
         "image": "page14.jpg",
         "audio": {
           "src": "page14.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -343,7 +389,8 @@
         "image": "page15.jpg",
         "audio": {
           "src": "page15.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -359,21 +406,24 @@
             "image": "page15_a.jpg",
             "audio": {
               "src": "page15_a.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Ask all your friends to help restore it together": {
             "image": "page15_b.jpg",
             "audio": {
               "src": "page15_b.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           },
           "Try to fix it alone without saying anything": {
             "image": "page15_c.jpg",
             "audio": {
               "src": "page15_c.mp3",
-              "startDelayMs": 0
+              "startDelayMs": 0,
+              "custom": false
             }
           }
         }
@@ -383,7 +433,8 @@
         "image": "page16.jpg",
         "audio": {
           "src": "page16.mp3",
-          "startDelayMs": 0
+          "startDelayMs": 0,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -396,11 +447,13 @@
     "coverAudio": {
       "front": {
         "src": "",
-        "startDelayMs": 800
+        "startDelayMs": 800,
+        "custom": false
       },
       "back": {
         "src": "",
-        "startDelayMs": 800
+        "startDelayMs": 800,
+        "custom": false
       }
     },
     "pages": [
@@ -408,7 +461,8 @@
         "pageNumber": 1,
         "audio": {
           "src": "",
-          "startDelayMs": 1100
+          "startDelayMs": 1100,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -417,7 +471,8 @@
         "pageNumber": 2,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -432,7 +487,8 @@
         "pageNumber": 3,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -441,7 +497,8 @@
         "pageNumber": 4,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -461,11 +518,13 @@
     "coverAudio": {
       "front": {
         "src": "",
-        "startDelayMs": 800
+        "startDelayMs": 800,
+        "custom": false
       },
       "back": {
         "src": "",
-        "startDelayMs": 800
+        "startDelayMs": 800,
+        "custom": false
       }
     },
     "pages": [
@@ -473,7 +532,8 @@
         "pageNumber": 1,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -482,7 +542,8 @@
         "pageNumber": 2,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": true,
         "dialog": {
@@ -497,7 +558,8 @@
         "pageNumber": 3,
         "audio": {
           "src": "",
-          "startDelayMs": 950
+          "startDelayMs": 950,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null
@@ -506,7 +568,8 @@
         "pageNumber": 4,
         "audio": {
           "src": "",
-          "startDelayMs": 1000
+          "startDelayMs": 1000,
+          "custom": false
         },
         "hasDialogChoice": false,
         "dialog": null

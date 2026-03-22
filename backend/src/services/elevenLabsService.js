@@ -46,7 +46,7 @@ async function synthesizeSpeechToMp3Buffer({
 }
 
 /**
- * Build spoken line from template. Placeholder: {name} (case-insensitive).
+ * Placeholder: {name} (case-insensitive).
  * @param {string} template
  * @param {string} name
  */
@@ -55,8 +55,8 @@ function applyNameTemplate(template, name) {
   return String(template || "").replace(/\{name\}/gi, trimmed);
 }
 
-/** Safe basename segment for welcome MP3 in data/ */
-function sanitizeWelcomeFileBase(parentId) {
+/** Safe folder segment for per-user voice assets */
+function sanitizeUserVoiceFolderId(parentId) {
   const s = String(parentId || "")
     .replaceAll(/[^a-zA-Z0-9_-]/g, "")
     .slice(0, 80);
@@ -64,47 +64,78 @@ function sanitizeWelcomeFileBase(parentId) {
 }
 
 /**
- * Spoken line after cartoon avatar is ready (kid name from profile).
+ * Line spoken for the book front / intro (kid name interpolated).
+ * Override with ELEVENLABS_CUSTOM_FRONT_TEMPLATE (use {name}).
  * @param {string} childName
  */
-function buildKidWelcomeLine(childName) {
+function buildCustomFrontLine(childName) {
   const name = String(childName || "").trim();
   const who = name || "friend";
-  return `Hello ${who}, welcome to the crazy world`;
+  const envTemplate = process.env.ELEVENLABS_CUSTOM_FRONT_TEMPLATE?.trim();
+  if (envTemplate) {
+    return applyNameTemplate(envTemplate, who);
+  }
+  return `Hello, ${who}. Welcome to the world of dragons. Uh, buckle down for the journey`;
 }
 
 /**
- * Generate MP3 via ElevenLabs and write under backend/data (e.g. welcome_parent-admin.mp3).
- * @param {{ apiKey: string; voiceId: string; childName: string; parentId: string; dataDir: string; modelId?: string }} params
- * @returns {Promise<{ fileName: string; filePath: string; text: string }>}
+ * Two ElevenLabs calls per user:
+ * - custom_name: spoken text is exactly the child's name (e.g. "Ari")
+ * - custom_front: full welcome line (see buildCustomFrontLine)
+ *
+ * @param {{ apiKey: string; voiceId: string; childName: string; userVoiceDir: string; modelId?: string }} params
+ * @returns {Promise<{ customNamePath: string; customFrontPath: string; texts: { custom_name: string; custom_front: string } }>}
  */
-async function synthesizeAndSaveKidWelcomeToDataDir({
+async function synthesizeAndSaveUserVoiceClips({
   apiKey,
   voiceId,
   childName,
-  parentId,
-  dataDir,
+  userVoiceDir,
   modelId
 }) {
-  const text = buildKidWelcomeLine(childName);
-  const buffer = await synthesizeSpeechToMp3Buffer({
+  const trimmed = String(childName || "").trim();
+  if (!trimmed) {
+    throw new Error("childName is required for personalized voice clips");
+  }
+
+  const textCustomName = trimmed;
+  const textCustomFront = buildCustomFrontLine(trimmed);
+
+  const bufferName = await synthesizeSpeechToMp3Buffer({
     apiKey,
     voiceId,
-    text,
+    text: textCustomName,
     modelId
   });
-  const base = sanitizeWelcomeFileBase(parentId);
-  const fileName = `welcome_${base}.mp3`;
-  const dir = path.resolve(dataDir);
+  const bufferFront = await synthesizeSpeechToMp3Buffer({
+    apiKey,
+    voiceId,
+    text: textCustomFront,
+    modelId
+  });
+
+  const dir = path.resolve(userVoiceDir);
   fs.mkdirSync(dir, { recursive: true });
-  const filePath = path.join(dir, fileName);
-  fs.writeFileSync(filePath, buffer);
-  return { fileName, filePath, text };
+
+  const customNamePath = path.join(dir, "custom_name.mp3");
+  const customFrontPath = path.join(dir, "custom_front.mp3");
+  fs.writeFileSync(customNamePath, bufferName);
+  fs.writeFileSync(customFrontPath, bufferFront);
+
+  return {
+    customNamePath,
+    customFrontPath,
+    texts: {
+      custom_name: textCustomName,
+      custom_front: textCustomFront
+    }
+  };
 }
 
 module.exports = {
   synthesizeSpeechToMp3Buffer,
   applyNameTemplate,
-  buildKidWelcomeLine,
-  synthesizeAndSaveKidWelcomeToDataDir
+  buildCustomFrontLine,
+  sanitizeUserVoiceFolderId,
+  synthesizeAndSaveUserVoiceClips
 };

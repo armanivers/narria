@@ -12,6 +12,10 @@ export function resolveBackendAssetUrl(path: string | null | undefined): string 
 export type Parent = {
   id: string;
   username: string;
+  /** Account email (stored in users.json) */
+  email?: string | null;
+  /** Parent / account display name */
+  name?: string | null;
   /** Mirrored from users.json when the child profile is set */
   childName?: string | null;
   /** Child's age in years; mirrored from users.json */
@@ -34,7 +38,19 @@ export type Book = {
 export type AudioConfig = {
   src: string;
   startDelayMs?: number;
+  /**
+   * When true, backend resolves `src` as a filename under the logged-in parent’s folder:
+   * `/assets/audio/personalized/users/<parentId>/`. Subtitles use the same base path (.json).
+   */
+  custom?: boolean;
 };
+
+function withParentQuery(path: string, parentId?: string | null) {
+  const id = parentId?.trim();
+  if (!id) return path;
+  const sep = path.includes("?") ? "&" : "?";
+  return `${path}${sep}parentId=${encodeURIComponent(id)}`;
+}
 
 /** Backend may send one clip, several, or string filenames; normalize to an ordered list. */
 export function normalizePageAudios(
@@ -46,9 +62,14 @@ export function normalizePageAudios(
     .map((item) => {
       if (typeof item === "string") {
         const src = item.trim();
-        return src ? { src, startDelayMs: 0 } : null;
+        return src ? { src, startDelayMs: 0, custom: false } : null;
       }
-      if (item && String(item.src || "").trim().length > 0) return item as AudioConfig;
+      if (item && String(item.src || "").trim().length > 0) {
+        return {
+          ...item,
+          custom: item.custom === true
+        } as AudioConfig;
+      }
       return null;
     })
     .filter((t): t is AudioConfig => t != null);
@@ -112,10 +133,15 @@ export async function login(username: string, password: string) {
   });
 }
 
-export async function register(username: string, password: string) {
+export async function register(input: {
+  username: string;
+  password: string;
+  email: string;
+  name?: string;
+}) {
   return request<{ token: string; parent: Parent }>("/auth/register", {
     method: "POST",
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify(input)
   });
 }
 
@@ -153,18 +179,20 @@ export async function getBooks() {
   };
 }
 
-export async function getBook(bookId: string) {
-  return request<{ book: BookDetails }>(`/books/${bookId}`);
+export async function getBook(bookId: string, parentId?: string | null) {
+  return request<{ book: BookDetails }>(withParentQuery(`/books/${bookId}`, parentId));
 }
 
-export async function getBookPage(bookId: string, pageNumber: number) {
-  return request<PageData>(`/books/${bookId}/pages/${pageNumber}`);
+export async function getBookPage(bookId: string, pageNumber: number, parentId?: string | null) {
+  return request<PageData>(withParentQuery(`/books/${bookId}/pages/${pageNumber}`, parentId));
 }
 
 export async function getProfilePhoto(parentId: string) {
   return request<{
     photoUrl: string | null;
     cartoonPhotoUrl: string | null;
+    customNameAudioUrl: string | null;
+    customFrontAudioUrl: string | null;
   }>(`/profile/photo/${parentId}`);
 }
 
@@ -179,16 +207,18 @@ export async function saveProfilePhoto(parentId: string, imageDataUrl: string) {
   });
 }
 
-/** ElevenLabs: generates MP3 on backend; returns URL under /assets/audio/personalized/ */
+/** ElevenLabs: two clips — custom_name (name only) + custom_front (welcome line); saved under /assets/audio/personalized/users/<id>/ */
 export async function requestElevenLabsWelcomeAudio(input: {
   name: string;
   parentId?: string;
 }) {
-  return request<{ audioUrl: string; fileName: string; text: string }>(
-    "/audio/elevenlabs/welcome",
-    {
-      method: "POST",
-      body: JSON.stringify(input)
-    }
-  );
+  return request<{
+    folderKey: string;
+    customNameUrl: string;
+    customFrontUrl: string;
+    texts: { custom_name: string; custom_front: string };
+  }>("/audio/elevenlabs/welcome", {
+    method: "POST",
+    body: JSON.stringify(input)
+  });
 }

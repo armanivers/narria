@@ -76,6 +76,11 @@ export default function StoryPage() {
   /** Avoid re-scheduling page narration when only deps like `pagesByNumber` refresh mid-play. */
   const pageNarrationScheduledForRef = useRef<number | null>(null);
 
+  useLayoutEffect(() => {
+    hasPlayedFrontRef.current = false;
+    hasPlayedBackRef.current = false;
+  }, [bookId]);
+
   useEffect(() => {
     const timer = setTimeout(() => setIntroFade(false), 1400);
     return () => clearTimeout(timer);
@@ -83,12 +88,12 @@ export default function StoryPage() {
 
   useEffect(() => {
     const parent = getParentFromSession();
-    if (!parent) {
+    if (!parent?.id) {
       router.replace("/");
       return;
     }
 
-    getBook(bookId).then((response) => {
+    getBook(bookId, parent.id).then((response) => {
       if (!response.book) {
         router.replace("/menu");
         return;
@@ -202,7 +207,12 @@ export default function StoryPage() {
       options?: { overrideDelayMs?: number; shouldAutoAdvanceOnEnd?: boolean }
     ) => {
       const src = resolveAudioUrl(audioConfig?.src);
-      if (!src) return;
+      if (!src) {
+        queueMicrotask(() => {
+          if (onEnded) onEnded();
+        });
+        return;
+      }
       stopAudioPlayback();
 
       const delay = options?.overrideDelayMs ?? audioConfig?.startDelayMs ?? 1000;
@@ -394,7 +404,8 @@ export default function StoryPage() {
   const loadPage = useCallback(
     async (pageNumber: number) => {
       if (pagesByNumber[pageNumber]) return pagesByNumber[pageNumber];
-      const raw = await getBookPage(bookId, pageNumber);
+      const parentForApi = getParentFromSession()?.id ?? "";
+      const raw = await getBookPage(bookId, pageNumber, parentForApi);
       const rawPageData: PageData = {
         ...raw,
         audio: normalizePageAudios(raw.audio),
@@ -659,7 +670,7 @@ export default function StoryPage() {
   const coverBackSrc = coverAudio?.back?.src ?? "";
 
   useEffect(() => {
-    if (introFade || !coverAudio?.front || hasPlayedFrontRef.current) return;
+    if (introFade || !coverAudio?.front?.src?.trim() || hasPlayedFrontRef.current) return;
     if (state !== "closed-front") return;
 
     hasPlayedFrontRef.current = true;
@@ -667,11 +678,14 @@ export default function StoryPage() {
     const run = setTimeout(() => {
       scheduleAudioPlaybackRef.current(front, undefined, { shouldAutoAdvanceOnEnd: true });
     }, 0);
-    return () => clearTimeout(run);
+    return () => {
+      clearTimeout(run);
+      hasPlayedFrontRef.current = false;
+    };
   }, [coverAudio, coverFrontSrc, introFade, state]);
 
   useEffect(() => {
-    if (!coverAudio?.back || hasPlayedBackRef.current) return;
+    if (!coverAudio?.back?.src?.trim() || hasPlayedBackRef.current) return;
     if (state !== "closed-back") return;
 
     hasPlayedBackRef.current = true;
@@ -679,7 +693,10 @@ export default function StoryPage() {
     const run = setTimeout(() => {
       scheduleAudioPlaybackRef.current(back);
     }, 0);
-    return () => clearTimeout(run);
+    return () => {
+      clearTimeout(run);
+      hasPlayedBackRef.current = false;
+    };
   }, [coverAudio, coverBackSrc, state]);
 
   /** Resume only after a real hidden→visible transition (avoids spurious play() loops). */
