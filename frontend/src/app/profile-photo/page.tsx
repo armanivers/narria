@@ -16,16 +16,20 @@ import {
   saveSession
 } from "@/lib/session";
 
-type FlowStep = "intro" | "camera" | "preview" | "done";
+/** Edit flow */
+type EditStep = "intro" | "camera" | "preview" | "done";
+/** New setup: child's name + age, then briefing → camera → preview */
+type CreateStep = "childDetails" | "preCameraBriefing" | "camera" | "preview";
 
 export default function ProfilePhotoPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  /** Primitives for effect deps (stable length; avoids HMR / React “deps array size changed”). */
   const modeParam = searchParams.get("mode") || "create";
   const isEdit = modeParam === "edit";
 
-  const [step, setStep] = useState<FlowStep>("intro");
+  const [editStep, setEditStep] = useState<EditStep>("intro");
+  const [createStep, setCreateStep] = useState<CreateStep>("childDetails");
+  const [pageReady, setPageReady] = useState(false);
   const [error, setError] = useState("");
   const [childName, setChildName] = useState("");
   const [age, setAge] = useState("");
@@ -35,7 +39,6 @@ export default function ProfilePhotoPage() {
   const [saving, setSaving] = useState(false);
   const [savingProfile, setSavingProfile] = useState(false);
   const [photoCacheBust, setPhotoCacheBust] = useState(0);
-  /** True while we’re polling after a save until the cartoon file appears (or timeout). */
   const [awaitingCartoon, setAwaitingCartoon] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -43,6 +46,29 @@ export default function ProfilePhotoPage() {
   const photoPollAttemptsRef = useRef(0);
   const parent = getParentFromSession();
   const parentId = parent?.id ?? "";
+
+  const cameraStepActive =
+    (isEdit && editStep === "camera") || (!isEdit && createStep === "camera");
+  const previewStepActive =
+    (isEdit && editStep === "preview") || (!isEdit && createStep === "preview");
+
+  function goToCameraStep() {
+    if (isEdit) setEditStep("camera");
+    else setCreateStep("camera");
+  }
+
+  function goToPreviewStep() {
+    if (isEdit) setEditStep("preview");
+    else setCreateStep("preview");
+  }
+
+  useEffect(() => {
+    setEditStep("intro");
+    setCreateStep("childDetails");
+    setCapturedPhoto(null);
+    setError("");
+    setPageReady(false);
+  }, [isEdit]);
 
   const stopPhotoPolling = useCallback(() => {
     if (photoPollIntervalRef.current) {
@@ -53,7 +79,6 @@ export default function ProfilePhotoPage() {
     setAwaitingCartoon(false);
   }, []);
 
-  /** Stable: reads session inside so `parent` object identity doesn’t churn every render. */
   const fetchPhotosFromServer = useCallback(async () => {
     const p = getParentFromSession();
     if (!p) return null;
@@ -68,9 +93,6 @@ export default function ProfilePhotoPage() {
     void fetchPhotosFromServer().catch(() => {});
   }, [fetchPhotosFromServer]);
 
-  /**
-   * After a new selfie, the cartoon is generated async on the server. Poll until it exists or cap.
-   */
   const startPhotoPollingForCartoon = useCallback(() => {
     if (!getParentFromSession()) return;
     stopPhotoPolling();
@@ -98,8 +120,8 @@ export default function ProfilePhotoPage() {
     photoPollIntervalRef.current = setInterval(() => void tick(), intervalMs);
   }, [fetchPhotosFromServer, stopPhotoPolling]);
 
-  /** Fixed-length deps: [parentId, modeParam, router, fetchPhotosFromServer] — never add/remove slots. */
   useEffect(() => {
+    let cancelled = false;
     const p = getParentFromSession();
     if (!p) {
       router.replace("/");
@@ -112,6 +134,7 @@ export default function ProfilePhotoPage() {
 
     getChildProfile(p.id)
       .then((response) => {
+        if (cancelled) return;
         if (response.child) {
           setChildName(response.child.childName);
           setAge(response.child.age != null ? String(response.child.age) : "");
@@ -119,12 +142,19 @@ export default function ProfilePhotoPage() {
           setChildName(p.childName?.trim() ?? "");
           setAge(p.childAge != null ? String(p.childAge) : "");
         }
+        setPageReady(true);
       })
       .catch(() => {
+        if (cancelled) return;
         setChildName(p.childName?.trim() ?? "");
         setAge(p.childAge != null ? String(p.childAge) : "");
+        setPageReady(true);
       });
-  }, [parentId, modeParam, router, fetchPhotosFromServer]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [parentId, modeParam, router, fetchPhotosFromServer, isEdit]);
 
   useEffect(() => {
     return () => {
@@ -138,7 +168,6 @@ export default function ProfilePhotoPage() {
     return () => stopPhotoPolling();
   }, [stopPhotoPolling]);
 
-  /** Refetch when returning to the tab (e.g. after visiting menu in another tab). */
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible") {
@@ -150,16 +179,15 @@ export default function ProfilePhotoPage() {
   }, [fetchPhotosFromServer]);
 
   useEffect(() => {
-    if (step !== "camera") return;
+    if (!cameraStepActive) return;
     if (!videoRef.current || !streamRef.current) return;
 
     videoRef.current.srcObject = streamRef.current;
     void videoRef.current.play().catch(() => {
       setError("Camera started but video feed could not play. Please retry.");
     });
-  }, [step]);
+  }, [cameraStepActive]);
 
-  /** Saves child name + age to backend (users.json + children.json). */
   async function pushChildProfileToBackend(): Promise<boolean> {
     if (!parent) return false;
     const trimmed = childName.trim();
@@ -201,12 +229,28 @@ export default function ProfilePhotoPage() {
     }
   }
 
+  const createDetailsValid =
+    childName.trim().length > 0 &&
+    (age.trim() === "" ||
+      (Number.isFinite(Number(age)) && Number(age) >= 1 && Number(age) <= 18));
+
+  function proceedFromChildDetails() {
+    setError("");
+    if (!createDetailsValid) {
+      setError("Please enter your child’s name. If you add an age, use 1–18.");
+      return;
+    }
+    setCreateStep("preCameraBriefing");
+  }
+
   async function startCamera() {
     setError("");
-    const trimmed = childName.trim();
-    if (!trimmed) {
-      setError("Please enter the child's name first.");
-      return;
+    if (isEdit) {
+      const trimmed = childName.trim();
+      if (!trimmed) {
+        setError("Please enter the child's name first.");
+        return;
+      }
     }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -214,7 +258,7 @@ export default function ProfilePhotoPage() {
         audio: false
       });
       streamRef.current = stream;
-      setStep("camera");
+      goToCameraStep();
     } catch {
       setError("Could not access webcam. Please allow camera permissions and retry.");
     }
@@ -224,6 +268,15 @@ export default function ProfilePhotoPage() {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
+    }
+  }
+
+  function cancelCamera() {
+    stopCamera();
+    if (isEdit) {
+      setEditStep("intro");
+    } else {
+      setCreateStep("preCameraBriefing");
     }
   }
 
@@ -248,22 +301,30 @@ export default function ProfilePhotoPage() {
     const imageDataUrl = canvas.toDataURL("image/jpeg", 0.82);
     setCapturedPhoto(imageDataUrl);
     stopCamera();
-    setStep("preview");
+    goToPreviewStep();
   }
 
-  async function confirmPhoto() {
+  async function confirmPhotoAndFinish() {
     if (!capturedPhoto || !parent) return;
     setSaving(true);
     setError("");
     try {
-      const response = await saveProfilePhoto(parent.id, capturedPhoto);
-      setSavedPhotoUrl(response.photoUrl);
-      setCartoonPhotoUrl(response.cartoonPhotoUrl ?? null);
       const profileOk = await pushChildProfileToBackend();
       if (!profileOk) return;
-      setStep("done");
+      const ageNum = age.trim() === "" ? null : Number(age);
+      const response = await saveProfilePhoto(parent.id, capturedPhoto, {
+        childName: childName.trim(),
+        age: ageNum != null && Number.isFinite(ageNum) ? ageNum : undefined
+      });
+      setSavedPhotoUrl(response.photoUrl);
+      setCartoonPhotoUrl(response.cartoonPhotoUrl ?? null);
       setCapturedPhoto(null);
       startPhotoPollingForCartoon();
+      if (isEdit) {
+        setEditStep("done");
+      } else {
+        router.push("/menu");
+      }
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : "Could not save photo");
     } finally {
@@ -274,6 +335,50 @@ export default function ProfilePhotoPage() {
   const originalSrc = resolveBackendAssetUrl(savedPhotoUrl);
   const cartoonSrc = resolveBackendAssetUrl(cartoonPhotoUrl);
 
+  let cartoonPlaceholder = "Shows here after you save a selfie (Gemini + cartoon).";
+  if (awaitingCartoon && originalSrc) {
+    cartoonPlaceholder = "Drawing your cartoon… this updates automatically.";
+  } else if (originalSrc) {
+    cartoonPlaceholder = "Cartoon is still cooking… tap “Refresh photos” if it’s slow.";
+  }
+
+  let previewConfirmLabel = "Finish & go to menu";
+  if (saving) previewConfirmLabel = "Saving…";
+  else if (isEdit) previewConfirmLabel = "Save photo";
+
+  const pageTitle = (() => {
+    if (isEdit) {
+      if (editStep === "camera") return "Take a selfie";
+      if (editStep === "preview") return "Review photo";
+      return "Edit child profile";
+    }
+    switch (createStep) {
+      case "childDetails":
+        return "Child profile & selfie";
+      case "preCameraBriefing":
+        return "Before we open the camera";
+      case "camera":
+        return "Take a selfie";
+      case "preview":
+        return "Review photo";
+      default:
+        return "New selfie";
+    }
+  })();
+
+  if (!pageReady) {
+    return (
+      <main className="kidPageShell kidPageShell--center">
+        <div className="kidFloatShape kidFloat1" aria-hidden />
+        <div className="kidFloatShape kidFloat2" aria-hidden />
+        <div className="kidFloatShape kidFloat3" aria-hidden />
+        <p className="menuLoading" style={{ marginTop: 24 }}>
+          Loading…
+        </p>
+      </main>
+    );
+  }
+
   return (
     <main className="kidPageShell kidPageShell--center">
       <div className="kidFloatShape kidFloat1" aria-hidden />
@@ -281,21 +386,33 @@ export default function ProfilePhotoPage() {
       <div className="kidFloatShape kidFloat3" aria-hidden />
 
       <section className="kidCard kidCard--wide profilePanel">
-        <h1 className="title">{isEdit ? "Edit profile" : "New selfie"}</h1>
-        <p className="subtitle">
-          {isEdit
-            ? "Update your reader’s name and age, see your photos, or take a new selfie."
-            : "Add your reader’s name and age, then take a selfie for the story."}
-        </p>
+        <h1 className="title">{pageTitle}</h1>
 
-        {(step === "intro" || step === "done") && (
+        {!isEdit && createStep === "childDetails" ? (
+          <p className="subtitle">
+            Add your child&apos;s name and age, then we&apos;ll guide you through the selfie for the
+            magic book.
+          </p>
+        ) : null}
+        {!isEdit && createStep === "preCameraBriefing" ? (
+          <p className="subtitle">Quick tips so the photo looks great in your book.</p>
+        ) : null}
+
+        {isEdit ? (
+          <p className="subtitle">
+            Update your child&apos;s name and age, see their photos, or take a new selfie.
+          </p>
+        ) : null}
+
+        {/* ——— Create: child name + age (same flow as selfie) ——— */}
+        {!isEdit && createStep === "childDetails" ? (
           <div className="profileIntro">
             <div className="profileFieldsGrid">
-              <label className="authLabel" htmlFor="profile-child-name">
+              <label className="authLabel" htmlFor="profile-child-name-create">
                 Child&apos;s name
               </label>
               <input
-                id="profile-child-name"
+                id="profile-child-name-create"
                 className="input"
                 placeholder="e.g. Sam"
                 value={childName}
@@ -303,14 +420,99 @@ export default function ProfilePhotoPage() {
                 required
                 autoComplete="nickname"
               />
-              <label className="authLabel" htmlFor="profile-child-age">
+              <label className="authLabel" htmlFor="profile-child-age-create">
                 Age{" "}
                 <span style={{ fontWeight: 600, textTransform: "none", letterSpacing: "normal" }}>
                   (optional)
                 </span>
               </label>
               <input
-                id="profile-child-age"
+                id="profile-child-age-create"
+                className="input"
+                placeholder="e.g. 7"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={18}
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+              />
+            </div>
+            <div className="profileButtonRow profileButtonRow--spaced">
+              <button
+                type="button"
+                className="menuButton secondaryButton"
+                onClick={() => router.push("/menu")}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="menuButton"
+                disabled={!createDetailsValid}
+                onClick={proceedFromChildDetails}
+              >
+                Proceed
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {/* ——— Create: pre-camera briefing ——— */}
+        {!isEdit && createStep === "preCameraBriefing" ? (
+          <div className="profileBriefing">
+            <div className="profileBriefingCard">
+              <p className="profileBriefingLead">
+                You&apos;re about to take a <strong>selfie of your child</strong>.
+              </p>
+              <ul className="profileBriefingList">
+                <li>Ask them to sit or stand comfortably.</li>
+                <li>
+                  Try to keep their <strong>face centered</strong> in the frame with good light.
+                </li>
+                <li>Hold the device steady — we&apos;ll use this in the magic book!</li>
+              </ul>
+              <p className="profileBriefingQuestion">Did you understand these instructions?</p>
+            </div>
+            <div className="profileButtonRow profileButtonRow--spaced">
+              <button
+                type="button"
+                className="menuButton secondaryButton"
+                onClick={() => setCreateStep("childDetails")}
+              >
+                Back
+              </button>
+              <button type="button" className="menuButton" onClick={() => void startCamera()}>
+                I understood — open camera
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {/* ——— Edit: intro + gallery ——— */}
+        {isEdit && (editStep === "intro" || editStep === "done") ? (
+          <div className="profileIntro">
+            <div className="profileFieldsGrid">
+              <label className="authLabel" htmlFor="profile-child-name-edit">
+                Child&apos;s name
+              </label>
+              <input
+                id="profile-child-name-edit"
+                className="input"
+                placeholder="e.g. Sam"
+                value={childName}
+                onChange={(e) => setChildName(e.target.value)}
+                required
+                autoComplete="nickname"
+              />
+              <label className="authLabel" htmlFor="profile-child-age-edit">
+                Age{" "}
+                <span style={{ fontWeight: 600, textTransform: "none", letterSpacing: "normal" }}>
+                  (optional)
+                </span>
+              </label>
+              <input
+                id="profile-child-age-edit"
                 className="input"
                 placeholder="e.g. 7"
                 type="number"
@@ -322,89 +524,68 @@ export default function ProfilePhotoPage() {
               />
             </div>
 
-            {isEdit && (
-              <>
-                <div className="profileButtonRow">
-                  <button
-                    type="button"
-                    className="menuButton secondaryButton"
-                    disabled={savingProfile}
-                    onClick={() => void saveNameAndAgeClick()}
-                  >
-                    {savingProfile ? "Saving…" : "Save name & age"}
-                  </button>
-                  <button type="button" className="menuButton secondaryButton" onClick={refreshPhotos}>
-                    Refresh photos
-                  </button>
-                </div>
+            <div className="profileButtonRow">
+              <button
+                type="button"
+                className="menuButton secondaryButton"
+                disabled={savingProfile}
+                onClick={() => void saveNameAndAgeClick()}
+              >
+                {savingProfile ? "Saving…" : "Save name & age"}
+              </button>
+              <button type="button" className="menuButton secondaryButton" onClick={refreshPhotos}>
+                Refresh photos
+              </button>
+            </div>
 
-                <div className="profileDualGallery">
-                  <div className="profileDualCard">
-                    <p className="profileDualLabel">Original photo</p>
-                    {originalSrc ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        className="profileDualImg"
-                        src={`${originalSrc}?t=${photoCacheBust}`}
-                        alt="Original profile"
-                      />
-                    ) : (
-                      <div className="profileDualPlaceholder">No selfie yet — use “Take picture”.</div>
-                    )}
-                  </div>
-                  <div className="profileDualCard">
-                    <p className="profileDualLabel">Cartoon version</p>
-                    {cartoonSrc ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        className="profileDualImg"
-                        src={`${cartoonSrc}?t=${photoCacheBust}`}
-                        alt="Cartoon avatar"
-                      />
-                    ) : (
-                      <div className="profileDualPlaceholder">
-                        {awaitingCartoon && originalSrc
-                          ? "Drawing your cartoon… this updates automatically."
-                          : originalSrc
-                            ? "Cartoon is still cooking… tap “Refresh photos” if it’s slow."
-                            : "Shows here after you save a selfie (Gemini + cartoon)."}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="profileButtonRow">
-                  <button type="button" className="menuButton" onClick={() => void startCamera()}>
-                    Take picture
-                  </button>
-                  <button type="button" className="menuButton secondaryButton" onClick={() => router.push("/menu")}>
-                    Back to menu
-                  </button>
-                </div>
-              </>
-            )}
-
-            {!isEdit && (
-              <div className="profileButtonRow">
-                <button type="button" className="menuButton" onClick={() => void startCamera()}>
-                  Take picture
-                </button>
-                <button type="button" className="menuButton secondaryButton" onClick={() => router.push("/menu")}>
-                  Back to menu
-                </button>
+            <div className="profileDualGallery">
+              <div className="profileDualCard">
+                <p className="profileDualLabel">Original photo</p>
+                {originalSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    className="profileDualImg"
+                    src={`${originalSrc}?t=${photoCacheBust}`}
+                    alt="Original profile"
+                  />
+                ) : (
+                  <div className="profileDualPlaceholder">No selfie yet — use “Take picture”.</div>
+                )}
               </div>
-            )}
+              <div className="profileDualCard">
+                <p className="profileDualLabel">Cartoon version</p>
+                {cartoonSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    className="profileDualImg"
+                    src={`${cartoonSrc}?t=${photoCacheBust}`}
+                    alt="Cartoon avatar"
+                  />
+                ) : (
+                  <div className="profileDualPlaceholder">{cartoonPlaceholder}</div>
+                )}
+              </div>
+            </div>
 
-            {step === "done" && !isEdit && (
+            <div className="profileButtonRow">
+              <button type="button" className="menuButton" onClick={() => void startCamera()}>
+                Take picture
+              </button>
+              <button type="button" className="menuButton secondaryButton" onClick={() => router.push("/menu")}>
+                Back to menu
+              </button>
+            </div>
+
+            {editStep === "done" ? (
               <p className="subtitle" style={{ marginTop: 12 }}>
-                Saved! Open <strong>Edit profile</strong> anytime — photos refresh automatically when the cartoon is
-                ready.
+                Saved! Your photos will update when the cartoon is ready.
               </p>
-            )}
+            ) : null}
           </div>
-        )}
+        ) : null}
 
-        {step === "camera" && (
+        {/* ——— Camera (shared) ——— */}
+        {cameraStepActive ? (
           <div className="cameraStage">
             <div className="cameraFrameWrap">
               <video ref={videoRef} className="cameraVideo" playsInline muted />
@@ -414,25 +595,23 @@ export default function ProfilePhotoPage() {
               <button type="button" className="menuButton" onClick={takePhoto}>
                 Take Photo
               </button>
-              <button
-                type="button"
-                className="menuButton secondaryButton"
-                onClick={() => {
-                  stopCamera();
-                  setStep("intro");
-                }}
-              >
+              <button type="button" className="menuButton secondaryButton" onClick={cancelCamera}>
                 Cancel
               </button>
             </div>
           </div>
-        )}
+        ) : null}
 
-        {step === "preview" && capturedPhoto && (
+        {/* ——— Preview (shared) ——— */}
+        {previewStepActive && capturedPhoto ? (
           <div className="profilePreview">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="profilePreviewImage" src={capturedPhoto} alt="Captured selfie" />
-            <p className="subtitle">Happy with this? We’ll save your photo and name/age.</p>
+            <p className="subtitle">
+              {isEdit
+                ? "Happy with this? We’ll save your photo and name/age."
+                : "Retake if you like, or finish to save and go to your story menu."}
+            </p>
             <div className="profileButtonRow">
               <button
                 type="button"
@@ -442,14 +621,19 @@ export default function ProfilePhotoPage() {
                   void startCamera();
                 }}
               >
-                Retry
+                Retake
               </button>
-              <button type="button" className="menuButton" onClick={() => void confirmPhoto()} disabled={saving}>
-                {saving ? "Saving…" : "Save photo"}
+              <button
+                type="button"
+                className="menuButton"
+                onClick={() => void confirmPhotoAndFinish()}
+                disabled={saving}
+              >
+                {previewConfirmLabel}
               </button>
             </div>
           </div>
-        )}
+        ) : null}
 
         {error ? (
           <p className="authError" style={{ marginTop: 10 }}>

@@ -161,16 +161,16 @@ async function generateCartoonFromPhotoBase64({ base64, mimeType }) {
 
 /**
  * After a selfie is saved, generate cartoon variant as `<parentId>_cartoon.<ext>` when Gemini succeeds.
- * ElevenLabs (custom_name + custom_front) runs whenever child name + keys + userVoiceDir exist,
- * even if Gemini fails, returns no image, or throws.
- * @param {{ profilesDir: string, safeParentId: string, imageBase64: string, mimeType: string, childDisplayName?: string | null, userVoiceDir?: string | null }} params
+ * ElevenLabs (custom_name + custom_front) runs whenever the child's name + keys + userVoiceDir exist,
+ * even if Gemini fails, returns no image, or throws. `childName` must be the kid's name from users/children (not parent display name).
+ * @param {{ profilesDir: string, safeParentId: string, imageBase64: string, mimeType: string, childName?: string | null, userVoiceDir?: string | null }} params
  */
 async function generateAndSaveCartoonAvatar({
   profilesDir,
   safeParentId,
   imageBase64,
   mimeType,
-  childDisplayName = null,
+  childName = null,
   userVoiceDir = null
 }) {
   try {
@@ -200,15 +200,28 @@ async function generateAndSaveCartoonAvatar({
         });
       }
     } catch (err) {
+      const errText = redactSecrets(err?.message || String(err));
       console.error("[gemini cartoon] job END (error)", {
         parentId: safeParentId,
         totalMs: Date.now() - jobStarted,
-        error: redactSecrets(err?.message || String(err))
+        error: errText
       });
+      const hint = String(errText).toLowerCase();
+      if (
+        hint.includes("suspended") ||
+        hint.includes("permission denied") ||
+        hint.includes("403") ||
+        hint.includes("api key not valid")
+      ) {
+        console.warn(
+          "[gemini cartoon] Fix: your GEMINI_API_KEY is rejected or the Google project consumer is suspended. " +
+            "Create a new key at https://aistudio.google.com/app/apikey (or Cloud Console) and update backend/.env. " +
+            "Cartoon avatars are optional — ElevenLabs clips and custom_front.json still generate without Gemini."
+        );
+      }
     }
 
-    const trimmedName =
-      childDisplayName != null ? String(childDisplayName).trim() : "";
+    const trimmedName = childName != null ? String(childName).trim() : "";
     const apiKey = getElevenLabsApiKey();
     const voiceId = getElevenLabsVoiceId();
     const modelId = process.env.ELEVENLABS_MODEL_ID?.trim() || undefined;
@@ -223,7 +236,7 @@ async function generateAndSaveCartoonAvatar({
 
     if (!trimmedName) {
       console.log(
-        "[elevenlabs] user voice clips skipped (no child name on account yet; create child profile first)"
+        "[elevenlabs] user voice clips skipped (no child name saved yet — save child name with profile/selfie flow first)"
       );
     } else if (!apiKey || !voiceId) {
       console.log(
@@ -240,12 +253,21 @@ async function generateAndSaveCartoonAvatar({
           userVoiceDir,
           modelId
         });
+        const subPath = saved.subtitlesPath;
+        const subOk = subPath && fs.existsSync(subPath);
         console.log("[elevenlabs] user voice clips saved", {
           parentId: safeParentId,
-          dir: userVoiceDir,
+          dir: path.resolve(userVoiceDir),
+          custom_front_subtitles_path: subPath,
+          custom_front_json_on_disk: subOk,
           custom_name: saved.texts.custom_name,
           custom_front_preview: `${saved.texts.custom_front.slice(0, 72)}${saved.texts.custom_front.length > 72 ? "…" : ""}`
         });
+        if (!subOk) {
+          console.warn(
+            "[elevenlabs] custom_front.json missing after save — check logs for [custom_front subtitles] or [elevenlabs] custom_front subtitles FAILED"
+          );
+        }
       } catch (voiceErr) {
         console.error("[elevenlabs] user voice clips failed:", {
           parentId: safeParentId,

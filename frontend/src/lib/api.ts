@@ -1,10 +1,25 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+/**
+ * Base URL for JSON API + `/assets/...` paths.
+ * - Set `NEXT_PUBLIC_API_BASE_URL` to call Express directly (e.g. different host).
+ * - Otherwise in the browser: same-origin `/api/narria` (see `next.config.ts` rewrite → Express).
+ * - Otherwise (SSR / Node): `NARRIA_BACKEND_URL` or `http://127.0.0.1:4000`.
+ */
+export function getApiBase(): string {
+  const explicit = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, "");
 
-/** Backend serves `/assets/...`; use this for <img src> in the browser */
+  if (typeof window !== "undefined") {
+    return "/api/narria";
+  }
+
+  return (process.env.NARRIA_BACKEND_URL || "http://127.0.0.1:4000").replace(/\/$/, "");
+}
+
+/** Backend serves `/assets/...`; use this for `<img src>` / audio URLs in the browser */
 export function resolveBackendAssetUrl(path: string | null | undefined): string | null {
   if (path == null || path === "") return null;
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  const base = API_BASE_URL.replace(/\/$/, "");
+  const base = getApiBase().replace(/\/$/, "");
   const p = path.startsWith("/") ? path : `/${path}`;
   return `${base}${p}`;
 }
@@ -75,16 +90,27 @@ export function normalizePageAudios(
     .filter((t): t is AudioConfig => t != null);
 }
 
+export type DialogOption = {
+  label: string;
+  tags: string[];
+};
+
 export type DialogChoice = {
   question: string;
-  options: string[];
+  /** Backend normalizes legacy string options to `{ label, tags }`. */
+  options: DialogOption[];
 };
 
 export type PageData = {
   bookId: string;
   bookName: string;
+  storyId?: string;
+  storyTitle?: string;
+  narrator?: string | null;
   pageNumber: number;
   totalPages: number;
+  /** 1-based chapter index when this page is a story choice beat */
+  choiceChapter?: number | null;
   image: {
     kind: "url";
     image: string;
@@ -103,6 +129,11 @@ export type PageData = {
 };
 
 export type BookDetails = Book & {
+  storyId?: string;
+  storyTitle?: string;
+  narrator?: string | null;
+  /** All tags used on choice options in this book (for outcome `signals` zeros). */
+  signalCatalog?: string[];
   coverAudio: {
     front: AudioConfig;
     back: AudioConfig;
@@ -110,8 +141,46 @@ export type BookDetails = Book & {
   pageConfigs: unknown[];
 };
 
+export type StoryChoiceRecord = {
+  chapter: number;
+  choiceLabel: string;
+  tags: string[];
+};
+
+export type StoryOutcomePayload = {
+  parentId: string;
+  parentEmail?: string;
+  childName?: string;
+  childAge?: number | null;
+  storyId: string;
+  storyTitle: string;
+  narrator?: string;
+  choiceCount: number;
+  choices: StoryChoiceRecord[];
+  signals: Record<string, number>;
+};
+
+/** Initialize all catalog tags to 0, then +1 per tag on each selected choice. */
+export function buildSignalsFromChoices(
+  catalog: string[],
+  choices: { tags: string[] }[]
+): Record<string, number> {
+  const signals: Record<string, number> = {};
+  for (const t of catalog) {
+    signals[t] = 0;
+  }
+  for (const c of choices) {
+    for (const raw of c.tags) {
+      const t = String(raw).trim();
+      if (!t) continue;
+      signals[t] = (signals[t] ?? 0) + 1;
+    }
+  }
+  return signals;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${getApiBase()}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
@@ -120,8 +189,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   if (!response.ok) {
-    const data = await response.json().catch(() => null);
-    throw new Error(data?.error || "Request failed");
+    const data = (await response.json().catch(() => null)) as { error?: string } | null;
+    const detail = data?.error?.trim();
+    const statusBit = `${response.status} ${response.statusText || ""}`.trim();
+    throw new Error(detail || `Request failed (${statusBit})`);
   }
   return response.json();
 }
@@ -187,29 +258,48 @@ export async function getBookPage(bookId: string, pageNumber: number, parentId?:
   return request<PageData>(withParentQuery(`/books/${bookId}/pages/${pageNumber}`, parentId));
 }
 
+export async function submitStoryOutcome(payload: StoryOutcomePayload) {
+  return request<{ id: string; ok: boolean }>("/story-outcomes", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
 export async function getProfilePhoto(parentId: string) {
   return request<{
     photoUrl: string | null;
     cartoonPhotoUrl: string | null;
     customNameAudioUrl: string | null;
     customFrontAudioUrl: string | null;
+    /** Present when custom_front.json exists next to custom_front.mp3 for this parentId */
+    customFrontSubtitlesUrl?: string | null;
   }>(`/profile/photo/${parentId}`);
 }
 
-export async function saveProfilePhoto(parentId: string, imageDataUrl: string) {
+export async function saveProfilePhoto(
+  parentId: string,
+  imageDataUrl: string,
+  opts?: { childName?: string; age?: number | null }
+) {
+  const body: Record<string, unknown> = { parentId, imageDataUrl };
+  const cn = opts?.childName?.trim();
+  if (cn) body.childName = cn;
+  if (opts?.age != null && Number.isFinite(Number(opts.age))) {
+    body.age = Number(opts.age);
+  }
   return request<{
     photoUrl: string;
     cartoonPending?: boolean;
     cartoonPhotoUrl: string | null;
   }>("/profile/photo", {
     method: "POST",
-    body: JSON.stringify({ parentId, imageDataUrl })
+    body: JSON.stringify(body)
   });
 }
 
-/** ElevenLabs: two clips — custom_name (name only) + custom_front (welcome line); saved under /assets/audio/personalized/users/<id>/ */
+/** ElevenLabs: two clips — custom_name (child's name only) + custom_front (welcome line); saved under /assets/audio/personalized/users/<id>/ */
 export async function requestElevenLabsWelcomeAudio(input: {
-  name: string;
+  childName: string;
   parentId?: string;
 }) {
   return request<{
@@ -219,6 +309,6 @@ export async function requestElevenLabsWelcomeAudio(input: {
     texts: { custom_name: string; custom_front: string };
   }>("/audio/elevenlabs/welcome", {
     method: "POST",
-    body: JSON.stringify(input)
+    body: JSON.stringify({ childName: input.childName.trim(), parentId: input.parentId })
   });
 }

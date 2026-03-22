@@ -179,6 +179,62 @@ body {
   width: 100%;
 }
 
+.profileButtonRow--spaced {
+  justify-content: space-between;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 480px) {
+  .profileButtonRow--spaced {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.profileBriefing {
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+  width: 100%;
+}
+
+.profileBriefingCard {
+  max-width: 520px;
+  width: 100%;
+  padding: 20px 22px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(224, 242, 254, 0.9), rgba(255, 241, 242, 0.75));
+  border: 2px solid rgba(56, 189, 248, 0.25);
+  box-shadow: 0 10px 28px rgba(30, 58, 95, 0.08);
+}
+
+.profileBriefingLead {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--kid-ink);
+  line-height: 1.45;
+  text-align: center;
+}
+
+.profileBriefingList {
+  margin: 0 0 16px;
+  padding-left: 1.25rem;
+  font-weight: 700;
+  color: var(--kid-ink-soft);
+  line-height: 1.5;
+}
+
+.profileBriefingQuestion {
+  margin: 0;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--kid-ink);
+}
+
 .profileDualGallery {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -753,6 +809,114 @@ body {
   box-shadow: 0 8px 24px rgba(192, 132, 252, 0.35);
 }
 
+.authBrandMark--header {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+/* Login / register: full-height layout with site header + footer */
+.kidPageShell--auth {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.authSiteHeader {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  padding: 14px clamp(16px, 4vw, 28px);
+  border-bottom: 1px solid rgba(30, 58, 95, 0.1);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(30, 58, 95, 0.06);
+}
+
+.authSiteHeaderInner {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.authSiteTitle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--kid-ink);
+  line-height: 1.2;
+}
+
+.authSiteTagline {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--kid-ink-soft);
+  line-height: 1.3;
+}
+
+.authMainWrap {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(20px, 4vw, 40px) clamp(16px, 3vw, 32px);
+  width: 100%;
+}
+
+.authCard.authCard {
+  margin-bottom: 0;
+}
+
+.authCardTitle {
+  margin: 0 0 8px;
+  font-size: clamp(1.35rem, 3.5vw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--kid-ink);
+  text-align: center;
+}
+
+.authTagline--tight {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.authSiteFooter {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  padding: 18px clamp(16px, 4vw, 28px) 22px;
+  text-align: center;
+  border-top: 1px solid rgba(30, 58, 95, 0.1);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.authSiteFooterLine {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--kid-ink-soft);
+}
+
+.authSiteFooterSub {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(74, 111, 165, 0.85);
+}
+
 .authTitle {
   font-size: clamp(1.5rem, 4vw, 1.85rem);
   font-weight: 800;
@@ -1036,7 +1200,33 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 20px;
+  margin: -4px -4px 20px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(30, 58, 95, 0.08);
+  box-shadow: 0 6px 24px rgba(30, 58, 95, 0.06);
+}
+
+.menuGreeting {
+  margin: 0;
+  font-weight: 700;
+  color: #1e3a5f;
+  font-size: 0.95rem;
+  min-width: 0;
+}
+
+.menuGreetingAccent {
+  color: #0ea5e9;
+}
+
+.menuHeaderActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
 }
 
 .menuTopBtns {
@@ -1094,6 +1284,30 @@ body {
   margin-bottom: 22px;
   max-width: 36em;
   line-height: 1.45;
+}
+
+.menuHeadline--center,
+.menuSubline--center {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.menuStoriesLocked {
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+  margin-bottom: 26px;
+  padding: 8px 0 12px;
+}
+
+.menuLockedActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
 }
 
 .menuStoryGrid {
@@ -1224,6 +1438,13 @@ body {
 .menuBtnLogout:hover {
   background: #fff;
   transform: translateY(-1px);
+}
+
+.menuBtnLogout--header {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  border-width: 2px;
 }
 
 .menuLoading {

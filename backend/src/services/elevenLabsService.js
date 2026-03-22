@@ -5,6 +5,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { writeCustomFrontSubtitlesJson } = require("./customFrontSubtitles");
 
 /**
  * @param {{ apiKey: string; voiceId: string; text: string; modelId?: string }} params
@@ -79,12 +80,14 @@ function buildCustomFrontLine(childName) {
 }
 
 /**
- * Two ElevenLabs calls per user:
+ * Two ElevenLabs calls per user (both use the stored child name only — not parent account name):
  * - custom_name: spoken text is exactly the child's name (e.g. "Ari")
  * - custom_front: full welcome line (see buildCustomFrontLine)
+ * After each successful response, the MP3 is written to disk immediately; custom_front.json is
+ * generated right after custom_front.mp3 is saved (same process step, no other work in between).
  *
  * @param {{ apiKey: string; voiceId: string; childName: string; userVoiceDir: string; modelId?: string }} params
- * @returns {Promise<{ customNamePath: string; customFrontPath: string; texts: { custom_name: string; custom_front: string } }>}
+ * @returns {Promise<{ customNamePath: string; customFrontPath: string; subtitlesPath: string; texts: { custom_name: string; custom_front: string } }>}
  */
 async function synthesizeAndSaveUserVoiceClips({
   apiKey,
@@ -101,30 +104,43 @@ async function synthesizeAndSaveUserVoiceClips({
   const textCustomName = trimmed;
   const textCustomFront = buildCustomFrontLine(trimmed);
 
+  const dir = path.resolve(userVoiceDir);
+  fs.mkdirSync(dir, { recursive: true });
+  const customNamePath = path.join(dir, "custom_name.mp3");
+  const customFrontPath = path.join(dir, "custom_front.mp3");
+
   const bufferName = await synthesizeSpeechToMp3Buffer({
     apiKey,
     voiceId,
     text: textCustomName,
     modelId
   });
+  fs.writeFileSync(customNamePath, bufferName);
+
   const bufferFront = await synthesizeSpeechToMp3Buffer({
     apiKey,
     voiceId,
     text: textCustomFront,
     modelId
   });
-
-  const dir = path.resolve(userVoiceDir);
-  fs.mkdirSync(dir, { recursive: true });
-
-  const customNamePath = path.join(dir, "custom_name.mp3");
-  const customFrontPath = path.join(dir, "custom_front.mp3");
-  fs.writeFileSync(customNamePath, bufferName);
   fs.writeFileSync(customFrontPath, bufferFront);
+
+  let subtitlesPath = path.join(dir, "custom_front.json");
+  try {
+    const sub = await writeCustomFrontSubtitlesJson({
+      customFrontMp3Path: customFrontPath,
+      childName: trimmed,
+      spokenText: textCustomFront
+    });
+    subtitlesPath = sub.outPath;
+  } catch (subErr) {
+    console.error("[elevenlabs] custom_front subtitles FAILED (same folder as MP3):", subErr?.stack || subErr?.message || subErr);
+  }
 
   return {
     customNamePath,
     customFrontPath,
+    subtitlesPath,
     texts: {
       custom_name: textCustomName,
       custom_front: textCustomFront

@@ -72,7 +72,10 @@
   },
   {
     "id": "dragons",
-    "name": "Rainbow Sea Starfall",
+    "storyId": "rainbow_sea_of_starfall",
+    "storyTitle": "The Rainbow Sea of Starfall",
+    "narrator": "Captain Coral",
+    "name": "The Rainbow Sea of Starfall",
     "coverAudio": {
       "front": {
         "src": "custom_front.mp3",
@@ -110,6 +113,7 @@
       },
       {
         "pageNumber": 3,
+        "choiceChapter": 1,
         "image": "page3.jpg",
         "audio": [
 		  {
@@ -132,9 +136,18 @@
         "dialog": {
           "question": "What shall we do?",
           "options": [
-            "Walk slowly onto the bridge and speak gently to Lumi",
-            "Ask Captain Coral to come help rescue Lumi together",
-            "Wait behind a crystal pillar until the storm gets quieter"
+            {
+              "label": "Walk slowly onto the bridge and speak gently to Lumi",
+              "tags": ["approach_behavior", "calm_bravery", "emotional_attunement", "gentle_support"]
+            },
+            {
+              "label": "Ask Captain Coral to come help rescue Lumi together",
+              "tags": ["help_seeking", "trust_in_adult", "collaborative_coping", "social_problem_solving"]
+            },
+            {
+              "label": "Wait behind a crystal pillar until the storm gets quieter",
+              "tags": ["avoidance", "threat_sensitivity", "behavioral_inhibition", "cautious_temperament"]
+            }
           ]
         },
         "choiceOutcomes": {
@@ -188,6 +201,7 @@
       },
       {
         "pageNumber": 6,
+        "choiceChapter": 2,
         "image": "page6.jpg",
         "audio": {
           "src": "page6.mp3",
@@ -198,13 +212,22 @@
         "dialog": {
           "question": "Which shell needs you first?",
           "options": [
-            "Open the trembling shell and say, This one feels scared",
-            "Open the blue shell and say, This one feels lonely or sad",
-            "Ignore the shells and search directly for the shard"
+            {
+              "label": "Open the trembling shell first and say, \"This one feels scared.\"",
+              "tags": ["emotion_recognition_fear", "emotional_awareness", "emotional_attunement", "sensitivity_to_distress"]
+            },
+            {
+              "label": "Open the blue tear-shell first and say, \"This one feels lonely or sad.\"",
+              "tags": ["emotion_recognition_sadness", "empathy", "emotional_awareness", "sensitivity_to_sadness"]
+            },
+            {
+              "label": "Ignore the shells and look directly for the shard",
+              "tags": ["emotion_avoidance", "task_over_emotion", "low_affective_engagement", "goal_directed_focus"]
+            }
           ]
         },
         "choiceOutcomes": {
-          "Open the trembling shell and say, This one feels scared": {
+          "Open the trembling shell first and say, \"This one feels scared.\"": {
             "image": "page6_a.jpg",
             "audio": {
               "src": "page6_a.mp3",
@@ -212,7 +235,7 @@
               "custom": false
             }
           },
-          "Open the blue shell and say, This one feels lonely or sad": {
+          "Open the blue tear-shell first and say, \"This one feels lonely or sad.\"": {
             "image": "page6_b.jpg",
             "audio": {
               "src": "page6_b.mp3",
@@ -220,7 +243,7 @@
               "custom": false
             }
           },
-          "Ignore the shells and search directly for the shard": {
+          "Ignore the shells and look directly for the shard": {
             "image": "page6_c.jpg",
             "audio": {
               "src": "page6_c.mp3",
@@ -254,6 +277,7 @@
       },
       {
         "pageNumber": 9,
+        "choiceChapter": 3,
         "image": "page9.jpg",
         "audio": {
           "src": "page9.mp3",
@@ -264,13 +288,22 @@
         "dialog": {
           "question": "What kind of magic shall we make here?",
           "options": [
-            "Invite Finn to sit with you and say, Everyone gets a place",
-            "Tell Captain Coral or another grown pirate that something unfair is happening",
-            "Stay quiet so the loud pirates do not get upset"
+            {
+              "label": "Invite Finn to sit with you and say, \"Everyone gets a place.\"",
+              "tags": ["prosocial_behavior", "peer_inclusion", "fairness_orientation", "assertive_kindness", "defending_behavior"]
+            },
+            {
+              "label": "Tell Captain Coral or another grown pirate that something unfair is happening",
+              "tags": ["help_seeking_social", "trust_in_adult", "fairness_orientation", "safe_conflict_response"]
+            },
+            {
+              "label": "Stay quiet so the loud pirates do not get upset",
+              "tags": ["social_avoidance", "conflict_avoidance", "bystander_passivity", "fear_of_retaliation", "peer_distress_sensitivity"]
+            }
           ]
         },
         "choiceOutcomes": {
-          "Invite Finn to sit with you and say, Everyone gets a place": {
+          "Invite Finn to sit with you and say, \"Everyone gets a place.\"": {
             "image": "page9_a.jpg",
             "audio": {
               "src": "page9_a.mp3",
@@ -320,6 +353,7 @@
       },
       {
         "pageNumber": 12,
+        "choiceChapter": 4,
         "image": "page12.jpg",
         "audio": {
           "src": "page12.mp3",
@@ -330,13 +364,22 @@
         "dialog": {
           "question": "What do we do with heavy feelings?",
           "options": [
-            "Tell Marina, Some feelings are too heavy to hold alone",
-            "Tell Lumi and ask him to stay beside you while you think",
-            "Close the chest and keep moving without opening it"
+            {
+              "label": "Tell Marina, \"Some feelings are too heavy to hold alone.\"",
+              "tags": ["safe_disclosure", "help_seeking", "trust_in_supportive_other", "emotional_openness"]
+            },
+            {
+              "label": "Tell Lumi and ask him to stay beside you while you think",
+              "tags": ["co_regulation", "proximity_seeking", "relational_coping", "partial_disclosure"]
+            },
+            {
+              "label": "Close the chest and keep moving without opening it",
+              "tags": ["secrecy", "emotional_suppression", "avoidance", "discomfort_with_disclosure"]
+            }
           ]
         },
         "choiceOutcomes": {
-          "Tell Marina, Some feelings are too heavy to hold alone": {
+          "Tell Marina, \"Some feelings are too heavy to hold alone.\"": {
             "image": "page12_a.jpg",
             "audio": {
               "src": "page12_a.mp3",
@@ -386,6 +429,7 @@
       },
       {
         "pageNumber": 15,
+        "choiceChapter": 5,
         "image": "page15.jpg",
         "audio": {
           "src": "page15.mp3",
@@ -396,9 +440,18 @@
         "dialog": {
           "question": "How is the Heart-Star restored?",
           "options": [
-            "Place your hand on the Heart-Star and say how you feel out loud",
-            "Ask all your friends to help restore it together",
-            "Try to fix it alone without saying anything"
+            {
+              "label": "Place your hand on the Heart-Star and say how you feel out loud",
+              "tags": ["emotion_expression", "emotional_awareness", "self_regulation", "emotional_honesty"]
+            },
+            {
+              "label": "Ask all your friends to help restore it together",
+              "tags": ["collaborative_coping", "help_seeking", "trust_in_others", "social_resilience"]
+            },
+            {
+              "label": "Try to fix it alone without saying anything",
+              "tags": ["independent_coping", "low_help_seeking", "emotional_withholding", "self_reliance"]
+            }
           ]
         },
         "choiceOutcomes": {

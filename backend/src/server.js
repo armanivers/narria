@@ -2,7 +2,8 @@ const {
   loadBackendEnvironment,
   getGeminiApiKey,
   getElevenLabsApiKey,
-  getElevenLabsVoiceId
+  getElevenLabsVoiceId,
+  getN8nStoryOutcomeWebhookUrl
 } = require("./loadEnv");
 loadBackendEnvironment();
 
@@ -10,6 +11,7 @@ const express = require("express");
 const cors = require("cors");
 const fs = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
 const { getStoryPageImage } = require("./services/imageService");
 const {
   generateAndSaveCartoonAvatar,
@@ -47,8 +49,8 @@ function writeJson(fileName, value) {
   fs.writeFileSync(file, JSON.stringify(value, null, 2));
 }
 
-/** Child name from users.json / children.json for personalized ElevenLabs clips */
-function resolveChildDisplayName(parentId) {
+/** Child's name from users.json / children.json — sole name used for ElevenLabs (custom_name / custom_front). */
+function resolveChildNameForVoice(parentId) {
   if (!parentId) return null;
   try {
     const users = readJson("users.json");
@@ -161,6 +163,47 @@ function resolvePageImage(bookId, imageFileName, book, pageNumber) {
   return { kind: "url", image: imageUrl };
 }
 
+/** Dialog option: plain string (legacy) or `{ label, tags? }` from books.json */
+function normalizeDialogOption(raw) {
+  if (typeof raw === "string") {
+    const label = raw.trim();
+    return label ? { label, tags: [] } : null;
+  }
+  if (raw && typeof raw === "object" && raw.label != null) {
+    const label = String(raw.label).trim();
+    if (!label) return null;
+    const tags = Array.isArray(raw.tags) ? raw.tags.map((t) => String(t).trim()).filter(Boolean) : [];
+    return { label, tags };
+  }
+  return null;
+}
+
+function normalizeDialog(dialog) {
+  if (!dialog || typeof dialog !== "object") return null;
+  const options = Array.isArray(dialog.options)
+    ? dialog.options.map(normalizeDialogOption).filter(Boolean)
+    : [];
+  return {
+    question: String(dialog.question || ""),
+    options
+  };
+}
+
+/** All unique choice tags on a book (for story outcome `signals` baseline zeros). */
+function collectSignalCatalog(pages) {
+  const set = new Set();
+  for (const p of pages || []) {
+    const opts = p.dialog?.options;
+    if (!Array.isArray(opts)) continue;
+    for (const o of opts) {
+      const normalized = normalizeDialogOption(o);
+      if (!normalized) continue;
+      for (const t of normalized.tags) set.add(t);
+    }
+  }
+  return Array.from(set).sort();
+}
+
 function resolveChoiceOutcomes(bookId, choiceOutcomes, book, pageNumber, parentId) {
   if (!choiceOutcomes || typeof choiceOutcomes !== "object") return null;
   const entries = Object.entries(choiceOutcomes).map(([option, outcome]) => {
@@ -217,6 +260,15 @@ function normalizeBook(rawBook) {
   return {
     id: rawBook.id,
     name: rawBook.name,
+    storyId: rawBook.storyId != null && String(rawBook.storyId).trim() !== "" ? String(rawBook.storyId).trim() : rawBook.id,
+    storyTitle:
+      rawBook.storyTitle != null && String(rawBook.storyTitle).trim() !== ""
+        ? String(rawBook.storyTitle).trim()
+        : rawBook.name,
+    narrator:
+      rawBook.narrator != null && String(rawBook.narrator).trim() !== ""
+        ? String(rawBook.narrator).trim()
+        : null,
     coverAudio: rawBook.coverAudio || {
       front: { src: "", startDelayMs: 800 },
       back: { src: "", startDelayMs: 800 }
@@ -256,6 +308,71 @@ function publicParentFromUser(user, childName, childAge) {
   };
 }
 
+function parseAgeInput(age) {
+  if (age === undefined || age === null || age === "") return null;
+  const n = Number(age);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * Persist the child's name and age (the only kid name stored; used for ElevenLabs TTS and stories).
+ * @param {string} parentId
+ * @param {string} childName
+ * @param {unknown} age
+ * @param {boolean} [preserveExistingAge] when true and parsed age is null, keep users.json childAge if set
+ */
+function upsertChildProfileData(parentId, childName, age, preserveExistingAge = false) {
+  const trimmedName = String(childName || "").trim();
+  if (!trimmedName) {
+    const err = new Error("childName required");
+    err.code = "CHILD_NAME_REQUIRED";
+    throw err;
+  }
+  const users = readJson("users.json");
+  const userIndex = users.findIndex((user) => user.id === parentId);
+  if (userIndex < 0) {
+    const err = new Error("User not found");
+    err.code = "USER_NOT_FOUND";
+    throw err;
+  }
+
+  let safeAge = parseAgeInput(age);
+  if (preserveExistingAge && safeAge === null) {
+    const prev = users[userIndex].childAge;
+    if (prev != null && Number.isFinite(Number(prev))) {
+      safeAge = Number(prev);
+    }
+  }
+
+  const children = readJson("children.json");
+  const existingIndex = children.findIndex((item) => item.parentId === parentId);
+  const child = {
+    id: existingIndex >= 0 ? children[existingIndex].id : `child-${Date.now()}`,
+    parentId,
+    childName: trimmedName,
+    age: safeAge
+  };
+  if (existingIndex >= 0) {
+    children[existingIndex] = child;
+  } else {
+    children.push(child);
+  }
+  writeJson("children.json", children);
+
+  users[userIndex] = {
+    ...users[userIndex],
+    childName: trimmedName,
+    childAge: safeAge
+  };
+  writeJson("users.json", users);
+
+  const u = users[userIndex];
+  return {
+    child,
+    parent: publicParentFromUser(u, trimmedName, safeAge)
+  };
+}
+
 /** Folder under /assets/audio/personalized/users/<id>/ for custom_name.mp3 + custom_front.mp3 */
 function userVoiceFolderKey(parentId, displayName) {
   const fromParent = sanitizeUserVoiceFolderId(parentId);
@@ -271,10 +388,12 @@ function userVoiceClipUrls(folderKey) {
   const base = path.join(USER_VOICE_DIR, folderKey);
   const nameFile = path.join(base, "custom_name.mp3");
   const frontFile = path.join(base, "custom_front.mp3");
+  const frontJson = path.join(base, "custom_front.json");
   const prefix = `/assets/audio/personalized/users/${folderKey}`;
   return {
     customNameAudioUrl: fs.existsSync(nameFile) ? `${prefix}/custom_name.mp3` : null,
-    customFrontAudioUrl: fs.existsSync(frontFile) ? `${prefix}/custom_front.mp3` : null
+    customFrontAudioUrl: fs.existsSync(frontFile) ? `${prefix}/custom_front.mp3` : null,
+    customFrontSubtitlesUrl: fs.existsSync(frontJson) ? `${prefix}/custom_front.json` : null
   };
 }
 
@@ -411,47 +530,15 @@ app.post("/profile/child", (req, res) => {
   if (!parentId || !trimmedName) {
     return res.status(400).json({ error: "parentId and childName are required" });
   }
-
-  const users = readJson("users.json");
-  const userIndex = users.findIndex((user) => user.id === parentId);
-  if (userIndex < 0) {
-    return res.status(404).json({ error: "User account not found" });
+  try {
+    const { child, parent } = upsertChildProfileData(parentId, trimmedName, age, false);
+    return res.status(201).json({ child, parent });
+  } catch (e) {
+    if (e.code === "USER_NOT_FOUND") {
+      return res.status(404).json({ error: "User account not found" });
+    }
+    throw e;
   }
-
-  const parsedAge =
-    age === undefined || age === null || age === ""
-      ? null
-      : Number(age);
-  const safeAge = Number.isFinite(parsedAge) ? parsedAge : null;
-
-  const children = readJson("children.json");
-  const existingIndex = children.findIndex((item) => item.parentId === parentId);
-  const child = {
-    id: existingIndex >= 0 ? children[existingIndex].id : `child-${Date.now()}`,
-    parentId,
-    childName: trimmedName,
-    age: safeAge
-  };
-
-  if (existingIndex >= 0) {
-    children[existingIndex] = child;
-  } else {
-    children.push(child);
-  }
-  writeJson("children.json", children);
-
-  users[userIndex] = {
-    ...users[userIndex],
-    childName: trimmedName,
-    childAge: safeAge
-  };
-  writeJson("users.json", users);
-
-  const u = users[userIndex];
-  return res.status(201).json({
-    child,
-    parent: publicParentFromUser(u, trimmedName, safeAge)
-  });
 });
 
 app.get("/profile/photo/:parentId", (req, res) => {
@@ -468,28 +555,29 @@ app.get("/profile/photo/:parentId", (req, res) => {
     photoUrl: original?.url ?? null,
     cartoonPhotoUrl: cartoon?.url ?? null,
     customNameAudioUrl: voice.customNameAudioUrl,
-    customFrontAudioUrl: voice.customFrontAudioUrl
+    customFrontAudioUrl: voice.customFrontAudioUrl,
+    customFrontSubtitlesUrl: voice.customFrontSubtitlesUrl
   });
 });
 
 /**
  * Generate personalized voice clips via ElevenLabs (two API calls).
- * Body: { name: string (required — kid's name, e.g. "Ari"), parentId?: string }
+ * Body: { childName: string (preferred) or name (alias) — the child's name only, e.g. "Ari", parentId?: string }
  *
  * Writes:
- * - custom_name.mp3 — spoken text is exactly `name`
- * - custom_front.mp3 — "Hello, {name}. Welcome to the world of dragons. …" (template overridable)
+ * - custom_name.mp3 — spoken text is exactly the child's name
+ * - custom_front.mp3 — "Hello, {childName}. Welcome to the world of dragons. …" (template overridable)
  *
  * Directory: /assets/audio/personalized/users/<parentId|slug>/
  */
 app.post("/audio/elevenlabs/welcome", async (req, res) => {
   const apiKey = getElevenLabsApiKey();
   const voiceId = getElevenLabsVoiceId();
-  const { name, parentId } = req.body || {};
-  const displayName = String(name || "").trim();
+  const { name, childName, parentId } = req.body || {};
+  const displayName = String(childName || name || "").trim();
 
   if (!displayName) {
-    return res.status(400).json({ error: "name is required (child name, e.g. Ari)" });
+    return res.status(400).json({ error: "childName is required (the child's name, e.g. Ari)" });
   }
   if (!apiKey) {
     return res.status(503).json({
@@ -522,14 +610,20 @@ app.post("/audio/elevenlabs/welcome", async (req, res) => {
     const prefix = `/assets/audio/personalized/users/${folderKey}`;
     const customNameUrl = `${prefix}/custom_name.mp3`;
     const customFrontUrl = `${prefix}/custom_front.mp3`;
+    const customFrontSubtitlesUrl = fs.existsSync(saved.subtitlesPath)
+      ? `${prefix}/custom_front.json`
+      : null;
     console.log("[elevenlabs] user voice clips done", {
       customNameUrl,
-      customFrontUrl
+      customFrontUrl,
+      customFrontSubtitlesUrl,
+      subtitlesPath: saved.subtitlesPath
     });
     return res.status(201).json({
       folderKey,
       customNameUrl,
       customFrontUrl,
+      customFrontSubtitlesUrl,
       texts: saved.texts
     });
   } catch (err) {
@@ -541,10 +635,22 @@ app.post("/audio/elevenlabs/welcome", async (req, res) => {
 });
 
 app.post("/profile/photo", (req, res) => {
-  const { parentId, imageDataUrl } = req.body || {};
+  const { parentId, imageDataUrl, childName: bodyChildName, age: bodyAge } = req.body || {};
   const safeParentId = sanitizeProfileId(parentId);
   if (!safeParentId || !imageDataUrl) {
     return res.status(400).json({ error: "parentId and imageDataUrl are required" });
+  }
+
+  const optionalChildName = String(bodyChildName || "").trim();
+  if (optionalChildName) {
+    try {
+      upsertChildProfileData(safeParentId, optionalChildName, bodyAge, true);
+    } catch (e) {
+      if (e.code === "USER_NOT_FOUND") {
+        return res.status(404).json({ error: "User account not found" });
+      }
+      throw e;
+    }
   }
 
   const match = /^data:image\/(png|jpeg|jpg|webp);base64,(.+)$/.exec(String(imageDataUrl));
@@ -576,12 +682,13 @@ app.post("/profile/photo", (req, res) => {
   // Always schedule: Gemini runs only if GEMINI_API_KEY is set; ElevenLabs runs afterward if
   // ELEVENLABS_* + child name exist (independent of Gemini — see cartoonAvatarService).
   console.log("[profile photo] scheduling post-upload (cartoon if Gemini key + ElevenLabs voice)", safeParentId);
+  const voiceChildName = resolveChildNameForVoice(safeParentId);
   void generateAndSaveCartoonAvatar({
     profilesDir: PROFILE_ASSETS_DIR,
     safeParentId,
     imageBase64: imageBase64ForGemini,
     mimeType,
-    childDisplayName: resolveChildDisplayName(safeParentId),
+    childName: voiceChildName,
     userVoiceDir: path.join(USER_VOICE_DIR, safeParentId)
   }).catch((err) => {
     console.error("[profile photo] post-upload task rejected:", err?.message || err);
@@ -620,13 +727,18 @@ app.get("/books/:bookId", (req, res) => {
     book: {
       id: book.id,
       name: book.name,
+      storyId: book.storyId,
+      storyTitle: book.storyTitle,
+      narrator: book.narrator,
+      signalCatalog: collectSignalCatalog(book.pages),
       pages: book.totalPages,
       coverAudio: resolveCoverAudio(book.id, book.coverAudio, parentId),
       pageConfigs: book.pages.map((page) => ({
         ...page,
         image: resolvePageImage(book.id, page.image || "", book, page.pageNumber),
         audio: resolvePageAudios(book.id, page.audio, parentId),
-        choiceOutcomes: resolveChoiceOutcomes(book.id, page.choiceOutcomes, book, page.pageNumber, parentId)
+        choiceOutcomes: resolveChoiceOutcomes(book.id, page.choiceOutcomes, book, page.pageNumber, parentId),
+        dialog: normalizeDialog(page.dialog)
       }))
     }
   });
@@ -654,14 +766,136 @@ app.get("/books/:bookId/pages/:pageNumber", (req, res) => {
   return res.json({
     bookId: book.id,
     bookName: book.name,
+    storyId: book.storyId,
+    storyTitle: book.storyTitle,
+    narrator: book.narrator,
     pageNumber,
     totalPages: book.totalPages,
+    choiceChapter: pageConfig.choiceChapter != null ? Number(pageConfig.choiceChapter) : null,
     image: imagePayload,
     audio: resolvePageAudios(book.id, pageConfig.audio, parentId),
     choiceOutcomes: resolveChoiceOutcomes(book.id, pageConfig.choiceOutcomes, book, pageNumber, parentId),
     hasDialogChoice: Boolean(pageConfig.hasDialogChoice),
-    dialog: pageConfig.dialog || null
+    dialog: normalizeDialog(pageConfig.dialog)
   });
+});
+
+const STORY_OUTCOMES_DIR = dataPath("story-outcomes");
+
+function isSafeWebhookUrl(raw) {
+  try {
+    const u = new URL(raw);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Fire-and-forget POST of story outcome JSON to n8n (or any HTTP webhook).
+ * Does not block the API response. Requires `N8N_STORY_OUTCOME_WEBHOOK_URL` in backend `.env`.
+ */
+function forwardStoryOutcomeToWebhook(payload) {
+  const url = getN8nStoryOutcomeWebhookUrl();
+  if (!url) {
+    return;
+  }
+  if (!isSafeWebhookUrl(url)) {
+    console.warn("[story-outcomes] N8N_STORY_OUTCOME_WEBHOOK_URL is not a valid http(s) URL — skipping webhook");
+    return;
+  }
+  void fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(payload)
+  })
+    .then((res) => {
+      if (res.ok) {
+        console.log("[story-outcomes] n8n webhook posted OK", res.status, `outcomeId=${payload.id}`);
+        return;
+      }
+      const urlHint = url.length > 60 ? `${url.slice(0, 56)}…` : url;
+      console.warn("[story-outcomes] n8n webhook returned", res.status, res.statusText, "—", urlHint);
+    })
+    .catch((err) => {
+      console.error("[story-outcomes] n8n webhook failed:", err?.message || err);
+    });
+}
+
+function newOutcomeId(parentId) {
+  const uuid =
+    typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : crypto.randomBytes(16).toString("hex");
+  return `${parentId}_${uuid}`;
+}
+
+app.post("/story-outcomes", (req, res) => {
+  try {
+    const body = req.body || {};
+    const rawParentId = String(body.parentId || "").trim();
+    const parentId = sanitizeProfileId(rawParentId);
+    if (!parentId) {
+      return res.status(400).json({ error: "parentId is required" });
+    }
+
+    let users = [];
+    try {
+      users = readJson("users.json");
+    } catch {
+      users = [];
+    }
+    const user =
+      users.find((u) => u.id === parentId) ||
+      users.find((u) => String(u.id || "").trim() === rawParentId) ||
+      null;
+
+    const id = newOutcomeId(parentId);
+    const completedAt = new Date().toISOString();
+
+    const parentEmail =
+      body.parentEmail != null && String(body.parentEmail).trim() !== ""
+        ? String(body.parentEmail).trim()
+        : user && user.email != null
+          ? String(user.email).trim()
+          : "";
+
+    const payload = {
+      id,
+      completedAt,
+      parentId,
+      parentEmail,
+      childName:
+        body.childName != null && String(body.childName).trim() !== ""
+          ? String(body.childName)
+          : user && user.childName != null
+            ? String(user.childName)
+            : "",
+      childAge:
+        body.childAge != null && Number.isFinite(Number(body.childAge))
+          ? Number(body.childAge)
+          : user && user.childAge != null && Number.isFinite(Number(user.childAge))
+            ? Number(user.childAge)
+            : null,
+      storyId: body.storyId != null ? String(body.storyId) : "",
+      storyTitle: body.storyTitle != null ? String(body.storyTitle) : "",
+      narrator: body.narrator != null ? String(body.narrator) : "",
+      choiceCount: Number.isFinite(Number(body.choiceCount)) ? Number(body.choiceCount) : 0,
+      choices: Array.isArray(body.choices) ? body.choices : [],
+      signals: body.signals && typeof body.signals === "object" && !Array.isArray(body.signals) ? body.signals : {}
+    };
+
+    fs.mkdirSync(STORY_OUTCOMES_DIR, { recursive: true });
+    const safeFile = `${id.replaceAll(/[^a-zA-Z0-9_.-]/g, "_")}.json`;
+    fs.writeFileSync(path.join(STORY_OUTCOMES_DIR, safeFile), JSON.stringify(payload, null, 2));
+
+    forwardStoryOutcomeToWebhook(payload);
+
+    return res.status(201).json({ id, ok: true });
+  } catch (err) {
+    console.error("[story-outcomes]", err);
+    return res.status(500).json({ error: "Failed to save story outcome" });
+  }
 });
 
 app.listen(PORT, () => {
@@ -673,4 +907,14 @@ app.listen(PORT, () => {
   console.log(
     `[env] ElevenLabs (custom_name + custom_front): ${elevenReady ? "configured (POST /audio/elevenlabs/welcome)" : "disabled — set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID"}`
   );
+  const n8nHook = getN8nStoryOutcomeWebhookUrl();
+  if (n8nHook) {
+    console.log(
+      `[env] n8n story outcome webhook: ${isSafeWebhookUrl(n8nHook) ? "enabled — auto POST JSON after each story save" : "invalid URL (must be http/https) — skipped"}`
+    );
+  } else {
+    console.log(
+      "[env] n8n story outcome webhook: disabled — add N8N_STORY_OUTCOME_WEBHOOK_URL to backend/.env to auto-forward JSON"
+    );
+  }
 });

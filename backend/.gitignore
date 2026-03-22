@@ -4,5 +4,9 @@ node_modules/
 
 # Generated after cartoon + ElevenLabs (see cartoonAvatarService)
 data/welcome_*.mp3
-# Per-user ElevenLabs clips (custom_name.mp3, custom_front.mp3)
+# Story outcome JSON files (local / webhook goes to n8n)
+data/story-outcomes/
+
+# Per-user uploads & generated voice (do not commit PII / binaries)
+public/assets/profiles/
 public/assets/audio/personalized/users/

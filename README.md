@@ -31,8 +31,11 @@ npm install
 npm run dev
 ```
 
-Frontend expects backend at `http://localhost:4000`.
-Set `NEXT_PUBLIC_API_BASE_URL` in `frontend/.env.local` if needed.
+By default the frontend uses Next.js rewrites: browser → `/api/narria/*` → Express at `http://127.0.0.1:4000`. Run the backend on port 4000, or set `NARRIA_BACKEND_URL` in `frontend/.env.local` (used by `next.config.ts`). To call Express directly from the browser instead, set `NEXT_PUBLIC_API_BASE_URL`.
+
+### Story outcome → n8n webhook
+
+When a story finishes, `POST /story-outcomes` saves JSON under `backend/data/story-outcomes/`. If you set **`N8N_STORY_OUTCOME_WEBHOOK_URL`** in `backend/.env` (full `https://…/webhook/…` URL from n8n), the server **also** sends a fire-and-forget **`POST`** with **`Content-Type: application/json`** and the **same body** as the saved file. Failures are logged only; the API still returns `201`.
 
 ### Backend: cartoon avatar (Gemini / Nano Banana)
 

@@ -56,9 +56,15 @@ function getElevenLabsVoiceId() {
   return cleanEnvString(process.env.ELEVENLABS_VOICE_ID);
 }
 
+/** @returns {string} Full n8n webhook URL, or empty if disabled */
+function getN8nStoryOutcomeWebhookUrl() {
+  return cleanEnvString(process.env.N8N_STORY_OUTCOME_WEBHOOK_URL);
+}
+
 module.exports = {
   loadBackendEnvironment,
   getGeminiApiKey,
   getElevenLabsApiKey,
-  getElevenLabsVoiceId
+  getElevenLabsVoiceId,
+  getN8nStoryOutcomeWebhookUrl
 };

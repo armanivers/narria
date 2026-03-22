@@ -3,7 +3,17 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import BookScene from "@/components/book/BookScene";
-import { AudioConfig, getBook, getBookPage, normalizePageAudios, PageData } from "@/lib/api";
+import {
+  AudioConfig,
+  buildSignalsFromChoices,
+  getApiBase,
+  getBook,
+  getBookPage,
+  normalizePageAudios,
+  PageData,
+  type StoryChoiceRecord,
+  submitStoryOutcome
+} from "@/lib/api";
 import { getParentFromSession } from "@/lib/session";
 
 type BookState = "closed-front" | "opening" | "open" | "flipping" | "closing" | "closed-back";
@@ -16,6 +26,28 @@ type SubtitleSegment = {
 };
 type SubtitleTrack = { segments: SubtitleSegment[] };
 
+function buildStoryChoicesFromPages(
+  pagesByNumber: Record<number, PageData>,
+  selectedChoiceByPage: Record<number, string>
+): StoryChoiceRecord[] {
+  const rows: { chapter: number; page: number; choiceLabel: string; tags: string[] }[] = [];
+  for (const [pageStr, choiceLabel] of Object.entries(selectedChoiceByPage)) {
+    const pageNum = Number(pageStr);
+    if (!Number.isInteger(pageNum)) continue;
+    const page = pagesByNumber[pageNum];
+    if (!page?.dialog?.options?.length) continue;
+    const chapter =
+      page.choiceChapter != null && Number.isFinite(Number(page.choiceChapter))
+        ? Number(page.choiceChapter)
+        : pageNum;
+    const match = page.dialog.options.find((o) => o.label === choiceLabel);
+    const tags = match?.tags ?? [];
+    rows.push({ chapter, page: pageNum, choiceLabel, tags });
+  }
+  rows.sort((a, b) => a.chapter - b.chapter || a.page - b.page);
+  return rows.map(({ chapter, choiceLabel, tags }) => ({ chapter, choiceLabel, tags }));
+}
+
 export default function StoryPage() {
   const router = useRouter();
   const params = useParams<{ bookId: string }>();
@@ -25,6 +57,12 @@ export default function StoryPage() {
   const [spreadStart, setSpreadStart] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [bookName, setBookName] = useState("");
+  const [storyMeta, setStoryMeta] = useState<{
+    storyId: string;
+    storyTitle: string;
+    narrator: string | null;
+  }>({ storyId: "", storyTitle: "", narrator: null });
+  const [signalCatalog, setSignalCatalog] = useState<string[]>([]);
   const [coverAudio, setCoverAudio] = useState<{
     front: AudioConfig;
     back: AudioConfig;
@@ -101,29 +139,35 @@ export default function StoryPage() {
       setBookName(response.book.name);
       setTotalPages(response.book.pages);
       setCoverAudio(response.book.coverAudio || null);
+      setStoryMeta({
+        storyId: response.book.storyId ?? bookId,
+        storyTitle: response.book.storyTitle ?? response.book.name,
+        narrator: response.book.narrator ?? null
+      });
+      setSignalCatalog(Array.isArray(response.book.signalCatalog) ? response.book.signalCatalog : []);
     });
   }, [bookId, router]);
-
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
 
   const resolveAudioUrl = useCallback(
     (src?: string) => {
       if (!src) return "";
       if (src.startsWith("http://") || src.startsWith("https://")) return src;
+      const apiBaseUrl = getApiBase();
       if (src.startsWith("/")) return `${apiBaseUrl}${src}`;
       return `${apiBaseUrl}/assets/audio/pages/${bookId}/${src}`;
     },
-    [apiBaseUrl, bookId]
+    [bookId]
   );
 
   const resolveImageUrl = useCallback(
     (src?: string) => {
       if (!src) return "";
       if (src.startsWith("http://") || src.startsWith("https://")) return src;
+      const apiBaseUrl = getApiBase();
       if (src.startsWith("/")) return `${apiBaseUrl}${src}`;
       return `${apiBaseUrl}/assets/images/${bookId}/${src}`;
     },
-    [apiBaseUrl, bookId]
+    [bookId]
   );
 
   const stopAudioPlayback = useCallback(() => {
@@ -153,6 +197,10 @@ export default function StoryPage() {
   }, []);
 
   const loadSubtitleTrack = useCallback(async (audioUrl: string) => {
+    if (!audioUrl || !String(audioUrl).trim()) {
+      subtitleTrackRef.current = null;
+      return;
+    }
     const subtitleUrl = subtitleUrlForAudio(audioUrl);
     try {
       const response = await fetch(subtitleUrl);
@@ -160,7 +208,13 @@ export default function StoryPage() {
         subtitleTrackRef.current = null;
         return;
       }
-      const data = (await response.json()) as SubtitleTrack;
+      let data: SubtitleTrack;
+      try {
+        data = (await response.json()) as SubtitleTrack;
+      } catch {
+        subtitleTrackRef.current = null;
+        return;
+      }
       subtitleTrackRef.current = Array.isArray(data?.segments) ? data : null;
     } catch {
       subtitleTrackRef.current = null;
@@ -207,20 +261,48 @@ export default function StoryPage() {
       options?: { overrideDelayMs?: number; shouldAutoAdvanceOnEnd?: boolean }
     ) => {
       const src = resolveAudioUrl(audioConfig?.src);
+      const shouldAutoAdvanceOnEnd = options?.shouldAutoAdvanceOnEnd ?? false;
       if (!src) {
         queueMicrotask(() => {
-          if (onEnded) onEnded();
+          if (shouldAutoAdvanceOnEnd) {
+            startAutoFlipCountdown(() => {
+              const triggerNext = advancePageRef.current;
+              if (triggerNext) void triggerNext();
+            });
+          } else if (onEnded) {
+            onEnded();
+          }
         });
         return;
       }
       stopAudioPlayback();
 
       const delay = options?.overrideDelayMs ?? audioConfig?.startDelayMs ?? 1000;
-      const shouldAutoAdvanceOnEnd = options?.shouldAutoAdvanceOnEnd ?? false;
       audioDelayTimeoutRef.current = setTimeout(() => {
         const audio = new Audio(src);
         audioRef.current = audio;
         void loadSubtitleTrack(src);
+
+        let endHandled = false;
+        const completePlayback = () => {
+          if (endHandled) return;
+          endHandled = true;
+          setIsAudioPlaying(false);
+          setIsAudioPaused(false);
+          subtitleSegmentIndexRef.current = -1;
+          subtitleWordIndexRef.current = -1;
+          setSubtitleWords([]);
+          setActiveSubtitleWordIndex(-1);
+          if (shouldAutoAdvanceOnEnd) {
+            startAutoFlipCountdown(() => {
+              const triggerNext = advancePageRef.current;
+              if (triggerNext) void triggerNext();
+            });
+          } else if (onEnded) {
+            onEnded();
+          }
+        };
+
         audio.onplay = () => {
           if (audioRef.current !== audio) return;
           setIsAudioPlaying(true);
@@ -272,30 +354,24 @@ export default function StoryPage() {
         };
         audio.onended = () => {
           if (audioRef.current !== audio) return;
-          setIsAudioPlaying(false);
-          setIsAudioPaused(false);
-          subtitleSegmentIndexRef.current = -1;
-          subtitleWordIndexRef.current = -1;
-          setSubtitleWords([]);
-          setActiveSubtitleWordIndex(-1);
-          if (shouldAutoAdvanceOnEnd) {
-            startAutoFlipCountdown(() => {
-              const triggerNext = advancePageRef.current;
-              if (triggerNext) {
-                void triggerNext();
-              }
-            });
+          completePlayback();
+        };
+        audio.onerror = () => {
+          if (audioRef.current !== audio) return;
+          completePlayback();
+        };
+        audio.play().catch((err: unknown) => {
+          if (audioRef.current !== audio) return;
+          if (endHandled) return;
+          const name = err instanceof Error ? err.name : "";
+          if (name === "NotAllowedError") {
+            setIsAudioPlaying(false);
+            setIsAudioPaused(false);
+            setAudioUnlockNeeded(true);
+            pendingAudioRef.current = audioConfig ? { config: audioConfig, onEnded, options } : null;
             return;
           }
-          if (onEnded) {
-            onEnded();
-          }
-        };
-        audio.play().catch(() => {
-          setIsAudioPlaying(false);
-          setIsAudioPaused(false);
-          setAudioUnlockNeeded(true);
-          pendingAudioRef.current = audioConfig ? { config: audioConfig, onEnded, options } : null;
+          completePlayback();
         });
       }, delay);
     },
@@ -312,7 +388,19 @@ export default function StoryPage() {
       options?: { shouldAutoAdvanceOnLastEnd?: boolean; firstOverrideDelayMs?: number }
     ) => {
       const playable = tracks.filter((t) => resolveAudioUrl(t.src));
-      if (playable.length === 0) return;
+      if (playable.length === 0) {
+        queueMicrotask(() => {
+          if (options?.shouldAutoAdvanceOnLastEnd) {
+            startAutoFlipCountdown(() => {
+              const triggerNext = advancePageRef.current;
+              if (triggerNext) void triggerNext();
+            });
+          } else {
+            onLastEnded?.();
+          }
+        });
+        return;
+      }
 
       const playIndex = (index: number) => {
         const config = playable[index];
@@ -337,7 +425,7 @@ export default function StoryPage() {
       };
       playIndex(0);
     },
-    [resolveAudioUrl, scheduleAudioPlayback]
+    [resolveAudioUrl, scheduleAudioPlayback, startAutoFlipCountdown]
   );
 
   const scheduleAudioPlaylistRef = useRef(scheduleAudioPlaylist);
@@ -473,8 +561,37 @@ export default function StoryPage() {
     setState("closing");
     setTimeout(() => setState("closed-back"), 600);
     setTimeout(() => setOutroFade(true), 700);
+
+    const parent = getParentFromSession();
+    const choices = buildStoryChoicesFromPages(pagesByNumber, selectedChoiceByPage);
+    const signals = buildSignalsFromChoices(signalCatalog, choices);
+    if (parent?.id) {
+      void submitStoryOutcome({
+        parentId: parent.id,
+        parentEmail: parent.email ?? "",
+        childName: parent.childName ?? "",
+        childAge: parent.childAge ?? null,
+        storyId: storyMeta.storyId || bookId,
+        storyTitle: storyMeta.storyTitle || bookName,
+        narrator: storyMeta.narrator ?? "",
+        choiceCount: choices.length,
+        choices,
+        signals
+      }).catch((err) => {
+        console.warn("[story outcome]", err);
+      });
+    }
+
     setTimeout(() => router.push("/menu"), 2400);
-  }, [router]);
+  }, [
+    bookId,
+    bookName,
+    pagesByNumber,
+    router,
+    selectedChoiceByPage,
+    signalCatalog,
+    storyMeta
+  ]);
 
   const continueAfterChoice = useCallback(() => {
     continueFromChoiceRef.current = true;
@@ -642,8 +759,18 @@ export default function StoryPage() {
           audio: override ? override.audio : basePageData.audio
         }
       : null;
-    const tracks = normalizePageAudios(pageData?.audio);
-    if (tracks.length === 0) return;
+    if (!pageData) return;
+
+    const tracks = normalizePageAudios(pageData.audio);
+    if (tracks.length === 0) {
+      const pn = pageData.pageNumber;
+      const run = setTimeout(() => {
+        handlePageAudioEndedRef.current(pn);
+      }, 0);
+      return () => {
+        clearTimeout(run);
+      };
+    }
 
     // Do not interrupt narration when deps change mid-clip. Browsers can briefly set `paused`
     // during buffering; requiring !paused caused stop+restart loops with `pagesByNumber` updates.
@@ -657,7 +784,7 @@ export default function StoryPage() {
     const run = setTimeout(() => {
       pageNarrationScheduledForRef.current = focusedPage;
       scheduleAudioPlaylistRef.current(tracks, () => {
-        handlePageAudioEndedRef.current(pageData!.pageNumber);
+        handlePageAudioEndedRef.current(pageData.pageNumber);
       });
     }, 0);
 
@@ -899,14 +1026,14 @@ export default function StoryPage() {
             <div className="dialogModalCard" onClick={(event) => event.stopPropagation()}>
               <p className="dialogQuestion">{currentPageData?.dialog?.question}</p>
               <div className="dialogOptions">
-                {currentPageData?.dialog?.options.slice(0, 3).map((option) => (
+                {currentPageData?.dialog?.options.slice(0, 3).map((option, optIdx) => (
                   <button
-                    key={option}
+                    key={`${option.label}-${optIdx}`}
                     className="menuButton secondaryButton"
                     type="button"
-                    onClick={() => handleChoiceSelect(option)}
+                    onClick={() => handleChoiceSelect(option.label)}
                   >
-                    {option}
+                    {option.label}
                   </button>
                 ))}
               </div>

@@ -1,8 +1,38 @@
 "use client";
 
-import { CSSProperties } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 
 type BookState = "closed-front" | "opening" | "open" | "flipping" | "closing" | "closed-back";
+
+/**
+ * Returns `url` only after a successful preload; on load error or empty URL, returns null
+ * so the page stays blank (no broken image flash).
+ */
+function useSafeBackgroundUrl(url: string | null): string | null {
+  const [readyUrl, setReadyUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!url?.trim()) {
+      setReadyUrl(null);
+      return;
+    }
+    setReadyUrl(null);
+    let cancelled = false;
+    const img = new Image();
+    img.onload = () => {
+      if (!cancelled) setReadyUrl(url);
+    };
+    img.onerror = () => {
+      if (!cancelled) setReadyUrl(null);
+    };
+    img.src = url;
+    return () => {
+      cancelled = true;
+    };
+  }, [url]);
+
+  return readyUrl;
+}
 
 export default function BookScene({
   state,
@@ -32,12 +62,11 @@ export default function BookScene({
   const isAnimatingClose = state === "closing";
   const isFlipping = state === "flipping";
 
-  const leftStyle: CSSProperties = leftPageImage
-    ? { backgroundImage: `url(${leftPageImage})` }
-    : {};
-  const rightStyle: CSSProperties = rightPageImage
-    ? { backgroundImage: `url(${rightPageImage})` }
-    : {};
+  const leftBgUrl = useSafeBackgroundUrl(leftPageImage);
+  const rightBgUrl = useSafeBackgroundUrl(rightPageImage);
+
+  const leftStyle: CSSProperties = leftBgUrl ? { backgroundImage: `url(${leftBgUrl})` } : {};
+  const rightStyle: CSSProperties = rightBgUrl ? { backgroundImage: `url(${rightBgUrl})` } : {};
 
   const focusLeft = focusedPage === leftPageNumber;
   const focusRight = focusedPage === rightPageNumber;
