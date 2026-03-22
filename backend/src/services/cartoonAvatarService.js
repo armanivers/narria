@@ -1,6 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { getGeminiApiKey } = require("../loadEnv");
+const { getGeminiApiKey, getElevenLabsApiKey, getElevenLabsVoiceId } = require("../loadEnv");
+const { synthesizeAndSaveKidWelcomeToDataDir } = require("./elevenLabsService");
 
 const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta";
 
@@ -151,13 +152,16 @@ async function generateCartoonFromPhotoBase64({ base64, mimeType }) {
 
 /**
  * After a selfie is saved, generate cartoon variant as `<parentId>_cartoon.<ext>` next to the original.
- * @param {{ profilesDir: string, safeParentId: string, imageBase64: string, mimeType: string }} params
+ * When Gemini succeeds and ElevenLabs + child name are available, writes `welcome_<parentId>.mp3` under dataDir.
+ * @param {{ profilesDir: string, safeParentId: string, imageBase64: string, mimeType: string, childDisplayName?: string | null, welcomeAudioDataDir?: string }} params
  */
 async function generateAndSaveCartoonAvatar({
   profilesDir,
   safeParentId,
   imageBase64,
-  mimeType
+  mimeType,
+  childDisplayName = null,
+  welcomeAudioDataDir = null
 }) {
   const jobStarted = Date.now();
   console.log("[gemini cartoon] job START", { parentId: safeParentId });
@@ -185,6 +189,45 @@ async function generateAndSaveCartoonAvatar({
       totalMs: Date.now() - jobStarted,
       savedAs: path.basename(targetPath)
     });
+
+    const trimmedName =
+      childDisplayName != null ? String(childDisplayName).trim() : "";
+    const apiKey = getElevenLabsApiKey();
+    const voiceId = getElevenLabsVoiceId();
+    const modelId = process.env.ELEVENLABS_MODEL_ID?.trim() || undefined;
+
+    if (!trimmedName) {
+      console.log(
+        "[elevenlabs] kid welcome skipped (no child name on account yet; create child profile first)"
+      );
+    } else if (!apiKey || !voiceId) {
+      console.log(
+        "[elevenlabs] kid welcome skipped — set ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID for data/welcome_*.mp3"
+      );
+    } else if (!welcomeAudioDataDir) {
+      console.warn("[elevenlabs] kid welcome skipped (welcomeAudioDataDir not set)");
+    } else {
+      try {
+        const saved = await synthesizeAndSaveKidWelcomeToDataDir({
+          apiKey,
+          voiceId,
+          childName: trimmedName,
+          parentId: safeParentId,
+          dataDir: welcomeAudioDataDir,
+          modelId
+        });
+        console.log("[elevenlabs] kid welcome saved to data/", {
+          parentId: safeParentId,
+          fileName: saved.fileName,
+          textPreview: `${saved.text.slice(0, 60)}${saved.text.length > 60 ? "…" : ""}`
+        });
+      } catch (welcomeErr) {
+        console.error("[elevenlabs] kid welcome after cartoon failed:", {
+          parentId: safeParentId,
+          error: welcomeErr?.message || String(welcomeErr)
+        });
+      }
+    }
   } catch (err) {
     console.error("[gemini cartoon] job END (error)", {
       parentId: safeParentId,

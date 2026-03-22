@@ -1,8 +1,21 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+
+/** Backend serves `/assets/...`; use this for <img src> in the browser */
+export function resolveBackendAssetUrl(path: string | null | undefined): string | null {
+  if (path == null || path === "") return null;
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  const base = API_BASE_URL.replace(/\/$/, "");
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${p}`;
+}
 
 export type Parent = {
   id: string;
   username: string;
+  /** Mirrored from users.json when the child profile is set */
+  childName?: string | null;
+  /** Child's age in years; mirrored from users.json */
+  childAge?: number | null;
 };
 
 export type ChildProfile = {
@@ -115,7 +128,7 @@ export async function createChildProfile(input: {
   childName: string;
   age?: number;
 }) {
-  return request<{ child: ChildProfile }>("/profile/child", {
+  return request<{ child: ChildProfile; parent: Parent }>("/profile/child", {
     method: "POST",
     body: JSON.stringify(input)
   });

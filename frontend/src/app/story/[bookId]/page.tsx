@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import BookScene from "@/components/book/BookScene";
 import { AudioConfig, getBook, getBookPage, normalizePageAudios, PageData } from "@/lib/api";
@@ -73,6 +73,8 @@ export default function StoryPage() {
   const subtitleWordIndexRef = useRef<number>(-1);
   /** Short SFX for spread change; separate from narration `audioRef`. */
   const pageFlipSfxRef = useRef<HTMLAudioElement | null>(null);
+  /** Avoid re-scheduling page narration when only deps like `pagesByNumber` refresh mid-play. */
+  const pageNarrationScheduledForRef = useRef<number | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIntroFade(false), 1400);
@@ -122,9 +124,15 @@ export default function StoryPage() {
   const stopAudioPlayback = useCallback(() => {
     if (audioDelayTimeoutRef.current) clearTimeout(audioDelayTimeoutRef.current);
     if (subtitleHideTimeoutRef.current) clearTimeout(subtitleHideTimeoutRef.current);
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
+    const prev = audioRef.current;
+    audioRef.current = null;
+    if (prev) {
+      prev.onplay = null;
+      prev.onpause = null;
+      prev.ontimeupdate = null;
+      prev.onended = null;
+      prev.pause();
+      prev.currentTime = 0;
     }
     setIsAudioPlaying(false);
     setIsAudioPaused(false);
@@ -204,16 +212,19 @@ export default function StoryPage() {
         audioRef.current = audio;
         void loadSubtitleTrack(src);
         audio.onplay = () => {
+          if (audioRef.current !== audio) return;
           setIsAudioPlaying(true);
           setIsAudioPaused(false);
         };
         audio.onpause = () => {
+          if (audioRef.current !== audio) return;
           setIsAudioPlaying(false);
           if (!audio.ended && audio.currentTime > 0) {
             setIsAudioPaused(true);
           }
         };
         audio.ontimeupdate = () => {
+          if (audioRef.current !== audio) return;
           const track = subtitleTrackRef.current;
           if (!track) return;
           const now = audio.currentTime;
@@ -223,7 +234,6 @@ export default function StoryPage() {
 
           if (segmentIndex === -1) {
             if (subtitleSegmentIndexRef.current !== -1) {
-              // Keep previous subtitle briefly after spoken segment ends.
               scheduleSubtitleHide(1200);
             }
             return;
@@ -251,6 +261,7 @@ export default function StoryPage() {
           }
         };
         audio.onended = () => {
+          if (audioRef.current !== audio) return;
           setIsAudioPlaying(false);
           setIsAudioPaused(false);
           subtitleSegmentIndexRef.current = -1;
@@ -271,7 +282,6 @@ export default function StoryPage() {
           }
         };
         audio.play().catch(() => {
-          // Browser autoplay policies can block sound; require one-click unlock.
           setIsAudioPlaying(false);
           setIsAudioPaused(false);
           setAudioUnlockNeeded(true);
@@ -281,6 +291,8 @@ export default function StoryPage() {
     },
     [loadSubtitleTrack, resolveAudioUrl, scheduleSubtitleHide, startAutoFlipCountdown, stopAudioPlayback]
   );
+
+  const scheduleAudioPlaybackRef = useRef(scheduleAudioPlayback);
 
   /** Play multiple clips in order; gap after each clip except before the first uses that clip's `startDelayMs` (default 0). */
   const scheduleAudioPlaylist = useCallback(
@@ -318,6 +330,8 @@ export default function StoryPage() {
     [resolveAudioUrl, scheduleAudioPlayback]
   );
 
+  const scheduleAudioPlaylistRef = useRef(scheduleAudioPlaylist);
+
   const unlockAudioAndResume = useCallback(async () => {
     try {
       const probe = new Audio();
@@ -325,7 +339,6 @@ export default function StoryPage() {
       await probe.play();
       probe.pause();
     } catch {
-      // If this still fails, keep the button visible.
       return;
     }
 
@@ -478,6 +491,8 @@ export default function StoryPage() {
     [pagesByNumber, selectedChoiceByPage, startAutoFlipCountdown]
   );
 
+  const handlePageAudioEndedRef = useRef(handlePageAudioEnded);
+
   const advancePage = useCallback(async () => {
     if (isBusy) return;
     stopAudioPlayback();
@@ -590,9 +605,17 @@ export default function StoryPage() {
     totalPages
   ]);
 
-  useEffect(() => {
+  /** Sync callback refs without putting those functions in other effects’ deps (stable hook arity). */
+  useLayoutEffect(() => {
+    scheduleAudioPlaybackRef.current = scheduleAudioPlayback;
+    scheduleAudioPlaylistRef.current = scheduleAudioPlaylist;
+    handlePageAudioEndedRef.current = handlePageAudioEnded;
     advancePageRef.current = advancePage;
-  }, [advancePage]);
+  }, [advancePage, handlePageAudioEnded, scheduleAudioPlayback, scheduleAudioPlaylist]);
+
+  useLayoutEffect(() => {
+    pageNarrationScheduledForRef.current = null;
+  }, [focusedPage]);
 
   useEffect(() => {
     if (state !== "open" || focusedPage < 1) return;
@@ -611,48 +634,79 @@ export default function StoryPage() {
     const tracks = normalizePageAudios(pageData?.audio);
     if (tracks.length === 0) return;
 
+    // Do not interrupt narration when deps change mid-clip. Browsers can briefly set `paused`
+    // during buffering; requiring !paused caused stop+restart loops with `pagesByNumber` updates.
+    if (pageNarrationScheduledForRef.current === focusedPage) {
+      const el = audioRef.current;
+      if (el && !el.ended) {
+        return;
+      }
+    }
+
     const run = setTimeout(() => {
-      scheduleAudioPlaylist(tracks, () => {
-        handlePageAudioEnded(pageData!.pageNumber);
+      pageNarrationScheduledForRef.current = focusedPage;
+      scheduleAudioPlaylistRef.current(tracks, () => {
+        handlePageAudioEndedRef.current(pageData!.pageNumber);
       });
     }, 0);
 
     return () => {
       clearTimeout(run);
-      stopAudioPlayback();
     };
-  }, [
-    advancePage,
-    choiceMediaOverrideByPage,
-    focusedPage,
-    handlePageAudioEnded,
-    pagesByNumber,
-    scheduleAudioPlaylist,
-    state,
-    stopAudioPlayback
-  ]);
+  }, [choiceMediaOverrideByPage, focusedPage, pagesByNumber, state]);
+
+  const coverFrontSrc = coverAudio?.front?.src ?? "";
+  const coverBackSrc = coverAudio?.back?.src ?? "";
 
   useEffect(() => {
     if (introFade || !coverAudio?.front || hasPlayedFrontRef.current) return;
     if (state !== "closed-front") return;
 
     hasPlayedFrontRef.current = true;
+    const front = coverAudio.front;
     const run = setTimeout(() => {
-      scheduleAudioPlayback(coverAudio.front, undefined, { shouldAutoAdvanceOnEnd: true });
+      scheduleAudioPlaybackRef.current(front, undefined, { shouldAutoAdvanceOnEnd: true });
     }, 0);
     return () => clearTimeout(run);
-  }, [coverAudio, introFade, scheduleAudioPlayback, state]);
+  }, [coverAudio, coverFrontSrc, introFade, state]);
 
   useEffect(() => {
     if (!coverAudio?.back || hasPlayedBackRef.current) return;
     if (state !== "closed-back") return;
 
     hasPlayedBackRef.current = true;
+    const back = coverAudio.back;
     const run = setTimeout(() => {
-      scheduleAudioPlayback(coverAudio.back);
+      scheduleAudioPlaybackRef.current(back);
     }, 0);
     return () => clearTimeout(run);
-  }, [coverAudio, scheduleAudioPlayback, state]);
+  }, [coverAudio, coverBackSrc, state]);
+
+  /** Resume only after a real hidden→visible transition (avoids spurious play() loops). */
+  useEffect(() => {
+    let docWasHidden = false;
+    const onVis = () => {
+      if (document.visibilityState === "hidden") {
+        docWasHidden = true;
+        return;
+      }
+      if (document.visibilityState !== "visible" || !docWasHidden) return;
+      docWasHidden = false;
+      const el = audioRef.current;
+      if (!el || el.ended) return;
+      if (el.paused && el.currentTime > 0) {
+        void el
+          .play()
+          .then(() => {
+            setIsAudioPlaying(true);
+            setIsAudioPaused(false);
+          })
+          .catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
 
   const currentPageData = useMemo(() => {
     const currentPageDataRaw = focusedPage > 0 ? pagesByNumber[focusedPage] : null;
@@ -744,8 +798,12 @@ export default function StoryPage() {
   );
 
   return (
-    <main className="screen">
-      <section className="panel storyContainer storyPanel">
+    <main className="kidPageShell">
+      <div className="kidFloatShape kidFloat1" aria-hidden />
+      <div className="kidFloatShape kidFloat2" aria-hidden />
+      <div className="kidFloatShape kidFloat3" aria-hidden />
+
+      <section className="kidCard kidCard--story storyContainer">
         {introFade ? <div className="storyIntroOverlay" /> : null}
         {outroFade ? <div className="storyOutroOverlay" /> : null}
         <div className="storyTopBar">
@@ -780,14 +838,16 @@ export default function StoryPage() {
           <p>
             {bookName} - Focus page {focusedPage || 0}/{totalPages}
           </p>
-          {showReplayButton ? (
-            <button className="menuButton secondaryButton" onClick={restartCurrentPageAudio}>
-              Restart Page
+          <div className="storyControlsActions">
+            {showReplayButton ? (
+              <button type="button" className="menuButton" onClick={restartCurrentPageAudio}>
+                Restart Page
+              </button>
+            ) : null}
+            <button type="button" className="menuButton" onClick={advancePage} disabled={isBusy}>
+              {label}
             </button>
-          ) : null}
-          <button className="menuButton" onClick={advancePage} disabled={isBusy}>
-            {label}
-          </button>
+          </div>
         </div>
 
         {audioUnlockNeeded ? (

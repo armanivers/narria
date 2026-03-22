@@ -1,0 +1,321 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "The cave of locked secrets only opens for",
+      "start_time": 0.099,
+      "end_time": 3.919,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "The",
+          "start_time": 0.099,
+          "end_time": 0.259
+        },
+        {
+          "text": " ",
+          "start_time": 0.259,
+          "end_time": 0.319
+        },
+        {
+          "text": "cave",
+          "start_time": 0.319,
+          "end_time": 0.759
+        },
+        {
+          "text": " ",
+          "start_time": 0.759,
+          "end_time": 0.839
+        },
+        {
+          "text": "of",
+          "start_time": 0.839,
+          "end_time": 0.939
+        },
+        {
+          "text": " ",
+          "start_time": 0.939,
+          "end_time": 1.1
+        },
+        {
+          "text": "locked",
+          "start_time": 1.1,
+          "end_time": 1.419
+        },
+        {
+          "text": " ",
+          "start_time": 1.419,
+          "end_time": 1.599
+        },
+        {
+          "text": "secrets",
+          "start_time": 1.599,
+          "end_time": 2.159
+        },
+        {
+          "text": " ",
+          "start_time": 2.159,
+          "end_time": 2.699
+        },
+        {
+          "text": "only",
+          "start_time": 2.7,
+          "end_time": 3.139
+        },
+        {
+          "text": " ",
+          "start_time": 3.139,
+          "end_time": 3.259
+        },
+        {
+          "text": "opens",
+          "start_time": 3.259,
+          "end_time": 3.74
+        },
+        {
+          "text": " ",
+          "start_time": 3.74,
+          "end_time": 3.819
+        },
+        {
+          "text": "for",
+          "start_time": 3.819,
+          "end_time": 3.919
+        }
+      ]
+    },
+    {
+      "text": "truths too heavy to carry",
+      "start_time": 4.159,
+      "end_time": 6.659,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "truths",
+          "start_time": 4.159,
+          "end_time": 5.059
+        },
+        {
+          "text": " ",
+          "start_time": 5.059,
+          "end_time": 5.119
+        },
+        {
+          "text": "too",
+          "start_time": 5.119,
+          "end_time": 5.359
+        },
+        {
+          "text": " ",
+          "start_time": 5.359,
+          "end_time": 5.479
+        },
+        {
+          "text": "heavy",
+          "start_time": 5.48,
+          "end_time": 6.079
+        },
+        {
+          "text": " ",
+          "start_time": 6.079,
+          "end_time": 6.139
+        },
+        {
+          "text": "to",
+          "start_time": 6.139,
+          "end_time": 6.279
+        },
+        {
+          "text": " ",
+          "start_time": 6.279,
+          "end_time": 6.339
+        },
+        {
+          "text": "carry",
+          "start_time": 6.339,
+          "end_time": 6.659
+        }
+      ]
+    },
+    {
+      "text": "alone.",
+      "start_time": 6.719,
+      "end_time": 7.44,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "alone.",
+          "start_time": 6.719,
+          "end_time": 7.44
+        }
+      ]
+    },
+    {
+      "text": "Then the stone door answered.",
+      "start_time": 8.159,
+      "end_time": 10.5,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Then",
+          "start_time": 8.159,
+          "end_time": 8.38
+        },
+        {
+          "text": " ",
+          "start_time": 8.38,
+          "end_time": 8.46
+        },
+        {
+          "text": "the",
+          "start_time": 8.46,
+          "end_time": 8.5
+        },
+        {
+          "text": " ",
+          "start_time": 8.5,
+          "end_time": 8.659
+        },
+        {
+          "text": "stone",
+          "start_time": 8.659,
+          "end_time": 9.139
+        },
+        {
+          "text": " ",
+          "start_time": 9.139,
+          "end_time": 9.319
+        },
+        {
+          "text": "door",
+          "start_time": 9.319,
+          "end_time": 9.859
+        },
+        {
+          "text": " ",
+          "start_time": 9.859,
+          "end_time": 10.0
+        },
+        {
+          "text": "answered.",
+          "start_time": 10.0,
+          "end_time": 10.5
+        }
+      ]
+    },
+    {
+      "text": "Lumi shrank closer.",
+      "start_time": 13.759,
+      "end_time": 15.399,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Lumi",
+          "start_time": 13.759,
+          "end_time": 14.199
+        },
+        {
+          "text": " ",
+          "start_time": 14.199,
+          "end_time": 14.38
+        },
+        {
+          "text": "shrank",
+          "start_time": 14.38,
+          "end_time": 14.859
+        },
+        {
+          "text": " ",
+          "start_time": 14.859,
+          "end_time": 14.92
+        },
+        {
+          "text": "closer.",
+          "start_time": 14.92,
+          "end_time": 15.399
+        }
+      ]
+    },
+    {
+      "text": "I do not like this cave",
+      "start_time": 16.459,
+      "end_time": 18.639,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "I",
+          "start_time": 16.459,
+          "end_time": 16.619
+        },
+        {
+          "text": " ",
+          "start_time": 16.619,
+          "end_time": 16.679
+        },
+        {
+          "text": "do",
+          "start_time": 16.68,
+          "end_time": 16.92
+        },
+        {
+          "text": " ",
+          "start_time": 16.92,
+          "end_time": 16.959
+        },
+        {
+          "text": "not",
+          "start_time": 16.959,
+          "end_time": 17.319
+        },
+        {
+          "text": " ",
+          "start_time": 17.319,
+          "end_time": 17.399
+        },
+        {
+          "text": "like",
+          "start_time": 17.399,
+          "end_time": 17.659
+        },
+        {
+          "text": " ",
+          "start_time": 17.659,
+          "end_time": 17.739
+        },
+        {
+          "text": "this",
+          "start_time": 17.739,
+          "end_time": 17.94
+        },
+        {
+          "text": " ",
+          "start_time": 17.94,
+          "end_time": 18.059
+        },
+        {
+          "text": "cave",
+          "start_time": 18.059,
+          "end_time": 18.639
+        }
+      ]
+    }
+  ]
+}

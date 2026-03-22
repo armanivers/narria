@@ -2,11 +2,15 @@
   {
     "id": "parent-admin",
     "username": "admin",
-    "password": "admin"
+    "password": "admin",
+    "childName": "Ari",
+    "childAge": 4
   },
   {
     "id": "parent-demo",
     "username": "demo",
-    "password": "demo"
+    "password": "demo",
+    "childName": null,
+    "childAge": null
   }
 ]

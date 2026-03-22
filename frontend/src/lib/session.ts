@@ -20,6 +20,21 @@ export function saveSession(token: string, parent: Parent) {
   storage.setItem(PARENT_KEY, JSON.stringify(parent));
 }
 
+export function getTokenFromSession(): string | null {
+  const storage = browserStorage();
+  if (!storage) return null;
+  return storage.getItem(TOKEN_KEY);
+}
+
+/** Update stored parent fields without touching the auth token */
+export function patchParentInSession(updates: Partial<Parent>) {
+  const storage = browserStorage();
+  if (!storage) return;
+  const prev = getParentFromSession();
+  if (!prev) return;
+  storage.setItem(PARENT_KEY, JSON.stringify({ ...prev, ...updates }));
+}
+
 export function clearSession() {
   const storage = browserStorage();
   if (!storage) return;

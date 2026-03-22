@@ -1,3 +1,6 @@
 node_modules/
 .env
 .env.local
+
+# Generated after cartoon + ElevenLabs (see cartoonAvatarService)
+data/welcome_*.mp3

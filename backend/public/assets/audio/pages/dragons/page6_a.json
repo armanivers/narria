@@ -1,0 +1,515 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "lifted their chin and said,",
+      "start_time": 0.199,
+      "end_time": 1.779,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "lifted",
+          "start_time": 0.199,
+          "end_time": 0.579
+        },
+        {
+          "text": " ",
+          "start_time": 0.579,
+          "end_time": 0.639
+        },
+        {
+          "text": "their",
+          "start_time": 0.639,
+          "end_time": 0.899
+        },
+        {
+          "text": " ",
+          "start_time": 0.899,
+          "end_time": 0.959
+        },
+        {
+          "text": "chin",
+          "start_time": 0.959,
+          "end_time": 1.319
+        },
+        {
+          "text": " ",
+          "start_time": 1.319,
+          "end_time": 1.399
+        },
+        {
+          "text": "and",
+          "start_time": 1.399,
+          "end_time": 1.539
+        },
+        {
+          "text": " ",
+          "start_time": 1.539,
+          "end_time": 1.62
+        },
+        {
+          "text": "said,",
+          "start_time": 1.62,
+          "end_time": 1.779
+        }
+      ]
+    },
+    {
+      "text": "\"Some feelings should be told to someone",
+      "start_time": 2.559,
+      "end_time": 5.039,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Some",
+          "start_time": 2.559,
+          "end_time": 2.839
+        },
+        {
+          "text": " ",
+          "start_time": 2.839,
+          "end_time": 3.039
+        },
+        {
+          "text": "feelings",
+          "start_time": 3.039,
+          "end_time": 3.559
+        },
+        {
+          "text": " ",
+          "start_time": 3.559,
+          "end_time": 3.819
+        },
+        {
+          "text": "should",
+          "start_time": 3.819,
+          "end_time": 3.959
+        },
+        {
+          "text": " ",
+          "start_time": 3.959,
+          "end_time": 3.999
+        },
+        {
+          "text": "be",
+          "start_time": 4.0,
+          "end_time": 4.159
+        },
+        {
+          "text": " ",
+          "start_time": 4.159,
+          "end_time": 4.219
+        },
+        {
+          "text": "told",
+          "start_time": 4.219,
+          "end_time": 4.48
+        },
+        {
+          "text": " ",
+          "start_time": 4.48,
+          "end_time": 4.519
+        },
+        {
+          "text": "to",
+          "start_time": 4.519,
+          "end_time": 4.639
+        },
+        {
+          "text": " ",
+          "start_time": 4.639,
+          "end_time": 4.699
+        },
+        {
+          "text": "someone",
+          "start_time": 4.699,
+          "end_time": 5.039
+        }
+      ]
+    },
+    {
+      "text": "safe.\"",
+      "start_time": 5.219,
+      "end_time": 5.539,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "safe.\"",
+          "start_time": 5.219,
+          "end_time": 5.539
+        }
+      ]
+    },
+    {
+      "text": "Marina smiled softly.",
+      "start_time": 6.519,
+      "end_time": 8.139,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Marina",
+          "start_time": 6.519,
+          "end_time": 7.019
+        },
+        {
+          "text": " ",
+          "start_time": 7.019,
+          "end_time": 7.059
+        },
+        {
+          "text": "smiled",
+          "start_time": 7.059,
+          "end_time": 7.639
+        },
+        {
+          "text": " ",
+          "start_time": 7.639,
+          "end_time": 7.699
+        },
+        {
+          "text": "softly.",
+          "start_time": 7.699,
+          "end_time": 8.139
+        }
+      ]
+    },
+    {
+      "text": "\"That is true magic,\" she said.",
+      "start_time": 8.979,
+      "end_time": 11.639,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"That",
+          "start_time": 8.979,
+          "end_time": 9.479
+        },
+        {
+          "text": " ",
+          "start_time": 9.479,
+          "end_time": 9.559
+        },
+        {
+          "text": "is",
+          "start_time": 9.559,
+          "end_time": 9.84
+        },
+        {
+          "text": " ",
+          "start_time": 9.84,
+          "end_time": 9.92
+        },
+        {
+          "text": "true",
+          "start_time": 9.92,
+          "end_time": 10.3
+        },
+        {
+          "text": " ",
+          "start_time": 10.3,
+          "end_time": 10.359
+        },
+        {
+          "text": "magic,\"",
+          "start_time": 10.359,
+          "end_time": 10.84
+        },
+        {
+          "text": " ",
+          "start_time": 10.84,
+          "end_time": 11.179
+        },
+        {
+          "text": "she",
+          "start_time": 11.179,
+          "end_time": 11.279
+        },
+        {
+          "text": " ",
+          "start_time": 11.279,
+          "end_time": 11.399
+        },
+        {
+          "text": "said.",
+          "start_time": 11.399,
+          "end_time": 11.639
+        }
+      ]
+    },
+    {
+      "text": "Lumi glowed with pride.",
+      "start_time": 12.619,
+      "end_time": 14.399,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Lumi",
+          "start_time": 12.619,
+          "end_time": 13.059
+        },
+        {
+          "text": " ",
+          "start_time": 13.059,
+          "end_time": 13.199
+        },
+        {
+          "text": "glowed",
+          "start_time": 13.199,
+          "end_time": 13.659
+        },
+        {
+          "text": " ",
+          "start_time": 13.659,
+          "end_time": 13.719
+        },
+        {
+          "text": "with",
+          "start_time": 13.719,
+          "end_time": 13.88
+        },
+        {
+          "text": " ",
+          "start_time": 13.88,
+          "end_time": 13.96
+        },
+        {
+          "text": "pride.",
+          "start_time": 13.96,
+          "end_time": 14.399
+        }
+      ]
+    },
+    {
+      "text": "\"The cave trusts honest hearts.\"",
+      "start_time": 15.159,
+      "end_time": 17.479,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"The",
+          "start_time": 15.159,
+          "end_time": 15.359
+        },
+        {
+          "text": " ",
+          "start_time": 15.359,
+          "end_time": 15.42
+        },
+        {
+          "text": "cave",
+          "start_time": 15.42,
+          "end_time": 15.88
+        },
+        {
+          "text": " ",
+          "start_time": 15.88,
+          "end_time": 15.96
+        },
+        {
+          "text": "trusts",
+          "start_time": 15.96,
+          "end_time": 16.52
+        },
+        {
+          "text": " ",
+          "start_time": 16.52,
+          "end_time": 16.619
+        },
+        {
+          "text": "honest",
+          "start_time": 16.619,
+          "end_time": 16.959
+        },
+        {
+          "text": " ",
+          "start_time": 16.959,
+          "end_time": 17.019
+        },
+        {
+          "text": "hearts.\"",
+          "start_time": 17.02,
+          "end_time": 17.479
+        }
+      ]
+    },
+    {
+      "text": "Above the mountain,",
+      "start_time": 18.399,
+      "end_time": 19.359,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Above",
+          "start_time": 18.399,
+          "end_time": 18.68
+        },
+        {
+          "text": " ",
+          "start_time": 18.68,
+          "end_time": 18.739
+        },
+        {
+          "text": "the",
+          "start_time": 18.739,
+          "end_time": 18.78
+        },
+        {
+          "text": " ",
+          "start_time": 18.78,
+          "end_time": 18.899
+        },
+        {
+          "text": "mountain,",
+          "start_time": 18.899,
+          "end_time": 19.359
+        }
+      ]
+    },
+    {
+      "text": "in the sky castle storm,",
+      "start_time": 20.219,
+      "end_time": 21.859,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "in",
+          "start_time": 20.219,
+          "end_time": 20.319
+        },
+        {
+          "text": " ",
+          "start_time": 20.319,
+          "end_time": 20.34
+        },
+        {
+          "text": "the",
+          "start_time": 20.34,
+          "end_time": 20.379
+        },
+        {
+          "text": " ",
+          "start_time": 20.379,
+          "end_time": 20.539
+        },
+        {
+          "text": "sky",
+          "start_time": 20.539,
+          "end_time": 20.959
+        },
+        {
+          "text": " ",
+          "start_time": 20.959,
+          "end_time": 21.019
+        },
+        {
+          "text": "castle",
+          "start_time": 21.02,
+          "end_time": 21.34
+        },
+        {
+          "text": " ",
+          "start_time": 21.34,
+          "end_time": 21.479
+        },
+        {
+          "text": "storm,",
+          "start_time": 21.479,
+          "end_time": 21.859
+        }
+      ]
+    },
+    {
+      "text": "the broken heart star was waiting",
+      "start_time": 22.939,
+      "end_time": 25.039,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "the",
+          "start_time": 22.939,
+          "end_time": 22.979
+        },
+        {
+          "text": " ",
+          "start_time": 22.979,
+          "end_time": 23.1
+        },
+        {
+          "text": "broken",
+          "start_time": 23.1,
+          "end_time": 23.5
+        },
+        {
+          "text": " ",
+          "start_time": 23.5,
+          "end_time": 23.639
+        },
+        {
+          "text": "heart",
+          "start_time": 23.639,
+          "end_time": 23.879
+        },
+        {
+          "text": " ",
+          "start_time": 23.879,
+          "end_time": 23.939
+        },
+        {
+          "text": "star",
+          "start_time": 23.939,
+          "end_time": 24.279
+        },
+        {
+          "text": " ",
+          "start_time": 24.279,
+          "end_time": 24.379
+        },
+        {
+          "text": "was",
+          "start_time": 24.379,
+          "end_time": 24.52
+        },
+        {
+          "text": " ",
+          "start_time": 24.52,
+          "end_time": 24.619
+        },
+        {
+          "text": "waiting",
+          "start_time": 24.619,
+          "end_time": 25.039
+        }
+      ]
+    }
+  ]
+}

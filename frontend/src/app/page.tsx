@@ -60,12 +60,12 @@ function AuthScreen() {
   }
 
   return (
-    <main className="authShell">
-      <div className="authOrb authOrb1" aria-hidden />
-      <div className="authOrb authOrb2" aria-hidden />
-      <div className="authOrb authOrb3" aria-hidden />
+    <main className="kidPageShell kidPageShell--center">
+      <div className="kidFloatShape kidFloat1" aria-hidden />
+      <div className="kidFloatShape kidFloat2" aria-hidden />
+      <div className="kidFloatShape kidFloat3" aria-hidden />
 
-      <section className="authCard">
+      <section className="kidCard kidCard--narrow">
         <div className="authBrand">
           <div className="authBrandMark" aria-hidden>
             N
@@ -202,10 +202,11 @@ function AuthScreen() {
         </form>
 
         <p className="authHint">
-          Hackathon demo · Real accounts: <strong style={{ color: "rgba(245,239,255,0.5)" }}>admin</strong> /{" "}
-          <strong style={{ color: "rgba(245,239,255,0.5)" }}>admin</strong> or{" "}
-          <strong style={{ color: "rgba(245,239,255,0.5)" }}>demo</strong> /{" "}
-          <strong style={{ color: "rgba(245,239,255,0.5)" }}>demo</strong>
+          Hackathon demo · Try{" "}
+          <strong style={{ color: "var(--kid-ink)" }}>admin</strong> /{" "}
+          <strong style={{ color: "var(--kid-ink)" }}>admin</strong> or{" "}
+          <strong style={{ color: "var(--kid-ink)" }}>demo</strong> /{" "}
+          <strong style={{ color: "var(--kid-ink)" }}>demo</strong>
         </p>
       </section>
     </main>
@@ -216,7 +217,7 @@ export default function Home() {
   return (
     <Suspense
       fallback={
-        <div className="authShell authShellFallback">
+        <div className="kidPageShellFallback">
           <span>Loading…</span>
         </div>
       }

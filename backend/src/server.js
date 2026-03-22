@@ -44,6 +44,30 @@ function writeJson(fileName, value) {
   fs.writeFileSync(file, JSON.stringify(value, null, 2));
 }
 
+/** Directory for JSON + generated welcome MP3s (e.g. welcome_parent-admin.mp3) */
+const DATA_JSON_DIR = path.join(__dirname, "..", "data");
+
+/** Child name from users.json / children.json for personalized welcome TTS */
+function resolveChildDisplayName(parentId) {
+  if (!parentId) return null;
+  try {
+    const users = readJson("users.json");
+    const u = users.find((x) => x.id === parentId);
+    const fromUser = u?.childName != null ? String(u.childName).trim() : "";
+    if (fromUser) return fromUser;
+  } catch {
+    /* ignore */
+  }
+  try {
+    const children = readJson("children.json");
+    const c = children.find((x) => x.parentId === parentId);
+    const n = c?.childName != null ? String(c.childName).trim() : "";
+    return n || null;
+  } catch {
+    return null;
+  }
+}
+
 function fileExists(relativeAssetPath) {
   const fullPath = path.join(ASSETS_ROOT, relativeAssetPath);
   return fs.existsSync(fullPath);
@@ -198,7 +222,7 @@ app.get("/health", (_req, res) => {
 
 app.post("/auth/login", (req, res) => {
   const { username, password } = req.body || {};
-  const users = readJson("users.json");
+  let users = readJson("users.json");
   const match = users.find(
     (user) => user.username === username && user.password === password
   );
@@ -207,11 +231,46 @@ app.post("/auth/login", (req, res) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
+  let childName =
+    match.childName != null && String(match.childName).trim() !== ""
+      ? String(match.childName).trim()
+      : null;
+
+  let childAge =
+    match.childAge != null && Number.isFinite(Number(match.childAge))
+      ? Number(match.childAge)
+      : null;
+
+  if (!childName || childAge == null) {
+    const children = readJson("children.json");
+    const row = children.find((item) => item.parentId === match.id);
+    const idx = users.findIndex((u) => u.id === match.id);
+    const patch = {};
+
+    if (!childName && row?.childName) {
+      const fromChild = String(row.childName).trim();
+      if (fromChild) {
+        childName = fromChild;
+        patch.childName = fromChild;
+      }
+    }
+    if (childAge == null && row?.age != null && Number.isFinite(Number(row.age))) {
+      childAge = Number(row.age);
+      patch.childAge = childAge;
+    }
+    if (idx >= 0 && Object.keys(patch).length > 0) {
+      users[idx] = { ...users[idx], ...patch };
+      writeJson("users.json", users);
+    }
+  }
+
   return res.json({
     token: `fake-jwt-${match.id}`,
     parent: {
       id: match.id,
-      username: match.username
+      username: match.username,
+      childName,
+      childAge
     }
   });
 });
@@ -231,7 +290,9 @@ app.post("/auth/register", (req, res) => {
   const newUser = {
     id: `parent-${Date.now()}`,
     username,
-    password
+    password,
+    childName: null,
+    childAge: null
   };
   users.push(newUser);
   writeJson("users.json", users);
@@ -240,7 +301,9 @@ app.post("/auth/register", (req, res) => {
     token: `fake-jwt-${newUser.id}`,
     parent: {
       id: newUser.id,
-      username: newUser.username
+      username: newUser.username,
+      childName: null,
+      childAge: null
     }
   });
 });
@@ -254,17 +317,30 @@ app.get("/profile/child/:parentId", (req, res) => {
 
 app.post("/profile/child", (req, res) => {
   const { parentId, childName, age } = req.body || {};
-  if (!parentId || !childName) {
+  const trimmedName = String(childName || "").trim();
+  if (!parentId || !trimmedName) {
     return res.status(400).json({ error: "parentId and childName are required" });
   }
+
+  const users = readJson("users.json");
+  const userIndex = users.findIndex((user) => user.id === parentId);
+  if (userIndex < 0) {
+    return res.status(404).json({ error: "User account not found" });
+  }
+
+  const parsedAge =
+    age === undefined || age === null || age === ""
+      ? null
+      : Number(age);
+  const safeAge = Number.isFinite(parsedAge) ? parsedAge : null;
 
   const children = readJson("children.json");
   const existingIndex = children.findIndex((item) => item.parentId === parentId);
   const child = {
-    id: `child-${Date.now()}`,
+    id: existingIndex >= 0 ? children[existingIndex].id : `child-${Date.now()}`,
     parentId,
-    childName,
-    age: age || null
+    childName: trimmedName,
+    age: safeAge
   };
 
   if (existingIndex >= 0) {
@@ -274,7 +350,22 @@ app.post("/profile/child", (req, res) => {
   }
   writeJson("children.json", children);
 
-  return res.status(201).json({ child });
+  users[userIndex] = {
+    ...users[userIndex],
+    childName: trimmedName,
+    childAge: safeAge
+  };
+  writeJson("users.json", users);
+
+  return res.status(201).json({
+    child,
+    parent: {
+      id: users[userIndex].id,
+      username: users[userIndex].username,
+      childName: trimmedName,
+      childAge: safeAge
+    }
+  });
 });
 
 app.get("/profile/photo/:parentId", (req, res) => {
@@ -393,7 +484,9 @@ app.post("/profile/photo", (req, res) => {
       profilesDir: PROFILE_ASSETS_DIR,
       safeParentId,
       imageBase64: imageBase64ForGemini,
-      mimeType
+      mimeType,
+      childDisplayName: resolveChildDisplayName(safeParentId),
+      welcomeAudioDataDir: DATA_JSON_DIR
     }).catch((err) => {
       console.error("[profile photo] cartoon task rejected:", err?.message || err);
     });

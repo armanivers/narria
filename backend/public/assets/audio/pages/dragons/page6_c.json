@@ -1,0 +1,643 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "stepped back and said,",
+      "start_time": 0.099,
+      "end_time": 1.759,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "stepped",
+          "start_time": 0.099,
+          "end_time": 0.479
+        },
+        {
+          "text": " ",
+          "start_time": 0.479,
+          "end_time": 0.539
+        },
+        {
+          "text": "back",
+          "start_time": 0.539,
+          "end_time": 1.019
+        },
+        {
+          "text": " ",
+          "start_time": 1.019,
+          "end_time": 1.259
+        },
+        {
+          "text": "and",
+          "start_time": 1.259,
+          "end_time": 1.399
+        },
+        {
+          "text": " ",
+          "start_time": 1.399,
+          "end_time": 1.48
+        },
+        {
+          "text": "said,",
+          "start_time": 1.48,
+          "end_time": 1.759
+        }
+      ]
+    },
+    {
+      "text": "\"I do not want to open it.\"",
+      "start_time": 2.5,
+      "end_time": 4.44,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"I",
+          "start_time": 2.5,
+          "end_time": 2.72
+        },
+        {
+          "text": " ",
+          "start_time": 2.72,
+          "end_time": 2.859
+        },
+        {
+          "text": "do",
+          "start_time": 2.859,
+          "end_time": 2.919
+        },
+        {
+          "text": " ",
+          "start_time": 2.919,
+          "end_time": 2.999
+        },
+        {
+          "text": "not",
+          "start_time": 3.0,
+          "end_time": 3.179
+        },
+        {
+          "text": " ",
+          "start_time": 3.179,
+          "end_time": 3.359
+        },
+        {
+          "text": "want",
+          "start_time": 3.359,
+          "end_time": 3.639
+        },
+        {
+          "text": " ",
+          "start_time": 3.639,
+          "end_time": 3.699
+        },
+        {
+          "text": "to",
+          "start_time": 3.699,
+          "end_time": 3.839
+        },
+        {
+          "text": " ",
+          "start_time": 3.839,
+          "end_time": 3.919
+        },
+        {
+          "text": "open",
+          "start_time": 3.919,
+          "end_time": 4.179
+        },
+        {
+          "text": " ",
+          "start_time": 4.179,
+          "end_time": 4.259
+        },
+        {
+          "text": "it.\"",
+          "start_time": 4.259,
+          "end_time": 4.44
+        }
+      ]
+    },
+    {
+      "text": "Captain Coral did not judge. Instead, he",
+      "start_time": 5.4,
+      "end_time": 8.659,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Captain",
+          "start_time": 5.4,
+          "end_time": 5.659
+        },
+        {
+          "text": " ",
+          "start_time": 5.659,
+          "end_time": 5.759
+        },
+        {
+          "text": "Coral",
+          "start_time": 5.759,
+          "end_time": 6.359
+        },
+        {
+          "text": " ",
+          "start_time": 6.359,
+          "end_time": 6.419
+        },
+        {
+          "text": "did",
+          "start_time": 6.42,
+          "end_time": 6.579
+        },
+        {
+          "text": " ",
+          "start_time": 6.579,
+          "end_time": 6.639
+        },
+        {
+          "text": "not",
+          "start_time": 6.639,
+          "end_time": 6.879
+        },
+        {
+          "text": " ",
+          "start_time": 6.879,
+          "end_time": 7.019
+        },
+        {
+          "text": "judge.",
+          "start_time": 7.019,
+          "end_time": 7.399
+        },
+        {
+          "text": " ",
+          "start_time": 7.399,
+          "end_time": 7.879
+        },
+        {
+          "text": "Instead,",
+          "start_time": 7.879,
+          "end_time": 8.46
+        },
+        {
+          "text": " ",
+          "start_time": 8.46,
+          "end_time": 8.559
+        },
+        {
+          "text": "he",
+          "start_time": 8.559,
+          "end_time": 8.659
+        }
+      ]
+    },
+    {
+      "text": "answered,",
+      "start_time": 8.76,
+      "end_time": 9.159,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "answered,",
+          "start_time": 8.76,
+          "end_time": 9.159
+        }
+      ]
+    },
+    {
+      "text": "\"Some hearts close to stay safe,",
+      "start_time": 9.979,
+      "end_time": 12.859,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Some",
+          "start_time": 9.979,
+          "end_time": 10.38
+        },
+        {
+          "text": " ",
+          "start_time": 10.38,
+          "end_time": 10.539
+        },
+        {
+          "text": "hearts",
+          "start_time": 10.539,
+          "end_time": 11.079
+        },
+        {
+          "text": " ",
+          "start_time": 11.079,
+          "end_time": 11.179
+        },
+        {
+          "text": "close",
+          "start_time": 11.179,
+          "end_time": 11.739
+        },
+        {
+          "text": " ",
+          "start_time": 11.739,
+          "end_time": 11.84
+        },
+        {
+          "text": "to",
+          "start_time": 11.84,
+          "end_time": 11.96
+        },
+        {
+          "text": " ",
+          "start_time": 11.96,
+          "end_time": 12.019
+        },
+        {
+          "text": "stay",
+          "start_time": 12.019,
+          "end_time": 12.379
+        },
+        {
+          "text": " ",
+          "start_time": 12.379,
+          "end_time": 12.479
+        },
+        {
+          "text": "safe,",
+          "start_time": 12.479,
+          "end_time": 12.859
+        }
+      ]
+    },
+    {
+      "text": "but the heaviest things get lighter when",
+      "start_time": 14.139,
+      "end_time": 17.52,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "but",
+          "start_time": 14.139,
+          "end_time": 14.279
+        },
+        {
+          "text": " ",
+          "start_time": 14.279,
+          "end_time": 14.339
+        },
+        {
+          "text": "the",
+          "start_time": 14.34,
+          "end_time": 14.42
+        },
+        {
+          "text": " ",
+          "start_time": 14.42,
+          "end_time": 14.559
+        },
+        {
+          "text": "heaviest",
+          "start_time": 14.559,
+          "end_time": 15.159
+        },
+        {
+          "text": " ",
+          "start_time": 15.159,
+          "end_time": 15.219
+        },
+        {
+          "text": "things",
+          "start_time": 15.219,
+          "end_time": 16.219
+        },
+        {
+          "text": " ",
+          "start_time": 16.219,
+          "end_time": 16.319
+        },
+        {
+          "text": "get",
+          "start_time": 16.319,
+          "end_time": 16.539
+        },
+        {
+          "text": " ",
+          "start_time": 16.539,
+          "end_time": 16.699
+        },
+        {
+          "text": "lighter",
+          "start_time": 16.699,
+          "end_time": 17.279
+        },
+        {
+          "text": " ",
+          "start_time": 17.279,
+          "end_time": 17.339
+        },
+        {
+          "text": "when",
+          "start_time": 17.34,
+          "end_time": 17.52
+        }
+      ]
+    },
+    {
+      "text": "shared.\"",
+      "start_time": 17.699,
+      "end_time": 18.26,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "shared.\"",
+          "start_time": 17.699,
+          "end_time": 18.26
+        }
+      ]
+    },
+    {
+      "text": "Then after a beat, he added,",
+      "start_time": 19.26,
+      "end_time": 21.34,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Then",
+          "start_time": 19.26,
+          "end_time": 19.559
+        },
+        {
+          "text": " ",
+          "start_time": 19.559,
+          "end_time": 19.859
+        },
+        {
+          "text": "after",
+          "start_time": 19.859,
+          "end_time": 20.12
+        },
+        {
+          "text": " ",
+          "start_time": 20.12,
+          "end_time": 20.18
+        },
+        {
+          "text": "a",
+          "start_time": 20.18,
+          "end_time": 20.26
+        },
+        {
+          "text": " ",
+          "start_time": 20.26,
+          "end_time": 20.319
+        },
+        {
+          "text": "beat,",
+          "start_time": 20.319,
+          "end_time": 20.619
+        },
+        {
+          "text": " ",
+          "start_time": 20.619,
+          "end_time": 20.879
+        },
+        {
+          "text": "he",
+          "start_time": 20.879,
+          "end_time": 21.0
+        },
+        {
+          "text": " ",
+          "start_time": 21.0,
+          "end_time": 21.079
+        },
+        {
+          "text": "added,",
+          "start_time": 21.079,
+          "end_time": 21.34
+        }
+      ]
+    },
+    {
+      "text": "\"Still,",
+      "start_time": 22.299,
+      "end_time": 22.799,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Still,",
+          "start_time": 22.299,
+          "end_time": 22.799
+        }
+      ]
+    },
+    {
+      "text": "take this.\"",
+      "start_time": 23.539,
+      "end_time": 24.159,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "take",
+          "start_time": 23.539,
+          "end_time": 23.76
+        },
+        {
+          "text": " ",
+          "start_time": 23.76,
+          "end_time": 23.819
+        },
+        {
+          "text": "this.\"",
+          "start_time": 23.819,
+          "end_time": 24.159
+        }
+      ]
+    },
+    {
+      "text": "Above the mountain,",
+      "start_time": 25.199,
+      "end_time": 26.159,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Above",
+          "start_time": 25.199,
+          "end_time": 25.479
+        },
+        {
+          "text": " ",
+          "start_time": 25.479,
+          "end_time": 25.519
+        },
+        {
+          "text": "the",
+          "start_time": 25.519,
+          "end_time": 25.619
+        },
+        {
+          "text": " ",
+          "start_time": 25.619,
+          "end_time": 25.679
+        },
+        {
+          "text": "mountain,",
+          "start_time": 25.68,
+          "end_time": 26.159
+        }
+      ]
+    },
+    {
+      "text": "in the sky castle storm,",
+      "start_time": 26.92,
+      "end_time": 28.799,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "in",
+          "start_time": 26.92,
+          "end_time": 27.02
+        },
+        {
+          "text": " ",
+          "start_time": 27.02,
+          "end_time": 27.059
+        },
+        {
+          "text": "the",
+          "start_time": 27.059,
+          "end_time": 27.099
+        },
+        {
+          "text": " ",
+          "start_time": 27.099,
+          "end_time": 27.239
+        },
+        {
+          "text": "sky",
+          "start_time": 27.239,
+          "end_time": 27.719
+        },
+        {
+          "text": " ",
+          "start_time": 27.719,
+          "end_time": 27.779
+        },
+        {
+          "text": "castle",
+          "start_time": 27.779,
+          "end_time": 28.139
+        },
+        {
+          "text": " ",
+          "start_time": 28.139,
+          "end_time": 28.279
+        },
+        {
+          "text": "storm,",
+          "start_time": 28.279,
+          "end_time": 28.799
+        }
+      ]
+    },
+    {
+      "text": "the broken heart star was waiting",
+      "start_time": 29.979,
+      "end_time": 33.54,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "the",
+          "start_time": 29.979,
+          "end_time": 30.039
+        },
+        {
+          "text": " ",
+          "start_time": 30.039,
+          "end_time": 30.219
+        },
+        {
+          "text": "broken",
+          "start_time": 30.219,
+          "end_time": 30.899
+        },
+        {
+          "text": " ",
+          "start_time": 30.899,
+          "end_time": 30.959
+        },
+        {
+          "text": "heart",
+          "start_time": 30.959,
+          "end_time": 31.259
+        },
+        {
+          "text": " ",
+          "start_time": 31.259,
+          "end_time": 31.319
+        },
+        {
+          "text": "star",
+          "start_time": 31.319,
+          "end_time": 31.84
+        },
+        {
+          "text": " ",
+          "start_time": 31.84,
+          "end_time": 31.899
+        },
+        {
+          "text": "was",
+          "start_time": 31.899,
+          "end_time": 32.06
+        },
+        {
+          "text": " ",
+          "start_time": 32.06,
+          "end_time": 32.18
+        },
+        {
+          "text": "waiting",
+          "start_time": 32.18,
+          "end_time": 33.54
+        }
+      ]
+    }
+  ]
+}

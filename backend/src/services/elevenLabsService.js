@@ -3,6 +3,9 @@
  * @see https://elevenlabs.io/docs/api-reference/text-to-speech/convert
  */
 
+const fs = require("node:fs");
+const path = require("node:path");
+
 /**
  * @param {{ apiKey: string; voiceId: string; text: string; modelId?: string }} params
  * @returns {Promise<Buffer>}
@@ -52,7 +55,56 @@ function applyNameTemplate(template, name) {
   return String(template || "").replace(/\{name\}/gi, trimmed);
 }
 
+/** Safe basename segment for welcome MP3 in data/ */
+function sanitizeWelcomeFileBase(parentId) {
+  const s = String(parentId || "")
+    .replaceAll(/[^a-zA-Z0-9_-]/g, "")
+    .slice(0, 80);
+  return s || "guest";
+}
+
+/**
+ * Spoken line after cartoon avatar is ready (kid name from profile).
+ * @param {string} childName
+ */
+function buildKidWelcomeLine(childName) {
+  const name = String(childName || "").trim();
+  const who = name || "friend";
+  return `Hello ${who}, welcome to the crazy world`;
+}
+
+/**
+ * Generate MP3 via ElevenLabs and write under backend/data (e.g. welcome_parent-admin.mp3).
+ * @param {{ apiKey: string; voiceId: string; childName: string; parentId: string; dataDir: string; modelId?: string }} params
+ * @returns {Promise<{ fileName: string; filePath: string; text: string }>}
+ */
+async function synthesizeAndSaveKidWelcomeToDataDir({
+  apiKey,
+  voiceId,
+  childName,
+  parentId,
+  dataDir,
+  modelId
+}) {
+  const text = buildKidWelcomeLine(childName);
+  const buffer = await synthesizeSpeechToMp3Buffer({
+    apiKey,
+    voiceId,
+    text,
+    modelId
+  });
+  const base = sanitizeWelcomeFileBase(parentId);
+  const fileName = `welcome_${base}.mp3`;
+  const dir = path.resolve(dataDir);
+  fs.mkdirSync(dir, { recursive: true });
+  const filePath = path.join(dir, fileName);
+  fs.writeFileSync(filePath, buffer);
+  return { fileName, filePath, text };
+}
+
 module.exports = {
   synthesizeSpeechToMp3Buffer,
-  applyNameTemplate
+  applyNameTemplate,
+  buildKidWelcomeLine,
+  synthesizeAndSaveKidWelcomeToDataDir
 };

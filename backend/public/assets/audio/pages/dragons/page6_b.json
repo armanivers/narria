@@ -1,0 +1,561 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "reached for Lumi and said,",
+      "start_time": 0.159,
+      "end_time": 2.0,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "reached",
+          "start_time": 0.159,
+          "end_time": 0.479
+        },
+        {
+          "text": " ",
+          "start_time": 0.479,
+          "end_time": 0.56
+        },
+        {
+          "text": "for",
+          "start_time": 0.56,
+          "end_time": 0.639
+        },
+        {
+          "text": " ",
+          "start_time": 0.639,
+          "end_time": 0.719
+        },
+        {
+          "text": "Lumi",
+          "start_time": 0.719,
+          "end_time": 1.079
+        },
+        {
+          "text": " ",
+          "start_time": 1.079,
+          "end_time": 1.539
+        },
+        {
+          "text": "and",
+          "start_time": 1.539,
+          "end_time": 1.699
+        },
+        {
+          "text": " ",
+          "start_time": 1.699,
+          "end_time": 1.779
+        },
+        {
+          "text": "said,",
+          "start_time": 1.779,
+          "end_time": 2.0
+        }
+      ]
+    },
+    {
+      "text": "\"Stay with me.",
+      "start_time": 2.859,
+      "end_time": 3.799,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Stay",
+          "start_time": 2.859,
+          "end_time": 3.22
+        },
+        {
+          "text": " ",
+          "start_time": 3.22,
+          "end_time": 3.319
+        },
+        {
+          "text": "with",
+          "start_time": 3.319,
+          "end_time": 3.519
+        },
+        {
+          "text": " ",
+          "start_time": 3.519,
+          "end_time": 3.619
+        },
+        {
+          "text": "me.",
+          "start_time": 3.619,
+          "end_time": 3.799
+        }
+      ]
+    },
+    {
+      "text": "I do not want to think alone.\"",
+      "start_time": 5.099,
+      "end_time": 6.619,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "I",
+          "start_time": 5.099,
+          "end_time": 5.119
+        },
+        {
+          "text": " ",
+          "start_time": 5.119,
+          "end_time": 5.139
+        },
+        {
+          "text": "do",
+          "start_time": 5.139,
+          "end_time": 5.259
+        },
+        {
+          "text": " ",
+          "start_time": 5.259,
+          "end_time": 5.299
+        },
+        {
+          "text": "not",
+          "start_time": 5.299,
+          "end_time": 5.48
+        },
+        {
+          "text": " ",
+          "start_time": 5.48,
+          "end_time": 5.579
+        },
+        {
+          "text": "want",
+          "start_time": 5.579,
+          "end_time": 5.659
+        },
+        {
+          "text": " ",
+          "start_time": 5.659,
+          "end_time": 5.679
+        },
+        {
+          "text": "to",
+          "start_time": 5.679,
+          "end_time": 5.819
+        },
+        {
+          "text": " ",
+          "start_time": 5.819,
+          "end_time": 5.879
+        },
+        {
+          "text": "think",
+          "start_time": 5.879,
+          "end_time": 6.059
+        },
+        {
+          "text": " ",
+          "start_time": 6.059,
+          "end_time": 6.179
+        },
+        {
+          "text": "alone.\"",
+          "start_time": 6.179,
+          "end_time": 6.619
+        }
+      ]
+    },
+    {
+      "text": "Lumi answered at once, \"I stay.\"",
+      "start_time": 7.819,
+      "end_time": 10.659,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Lumi",
+          "start_time": 7.819,
+          "end_time": 8.38
+        },
+        {
+          "text": " ",
+          "start_time": 8.38,
+          "end_time": 8.559
+        },
+        {
+          "text": "answered",
+          "start_time": 8.559,
+          "end_time": 8.92
+        },
+        {
+          "text": " ",
+          "start_time": 8.92,
+          "end_time": 8.96
+        },
+        {
+          "text": "at",
+          "start_time": 8.96,
+          "end_time": 9.059
+        },
+        {
+          "text": " ",
+          "start_time": 9.059,
+          "end_time": 9.139
+        },
+        {
+          "text": "once,",
+          "start_time": 9.139,
+          "end_time": 9.479
+        },
+        {
+          "text": " ",
+          "start_time": 9.479,
+          "end_time": 10.059
+        },
+        {
+          "text": "\"I",
+          "start_time": 10.059,
+          "end_time": 10.199
+        },
+        {
+          "text": " ",
+          "start_time": 10.199,
+          "end_time": 10.359
+        },
+        {
+          "text": "stay.\"",
+          "start_time": 10.359,
+          "end_time": 10.659
+        }
+      ]
+    },
+    {
+      "text": "Marina's voice flowed gently.",
+      "start_time": 11.779,
+      "end_time": 13.659,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Marina's",
+          "start_time": 11.779,
+          "end_time": 12.22
+        },
+        {
+          "text": " ",
+          "start_time": 12.22,
+          "end_time": 12.3
+        },
+        {
+          "text": "voice",
+          "start_time": 12.3,
+          "end_time": 12.639
+        },
+        {
+          "text": " ",
+          "start_time": 12.639,
+          "end_time": 12.779
+        },
+        {
+          "text": "flowed",
+          "start_time": 12.779,
+          "end_time": 13.179
+        },
+        {
+          "text": " ",
+          "start_time": 13.179,
+          "end_time": 13.259
+        },
+        {
+          "text": "gently.",
+          "start_time": 13.259,
+          "end_time": 13.659
+        }
+      ]
+    },
+    {
+      "text": "\"Even asking for company is a brave",
+      "start_time": 14.439,
+      "end_time": 17.279,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Even",
+          "start_time": 14.439,
+          "end_time": 14.839
+        },
+        {
+          "text": " ",
+          "start_time": 14.839,
+          "end_time": 14.959
+        },
+        {
+          "text": "asking",
+          "start_time": 14.96,
+          "end_time": 15.359
+        },
+        {
+          "text": " ",
+          "start_time": 15.359,
+          "end_time": 15.459
+        },
+        {
+          "text": "for",
+          "start_time": 15.46,
+          "end_time": 15.599
+        },
+        {
+          "text": " ",
+          "start_time": 15.599,
+          "end_time": 15.679
+        },
+        {
+          "text": "company",
+          "start_time": 15.679,
+          "end_time": 16.18
+        },
+        {
+          "text": " ",
+          "start_time": 16.18,
+          "end_time": 16.639
+        },
+        {
+          "text": "is",
+          "start_time": 16.639,
+          "end_time": 16.739
+        },
+        {
+          "text": " ",
+          "start_time": 16.739,
+          "end_time": 16.779
+        },
+        {
+          "text": "a",
+          "start_time": 16.779,
+          "end_time": 16.879
+        },
+        {
+          "text": " ",
+          "start_time": 16.879,
+          "end_time": 16.939
+        },
+        {
+          "text": "brave",
+          "start_time": 16.94,
+          "end_time": 17.279
+        }
+      ]
+    },
+    {
+      "text": "beginning,\" she said.",
+      "start_time": 17.34,
+      "end_time": 18.639,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "beginning,\"",
+          "start_time": 17.34,
+          "end_time": 17.779
+        },
+        {
+          "text": " ",
+          "start_time": 17.779,
+          "end_time": 18.18
+        },
+        {
+          "text": "she",
+          "start_time": 18.18,
+          "end_time": 18.28
+        },
+        {
+          "text": " ",
+          "start_time": 18.28,
+          "end_time": 18.399
+        },
+        {
+          "text": "said.",
+          "start_time": 18.399,
+          "end_time": 18.639
+        }
+      ]
+    },
+    {
+      "text": "Above the mountain,",
+      "start_time": 19.879,
+      "end_time": 20.719,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Above",
+          "start_time": 19.879,
+          "end_time": 20.119
+        },
+        {
+          "text": " ",
+          "start_time": 20.119,
+          "end_time": 20.159
+        },
+        {
+          "text": "the",
+          "start_time": 20.159,
+          "end_time": 20.199
+        },
+        {
+          "text": " ",
+          "start_time": 20.199,
+          "end_time": 20.299
+        },
+        {
+          "text": "mountain,",
+          "start_time": 20.299,
+          "end_time": 20.719
+        }
+      ]
+    },
+    {
+      "text": "in the sky castle storm,",
+      "start_time": 21.739,
+      "end_time": 23.579,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "in",
+          "start_time": 21.739,
+          "end_time": 21.84
+        },
+        {
+          "text": " ",
+          "start_time": 21.84,
+          "end_time": 21.859
+        },
+        {
+          "text": "the",
+          "start_time": 21.859,
+          "end_time": 21.899
+        },
+        {
+          "text": " ",
+          "start_time": 21.899,
+          "end_time": 22.039
+        },
+        {
+          "text": "sky",
+          "start_time": 22.039,
+          "end_time": 22.519
+        },
+        {
+          "text": " ",
+          "start_time": 22.519,
+          "end_time": 22.599
+        },
+        {
+          "text": "castle",
+          "start_time": 22.6,
+          "end_time": 22.959
+        },
+        {
+          "text": " ",
+          "start_time": 22.959,
+          "end_time": 23.099
+        },
+        {
+          "text": "storm,",
+          "start_time": 23.1,
+          "end_time": 23.579
+        }
+      ]
+    },
+    {
+      "text": "the broken heart star",
+      "start_time": 24.84,
+      "end_time": 26.42,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "the",
+          "start_time": 24.84,
+          "end_time": 24.959
+        },
+        {
+          "text": " ",
+          "start_time": 24.959,
+          "end_time": 25.0
+        },
+        {
+          "text": "broken",
+          "start_time": 25.0,
+          "end_time": 25.579
+        },
+        {
+          "text": " ",
+          "start_time": 25.579,
+          "end_time": 25.639
+        },
+        {
+          "text": "heart",
+          "start_time": 25.639,
+          "end_time": 25.879
+        },
+        {
+          "text": " ",
+          "start_time": 25.879,
+          "end_time": 25.959
+        },
+        {
+          "text": "star",
+          "start_time": 25.959,
+          "end_time": 26.42
+        }
+      ]
+    },
+    {
+      "text": "was waiting.",
+      "start_time": 27.139,
+      "end_time": 27.779,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "was",
+          "start_time": 27.139,
+          "end_time": 27.299
+        },
+        {
+          "text": " ",
+          "start_time": 27.299,
+          "end_time": 27.379
+        },
+        {
+          "text": "waiting.",
+          "start_time": 27.379,
+          "end_time": 27.779
+        }
+      ]
+    }
+  ]
+}

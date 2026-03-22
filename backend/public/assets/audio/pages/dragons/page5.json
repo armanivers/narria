@@ -1,0 +1,733 @@
+{
+  "language_code": null,
+  "segments": [
+    {
+      "text": "Out of the silence came a voice that",
+      "start_time": 0.28,
+      "end_time": 3.22,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Out",
+          "start_time": 0.28,
+          "end_time": 0.459
+        },
+        {
+          "text": " ",
+          "start_time": 0.459,
+          "end_time": 0.499
+        },
+        {
+          "text": "of",
+          "start_time": 0.5,
+          "end_time": 0.579
+        },
+        {
+          "text": " ",
+          "start_time": 0.579,
+          "end_time": 0.62
+        },
+        {
+          "text": "the",
+          "start_time": 0.62,
+          "end_time": 0.68
+        },
+        {
+          "text": " ",
+          "start_time": 0.68,
+          "end_time": 0.819
+        },
+        {
+          "text": "silence",
+          "start_time": 0.819,
+          "end_time": 1.319
+        },
+        {
+          "text": " ",
+          "start_time": 1.319,
+          "end_time": 1.739
+        },
+        {
+          "text": "came",
+          "start_time": 1.74,
+          "end_time": 1.919
+        },
+        {
+          "text": " ",
+          "start_time": 1.919,
+          "end_time": 1.959
+        },
+        {
+          "text": "a",
+          "start_time": 1.959,
+          "end_time": 2.139
+        },
+        {
+          "text": " ",
+          "start_time": 2.139,
+          "end_time": 2.199
+        },
+        {
+          "text": "voice",
+          "start_time": 2.2,
+          "end_time": 2.679
+        },
+        {
+          "text": " ",
+          "start_time": 2.679,
+          "end_time": 3.059
+        },
+        {
+          "text": "that",
+          "start_time": 3.059,
+          "end_time": 3.22
+        }
+      ]
+    },
+    {
+      "text": "sounded ancient and wounded.",
+      "start_time": 3.299,
+      "end_time": 5.579,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "sounded",
+          "start_time": 3.299,
+          "end_time": 3.759
+        },
+        {
+          "text": " ",
+          "start_time": 3.759,
+          "end_time": 3.879
+        },
+        {
+          "text": "ancient",
+          "start_time": 3.879,
+          "end_time": 4.44
+        },
+        {
+          "text": " ",
+          "start_time": 4.44,
+          "end_time": 4.759
+        },
+        {
+          "text": "and",
+          "start_time": 4.759,
+          "end_time": 4.88
+        },
+        {
+          "text": " ",
+          "start_time": 4.88,
+          "end_time": 5.059
+        },
+        {
+          "text": "wounded.",
+          "start_time": 5.059,
+          "end_time": 5.579
+        }
+      ]
+    },
+    {
+      "text": "\"Some secrets are surprises,\" the Keeper",
+      "start_time": 6.399,
+      "end_time": 10.359,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Some",
+          "start_time": 6.399,
+          "end_time": 6.96
+        },
+        {
+          "text": " ",
+          "start_time": 6.96,
+          "end_time": 7.159
+        },
+        {
+          "text": "secrets",
+          "start_time": 7.159,
+          "end_time": 7.879
+        },
+        {
+          "text": " ",
+          "start_time": 7.879,
+          "end_time": 8.139
+        },
+        {
+          "text": "are",
+          "start_time": 8.139,
+          "end_time": 8.46
+        },
+        {
+          "text": " ",
+          "start_time": 8.46,
+          "end_time": 8.599
+        },
+        {
+          "text": "surprises,\"",
+          "start_time": 8.599,
+          "end_time": 9.439
+        },
+        {
+          "text": " ",
+          "start_time": 9.439,
+          "end_time": 9.96
+        },
+        {
+          "text": "the",
+          "start_time": 9.96,
+          "end_time": 10.039
+        },
+        {
+          "text": " ",
+          "start_time": 10.039,
+          "end_time": 10.079
+        },
+        {
+          "text": "Keeper",
+          "start_time": 10.079,
+          "end_time": 10.359
+        }
+      ]
+    },
+    {
+      "text": "of Storms said slowly.",
+      "start_time": 10.399,
+      "end_time": 12.239,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "of",
+          "start_time": 10.399,
+          "end_time": 10.479
+        },
+        {
+          "text": " ",
+          "start_time": 10.479,
+          "end_time": 10.579
+        },
+        {
+          "text": "Storms",
+          "start_time": 10.579,
+          "end_time": 11.239
+        },
+        {
+          "text": " ",
+          "start_time": 11.239,
+          "end_time": 11.38
+        },
+        {
+          "text": "said",
+          "start_time": 11.38,
+          "end_time": 11.619
+        },
+        {
+          "text": " ",
+          "start_time": 11.619,
+          "end_time": 11.739
+        },
+        {
+          "text": "slowly.",
+          "start_time": 11.739,
+          "end_time": 12.239
+        }
+      ]
+    },
+    {
+      "text": "\"Some secrets",
+      "start_time": 13.179,
+      "end_time": 14.259,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Some",
+          "start_time": 13.179,
+          "end_time": 13.579
+        },
+        {
+          "text": " ",
+          "start_time": 13.579,
+          "end_time": 13.739
+        },
+        {
+          "text": "secrets",
+          "start_time": 13.739,
+          "end_time": 14.259
+        }
+      ]
+    },
+    {
+      "text": "are heavy stones.\"",
+      "start_time": 14.939,
+      "end_time": 16.5,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "are",
+          "start_time": 14.939,
+          "end_time": 15.079
+        },
+        {
+          "text": " ",
+          "start_time": 15.079,
+          "end_time": 15.199
+        },
+        {
+          "text": "heavy",
+          "start_time": 15.199,
+          "end_time": 15.579
+        },
+        {
+          "text": " ",
+          "start_time": 15.579,
+          "end_time": 15.659
+        },
+        {
+          "text": "stones.\"",
+          "start_time": 15.659,
+          "end_time": 16.5
+        }
+      ]
+    },
+    {
+      "text": "Marina stepped nearer.",
+      "start_time": 17.5,
+      "end_time": 18.899,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Marina",
+          "start_time": 17.5,
+          "end_time": 18.039
+        },
+        {
+          "text": " ",
+          "start_time": 18.039,
+          "end_time": 18.099
+        },
+        {
+          "text": "stepped",
+          "start_time": 18.1,
+          "end_time": 18.399
+        },
+        {
+          "text": " ",
+          "start_time": 18.399,
+          "end_time": 18.5
+        },
+        {
+          "text": "nearer.",
+          "start_time": 18.5,
+          "end_time": 18.899
+        }
+      ]
+    },
+    {
+      "text": "\"This chest opens only when the hero",
+      "start_time": 19.76,
+      "end_time": 22.199,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"This",
+          "start_time": 19.76,
+          "end_time": 20.02
+        },
+        {
+          "text": " ",
+          "start_time": 20.02,
+          "end_time": 20.18
+        },
+        {
+          "text": "chest",
+          "start_time": 20.18,
+          "end_time": 20.639
+        },
+        {
+          "text": " ",
+          "start_time": 20.639,
+          "end_time": 20.76
+        },
+        {
+          "text": "opens",
+          "start_time": 20.76,
+          "end_time": 21.159
+        },
+        {
+          "text": " ",
+          "start_time": 21.159,
+          "end_time": 21.26
+        },
+        {
+          "text": "only",
+          "start_time": 21.26,
+          "end_time": 21.479
+        },
+        {
+          "text": " ",
+          "start_time": 21.479,
+          "end_time": 21.539
+        },
+        {
+          "text": "when",
+          "start_time": 21.539,
+          "end_time": 21.639
+        },
+        {
+          "text": " ",
+          "start_time": 21.639,
+          "end_time": 21.699
+        },
+        {
+          "text": "the",
+          "start_time": 21.699,
+          "end_time": 21.76
+        },
+        {
+          "text": " ",
+          "start_time": 21.76,
+          "end_time": 21.84
+        },
+        {
+          "text": "hero",
+          "start_time": 21.84,
+          "end_time": 22.199
+        }
+      ]
+    },
+    {
+      "text": "chooses what to do with a heavy feeling,\"",
+      "start_time": 22.279,
+      "end_time": 24.559,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "chooses",
+          "start_time": 22.279,
+          "end_time": 22.719
+        },
+        {
+          "text": " ",
+          "start_time": 22.719,
+          "end_time": 22.819
+        },
+        {
+          "text": "what",
+          "start_time": 22.819,
+          "end_time": 22.979
+        },
+        {
+          "text": " ",
+          "start_time": 22.979,
+          "end_time": 23.039
+        },
+        {
+          "text": "to",
+          "start_time": 23.039,
+          "end_time": 23.159
+        },
+        {
+          "text": " ",
+          "start_time": 23.159,
+          "end_time": 23.239
+        },
+        {
+          "text": "do",
+          "start_time": 23.239,
+          "end_time": 23.439
+        },
+        {
+          "text": " ",
+          "start_time": 23.439,
+          "end_time": 23.519
+        },
+        {
+          "text": "with",
+          "start_time": 23.519,
+          "end_time": 23.619
+        },
+        {
+          "text": " ",
+          "start_time": 23.619,
+          "end_time": 23.679
+        },
+        {
+          "text": "a",
+          "start_time": 23.68,
+          "end_time": 23.719
+        },
+        {
+          "text": " ",
+          "start_time": 23.719,
+          "end_time": 23.819
+        },
+        {
+          "text": "heavy",
+          "start_time": 23.819,
+          "end_time": 24.019
+        },
+        {
+          "text": " ",
+          "start_time": 24.019,
+          "end_time": 24.179
+        },
+        {
+          "text": "feeling,\"",
+          "start_time": 24.18,
+          "end_time": 24.559
+        }
+      ]
+    },
+    {
+      "text": "she said in her calm, tide-like voice.",
+      "start_time": 25.039,
+      "end_time": 27.84,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "she",
+          "start_time": 25.039,
+          "end_time": 25.159
+        },
+        {
+          "text": " ",
+          "start_time": 25.159,
+          "end_time": 25.299
+        },
+        {
+          "text": "said",
+          "start_time": 25.299,
+          "end_time": 25.579
+        },
+        {
+          "text": " ",
+          "start_time": 25.579,
+          "end_time": 25.619
+        },
+        {
+          "text": "in",
+          "start_time": 25.619,
+          "end_time": 25.699
+        },
+        {
+          "text": " ",
+          "start_time": 25.699,
+          "end_time": 25.779
+        },
+        {
+          "text": "her",
+          "start_time": 25.779,
+          "end_time": 25.959
+        },
+        {
+          "text": " ",
+          "start_time": 25.959,
+          "end_time": 26.039
+        },
+        {
+          "text": "calm,",
+          "start_time": 26.039,
+          "end_time": 26.639
+        },
+        {
+          "text": " ",
+          "start_time": 26.639,
+          "end_time": 26.719
+        },
+        {
+          "text": "tide-like",
+          "start_time": 26.719,
+          "end_time": 27.319
+        },
+        {
+          "text": " ",
+          "start_time": 27.319,
+          "end_time": 27.439
+        },
+        {
+          "text": "voice.",
+          "start_time": 27.439,
+          "end_time": 27.84
+        }
+      ]
+    },
+    {
+      "text": "Captain Coral added,",
+      "start_time": 28.719,
+      "end_time": 30.079,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "Captain",
+          "start_time": 28.719,
+          "end_time": 29.059
+        },
+        {
+          "text": " ",
+          "start_time": 29.059,
+          "end_time": 29.179
+        },
+        {
+          "text": "Coral",
+          "start_time": 29.179,
+          "end_time": 29.679
+        },
+        {
+          "text": " ",
+          "start_time": 29.679,
+          "end_time": 29.819
+        },
+        {
+          "text": "added,",
+          "start_time": 29.819,
+          "end_time": 30.079
+        }
+      ]
+    },
+    {
+      "text": "\"Whatever choice you make,",
+      "start_time": 30.84,
+      "end_time": 32.559,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "\"Whatever",
+          "start_time": 30.84,
+          "end_time": 31.399
+        },
+        {
+          "text": " ",
+          "start_time": 31.399,
+          "end_time": 31.479
+        },
+        {
+          "text": "choice",
+          "start_time": 31.479,
+          "end_time": 31.92
+        },
+        {
+          "text": " ",
+          "start_time": 31.92,
+          "end_time": 32.0
+        },
+        {
+          "text": "you",
+          "start_time": 32.0,
+          "end_time": 32.159
+        },
+        {
+          "text": " ",
+          "start_time": 32.159,
+          "end_time": 32.219
+        },
+        {
+          "text": "make,",
+          "start_time": 32.219,
+          "end_time": 32.559
+        }
+      ]
+    },
+    {
+      "text": "you do not face it alone.\"",
+      "start_time": 33.68,
+      "end_time": 35.899,
+      "speaker": {
+        "id": "speaker_0",
+        "name": "Speaker 0"
+      },
+      "words": [
+        {
+          "text": "you",
+          "start_time": 33.68,
+          "end_time": 33.899
+        },
+        {
+          "text": " ",
+          "start_time": 33.899,
+          "end_time": 33.979
+        },
+        {
+          "text": "do",
+          "start_time": 33.979,
+          "end_time": 34.119
+        },
+        {
+          "text": " ",
+          "start_time": 34.119,
+          "end_time": 34.18
+        },
+        {
+          "text": "not",
+          "start_time": 34.18,
+          "end_time": 34.5
+        },
+        {
+          "text": " ",
+          "start_time": 34.5,
+          "end_time": 34.579
+        },
+        {
+          "text": "face",
+          "start_time": 34.579,
+          "end_time": 34.84
+        },
+        {
+          "text": " ",
+          "start_time": 34.84,
+          "end_time": 34.899
+        },
+        {
+          "text": "it",
+          "start_time": 34.899,
+          "end_time": 35.219
+        },
+        {
+          "text": " ",
+          "start_time": 35.219,
+          "end_time": 35.319
+        },
+        {
+          "text": "alone.\"",
+          "start_time": 35.319,
+          "end_time": 35.899
+        }
+      ]
+    }
+  ]
+}
